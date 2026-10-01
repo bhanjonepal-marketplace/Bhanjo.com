@@ -24,6 +24,24 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
     }
   }, [initialTab]);
 
+  // Guest Guard: If no account is logged in, immediately return to marketplace homepage
+  useEffect(() => {
+    if (!user && onBackToMarketplace) {
+      onBackToMarketplace();
+    }
+  }, [user, onBackToMarketplace]);
+
+  const handleLogout = () => {
+    logout();
+    if (onBackToMarketplace) {
+      onBackToMarketplace();
+    }
+  };
+
+  if (!user) {
+    return null;
+  }
+
   const [filterOrderStatus, setFilterOrderStatus] = useState('all');
   const [backendOrders, setBackendOrders] = useState([]);
   
@@ -286,7 +304,7 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
           </button>
 
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className="px-3.5 py-2 rounded-xl border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-red-50 hover:text-red-600 transition flex items-center justify-center gap-1"
             title="Logout"
           >

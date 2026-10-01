@@ -388,6 +388,7 @@ export const Navbar = ({
                     <button
                       onClick={() => {
                         logout();
+                        setActiveView('marketplace');
                         setIsUserMenuOpen(false);
                       }}
                       className="w-full text-left p-2 rounded-lg hover:bg-red-50 text-red-600 transition flex items-center gap-2 font-semibold"
@@ -662,12 +663,18 @@ export const Navbar = ({
             
             {/* Wishlist Shortcut */}
             <button
-              onClick={() => setActiveView('my-orders')}
+              onClick={() => {
+                if (!user) {
+                  onOpenAuthModal('Please login or sign up to access your Wishlist');
+                } else {
+                  setActiveView('wishlist');
+                }
+              }}
               className="relative p-2 text-slate-700 hover:text-red-500 transition"
               title="My Wishlist"
             >
               <Heart className="w-6 h-6" />
-              {wishlist.length > 0 && (
+              {user && wishlist.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white font-black text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
                   {wishlist.length}
                 </span>
@@ -676,13 +683,19 @@ export const Navbar = ({
 
             {/* Cart Icon */}
             <button
-              onClick={onOpenCart}
+              onClick={() => {
+                if (!user) {
+                  onOpenAuthModal('Please login or sign up to access your Shopping Cart');
+                } else {
+                  onOpenCart();
+                }
+              }}
               className="relative p-2 text-slate-700 hover:text-[#F85606] transition flex items-center gap-1.5"
               title="Shopping Cart"
             >
               <div className="relative">
                 <ShoppingCart className="w-6 h-6" />
-                {cartCount > 0 && (
+                {user && cartCount > 0 && (
                   <span className="absolute -top-1.5 -right-1.5 bg-[#F85606] text-white font-black text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
                     {cartCount}
                   </span>

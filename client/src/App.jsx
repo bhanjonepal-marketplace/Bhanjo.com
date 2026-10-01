@@ -82,6 +82,13 @@ export function App() {
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, [activeView]);
+
+  // When no account is logged in, ensure customer portal views are strictly redirected to 'marketplace' homepage
+  useEffect(() => {
+    if (!user && ['my-orders', 'dashboard', 'profile', 'wishlist', 'addresses', 'seller-center'].includes(activeView)) {
+      setActiveView('marketplace');
+    }
+  }, [user, activeView]);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   
@@ -358,7 +365,7 @@ export function App() {
         isMegaMenuOpen={isMegaMenuOpen}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenTrackOrder={handleOpenTrackOrder}
-        onOpenAuthModal={() => handleRequireAuth(() => {})}
+        onOpenAuthModal={(msg) => handleRequireAuth(() => {}, msg || 'Please login or sign up to continue')}
         onOpenAlibabaImporter={handleOpenImporter}
         onSelectCategory={handleSelectCategory}
         searchQuery={searchQuery}
@@ -404,15 +411,15 @@ export function App() {
       {/* 3. Main Content Container */}
       <main className="flex-1 max-w-7xl mx-auto px-3 sm:px-6 w-full py-3">
         
-        {/* Personal Account, Profile, Wishlist & Orders Dashboard */}
-        {['my-orders', 'dashboard', 'profile', 'wishlist', 'addresses'].includes(activeView) ? (
+        {/* Personal Account, Profile, Wishlist & Orders Dashboard (Only when logged in) */}
+        {user && ['my-orders', 'dashboard', 'profile', 'wishlist', 'addresses'].includes(activeView) ? (
           <MyOrdersDashboard
             initialTab={activeView === 'my-orders' || activeView === 'dashboard' ? 'orders' : activeView}
             onOpenTrackOrder={handleOpenTrackOrder}
             onSelectProduct={handleSelectProduct}
             onBackToMarketplace={() => setActiveView('marketplace')}
           />
-        ) : activeView === 'seller-center' ? (
+        ) : user && activeView === 'seller-center' ? (
           <SellerCentralDashboard
             onProductAdded={handleProductAdded}
             onBackToMarketplace={() => setActiveView('marketplace')}
@@ -608,6 +615,7 @@ export function App() {
                             onSelectProduct={handleSelectProduct}
                             onQuickChat={handleOpenQuickChat}
                             onQuickAdd={(p) => showToast(`Added "${p.title.slice(0, 24)}..." to cart!`)}
+                            onRequireAuth={handleRequireAuth}
                             onDeleteProduct={handleDeleteProduct}
                             onEditProduct={(p) => setEditingProduct(p)}
                           />

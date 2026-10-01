@@ -201,8 +201,10 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
+    setWishlist([]);
     localStorage.removeItem('bhanjo_user');
     localStorage.removeItem('bhanjo_token');
+    localStorage.removeItem('bhanjo_wishlist');
   };
 
   const toggleWishlist = (product) => {

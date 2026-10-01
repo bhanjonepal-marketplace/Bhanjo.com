@@ -133,6 +133,20 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
   };
 
   const handleAddToCart = () => {
+    if (!user) {
+      if (onRequireAuth) {
+        onRequireAuth(
+          () => {
+            addToCart(product, orderQuantity, 'retail');
+            setAddedSuccess(true);
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+            setTimeout(() => setAddedSuccess(false), 2500);
+          },
+          'Please login or sign up to add items to your Shopping Cart'
+        );
+      }
+      return;
+    }
     addToCart(product, orderQuantity, 'retail');
     setAddedSuccess(true);
     confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
@@ -140,6 +154,19 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
   };
 
   const handleBuyNow = () => {
+    if (!user) {
+      if (onRequireAuth) {
+        onRequireAuth(
+          () => {
+            addToCart(product, orderQuantity, 'retail');
+            onClose();
+            if (onOpenCart) onOpenCart();
+          },
+          'Please login or sign up to complete your purchase'
+        );
+      }
+      return;
+    }
     addToCart(product, orderQuantity, 'retail');
     onClose();
     if (onOpenCart) onOpenCart();
@@ -147,6 +174,12 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
 
   const handleSubmitReview = async (e) => {
     e.preventDefault();
+    if (!user) {
+      if (onRequireAuth) {
+        onRequireAuth(null, 'Please login or sign up to submit a verified product review');
+      }
+      return;
+    }
     if (!newReviewComment.trim()) return;
 
     setIsSubmittingReview(true);
@@ -207,7 +240,18 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
           <div className="flex items-center gap-2">
             {/* Wishlist Button */}
             <button
-              onClick={() => toggleWishlist(product)}
+              onClick={() => {
+                if (!user) {
+                  if (onRequireAuth) {
+                    onRequireAuth(
+                      () => toggleWishlist(product),
+                      'Please login or sign up to save items to your Wishlist'
+                    );
+                  }
+                  return;
+                }
+                toggleWishlist(product);
+              }}
               className={`p-1.5 rounded-lg border transition flex items-center gap-1 text-xs font-semibold ${
                 isFavorite 
                   ? 'border-red-300 bg-red-50 text-red-600' 

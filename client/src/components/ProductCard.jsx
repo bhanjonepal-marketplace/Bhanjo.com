@@ -4,9 +4,9 @@ import { useCurrency } from '../context/CurrencyContext';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
-export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onDeleteProduct, onEditProduct }) => {
+export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAuth, onDeleteProduct, onEditProduct }) => {
   const { formatPrice, formatNPR, formatJPY } = useCurrency();
-  const { toggleWishlist, isInWishlist, isAdmin } = useAuth();
+  const { user, toggleWishlist, isInWishlist, isAdmin } = useAuth();
   const { addToCart } = useCart();
   const [justAdded, setJustAdded] = useState(false);
 
@@ -17,6 +17,14 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onDeleteProd
 
   const handleQuickAddToCart = (e) => {
     e.stopPropagation();
+    if (!user) {
+      if (onRequireAuth) {
+        onRequireAuth(() => {
+          addToCart(product, 1, 'retail');
+        }, 'Please login or sign up to add items to your Shopping Cart');
+      }
+      return;
+    }
     addToCart(product, 1, 'retail');
     setJustAdded(true);
     if (onQuickAdd) onQuickAdd(product);
@@ -64,6 +72,14 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onDeleteProd
         <button
           onClick={(e) => {
             e.stopPropagation();
+            if (!user) {
+              if (onRequireAuth) {
+                onRequireAuth(() => {
+                  toggleWishlist(product);
+                }, 'Please login or sign up to save items to your Wishlist');
+              }
+              return;
+            }
             toggleWishlist(product);
           }}
           className={`absolute top-2 right-2 p-1.5 rounded-full bg-white/90 backdrop-blur-xs shadow-sm hover:scale-110 transition z-10 ${
