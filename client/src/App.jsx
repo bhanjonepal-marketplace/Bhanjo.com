@@ -85,7 +85,7 @@ export function App() {
 
   // When no account is logged in, ensure customer portal views are strictly redirected to 'marketplace' homepage
   useEffect(() => {
-    if (!user && ['my-orders', 'dashboard', 'profile', 'wishlist', 'addresses', 'seller-center'].includes(activeView)) {
+    if (!user && ['my-orders', 'dashboard', 'profile', 'wishlist', 'addresses', 'cart', 'seller-center'].includes(activeView)) {
       setActiveView('marketplace');
     }
   }, [user, activeView]);
@@ -411,13 +411,14 @@ export function App() {
       {/* 3. Main Content Container */}
       <main className="flex-1 max-w-7xl mx-auto px-3 sm:px-6 w-full py-3">
         
-        {/* Personal Account, Profile, Wishlist & Orders Dashboard (Only when logged in) */}
-        {user && ['my-orders', 'dashboard', 'profile', 'wishlist', 'addresses'].includes(activeView) ? (
+        {/* Personal Account, Profile, Wishlist, Cart & Orders Dashboard (Only when logged in) */}
+        {user && ['my-orders', 'dashboard', 'profile', 'wishlist', 'addresses', 'cart'].includes(activeView) ? (
           <MyOrdersDashboard
             initialTab={activeView === 'my-orders' || activeView === 'dashboard' ? 'orders' : activeView}
             onOpenTrackOrder={handleOpenTrackOrder}
             onSelectProduct={handleSelectProduct}
             onBackToMarketplace={() => setActiveView('marketplace')}
+            onOpenCartDrawer={() => setIsCartOpen(true)}
           />
         ) : user && activeView === 'seller-center' ? (
           <SellerCentralDashboard

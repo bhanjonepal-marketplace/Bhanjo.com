@@ -347,7 +347,26 @@ export const Navbar = ({
                     <span>My Orders ({userOrders.length})</span>
                   </button>
 
-                  {/* 3. My Wishlist */}
+                  {/* 3. My Cart */}
+                  <button
+                    onClick={() => {
+                      setActiveView('cart');
+                      setIsUserMenuOpen(false);
+                    }}
+                    className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] text-slate-700 transition flex items-center justify-between font-medium"
+                  >
+                    <div className="flex items-center gap-2">
+                      <ShoppingCart className="w-3.5 h-3.5 text-[#F85606]" />
+                      <span>My Cart</span>
+                    </div>
+                    {cartCount > 0 && (
+                      <span className="text-[10px] bg-[#F85606] text-white font-bold px-1.5 py-0.2 rounded-full">
+                        {cartCount}
+                      </span>
+                    )}
+                  </button>
+
+                  {/* 4. My Wishlist */}
                   <button
                     onClick={() => {
                       setActiveView('wishlist');
