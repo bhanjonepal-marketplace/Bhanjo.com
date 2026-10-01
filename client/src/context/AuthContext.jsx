@@ -172,9 +172,6 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfile = async (updatedFields) => {
     if (!user) return;
-    const merged = { ...user, ...updatedFields };
-    setUser(merged);
-    localStorage.setItem('bhanjo_user', JSON.stringify(merged));
 
     try {
       const res = await fetch(`/api/auth/profile/${user.id}`, {
@@ -182,18 +179,23 @@ export const AuthProvider = ({ children }) => {
         headers: getAuthHeaders(),
         body: JSON.stringify(updatedFields)
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.user) {
-          setUser(data.user);
-          localStorage.setItem('bhanjo_user', JSON.stringify(data.user));
-          return data.user;
-        }
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to update profile');
       }
+      if (data.user) {
+        setUser(data.user);
+        localStorage.setItem('bhanjo_user', JSON.stringify(data.user));
+        return data.user;
+      }
+      const merged = { ...user, ...updatedFields };
+      setUser(merged);
+      localStorage.setItem('bhanjo_user', JSON.stringify(merged));
+      return merged;
     } catch (e) {
-      console.log('Profile update local sync:', e);
+      console.error('Profile update error:', e);
+      throw e;
     }
-    return merged;
   };
 
   const logout = () => {

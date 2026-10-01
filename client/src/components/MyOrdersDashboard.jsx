@@ -1,21 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Package, Heart, MapPin, User, LogOut, ChevronRight, 
   Truck, CheckCircle2, Clock, Trash2, ShoppingCart, 
   FileText, ShieldCheck, ArrowRight, Star, Sparkles, 
-  Printer, X, AlertTriangle, RefreshCw, Check
+  Printer, X, AlertTriangle, RefreshCw, Check, Camera,
+  Lock, Eye, EyeOff, Upload, Bell, Calendar
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { useCart } from '../context/CartContext';
 import confetti from 'canvas-confetti';
 
-export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
+export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTab = 'orders', onBackToMarketplace }) => {
   const { user, logout, userOrders, wishlist, toggleWishlist, cancelOrder, updateProfile, clearAllOrders } = useAuth();
   const { formatPrice, currentCurrency } = useCurrency();
   const { addToCart } = useCart();
 
-  const [activeTab, setActiveTab] = useState('orders'); // 'orders', 'wishlist', 'addresses', 'profile'
+  const [activeTab, setActiveTab] = useState(initialTab || 'orders'); // 'profile', 'orders', 'wishlist', 'addresses'
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
+
   const [filterOrderStatus, setFilterOrderStatus] = useState('all');
   const [backendOrders, setBackendOrders] = useState([]);
   
@@ -36,10 +44,28 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
     city: user?.city || 'Kathmandu',
     province: user?.province || 'Bagmati Province',
     postal_code: user?.postal_code || '44600',
-    landmark: user?.landmark || ''
+    landmark: user?.landmark || '',
+    gender: user?.gender || 'Not Specified',
+    dob: user?.dob || '',
+    avatar: user?.avatar || ''
   });
+
+  // Password Change State
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [showConfirmPw, setShowConfirmPw] = useState(false);
+
+  // Notification Preferences
+  const [smsAlerts, setSmsAlerts] = useState(true);
+  const [emailAlerts, setEmailAlerts] = useState(true);
+
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState('');
+  const [profileError, setProfileError] = useState('');
+  const avatarInputRef = useRef(null);
 
   // Address Manager State
   const [isEditingAddress, setIsEditingAddress] = useState(false);
@@ -55,11 +81,44 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
         city: user.city || 'Kathmandu',
         province: user.province || 'Bagmati Province',
         postal_code: user.postal_code || '44600',
-        landmark: user.landmark || ''
+        landmark: user.landmark || '',
+        gender: user.gender || 'Not Specified',
+        dob: user.dob || '',
+        avatar: user.avatar || ''
       });
       setNewAddressInput(user.address || '');
     }
   }, [user]);
+
+  // Handle Photo / Avatar upload
+  const handleAvatarFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setProfileError('Please upload a valid image file (JPG, PNG, WebP).');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      setProfileError('Image file is too large. Please select a photo under 2MB.');
+      return;
+    }
+
+    setProfileError('');
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result;
+      if (base64) {
+        setProfileForm(prev => ({ ...prev, avatar: base64 }));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAvatar = () => {
+    setProfileForm(prev => ({ ...prev, avatar: '' }));
+  };
 
   const loadBackendOrders = () => {
     if (!user?.id) {
@@ -125,14 +184,42 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
     e.preventDefault();
     setIsSavingProfile(true);
     setProfileSuccess('');
+    setProfileError('');
+
+    // Password validation if new password was entered
+    if (newPassword) {
+      if (!currentPassword) {
+        setProfileError('Please enter your current password to authorize setting a new password.');
+        setIsSavingProfile(false);
+        return;
+      }
+      if (newPassword.length < 6) {
+        setProfileError('New password must be at least 6 characters long.');
+        setIsSavingProfile(false);
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        setProfileError('New password and confirm password do not match.');
+        setIsSavingProfile(false);
+        return;
+      }
+    }
 
     try {
-      await updateProfile(profileForm);
-      setProfileSuccess('Profile updated and saved to SQLite database successfully!');
-      confetti({ particleCount: 40, spread: 60 });
-      setTimeout(() => setProfileSuccess(''), 3500);
+      const payload = {
+        ...profileForm,
+        ...(newPassword ? { current_password: currentPassword, new_password: newPassword } : {})
+      };
+
+      await updateProfile(payload);
+      setProfileSuccess(newPassword ? 'Profile details and password updated successfully!' : 'Profile details updated and saved successfully!');
+      confetti({ particleCount: 50, spread: 60 });
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setTimeout(() => setProfileSuccess(''), 4000);
     } catch (err) {
-      console.error(err);
+      setProfileError(err.message || 'Failed to update profile. Please verify your inputs.');
     } finally {
       setIsSavingProfile(false);
     }
@@ -166,8 +253,12 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
       {/* Dashboard Top Header */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 mb-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-14 h-14 rounded-2xl bg-orange-500/10 text-[#F85606] flex items-center justify-center font-black text-xl border border-orange-200">
-            {user?.name ? user.name[0].toUpperCase() : 'U'}
+          <div className="w-14 h-14 rounded-2xl bg-orange-500/10 text-[#F85606] flex items-center justify-center font-black text-xl border border-orange-200 overflow-hidden relative shadow-xs flex-shrink-0">
+            {profileForm.avatar || user?.avatar ? (
+              <img src={profileForm.avatar || user.avatar} alt={user?.name} className="w-full h-full object-cover" />
+            ) : (
+              user?.name ? user.name[0].toUpperCase() : 'U'
+            )}
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -212,10 +303,10 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
         <div className="lg:col-span-3">
           <div className="bg-white rounded-2xl border border-slate-200 p-2 shadow-xs space-y-1">
             {[
+              { id: 'profile', label: 'My Profile & Settings', icon: User },
               { id: 'orders', label: 'My Orders & Deliveries', icon: Package, badge: allUserOrders.length },
               { id: 'wishlist', label: 'My Wishlist (Saved)', icon: Heart, badge: wishlist.length },
-              { id: 'addresses', label: 'Saved Addresses', icon: MapPin },
-              { id: 'profile', label: 'Account Settings', icon: User }
+              { id: 'addresses', label: 'Delivery Addresses', icon: MapPin }
             ].map((tab) => {
               const Icon = tab.icon;
               return (
@@ -570,133 +661,400 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
             </div>
           )}
 
-          {/* 4. Account Settings */}
+          {/* 4. Complete Customer Profile & Account Settings */}
           {activeTab === 'profile' && (
-            <form onSubmit={handleSaveProfile} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4 text-xs">
-              <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
+            <form onSubmit={handleSaveProfile} className="space-y-5 animate-in fade-in duration-150">
+              
+              {/* Profile Card Header */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-bold text-sm text-slate-900">
-                    Personal Account Profile
+                  <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                    <User className="w-4 h-4 text-[#F85606]" />
+                    <span>My Customer Profile & Settings</span>
                   </h3>
-                  <p className="text-xs text-slate-500">Changes are permanently synced with SQLite server database</p>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Update your photo, delivery destination, postal code, phone number, and security password.
+                  </p>
                 </div>
-                {profileSuccess && (
-                  <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-lg font-bold text-xs flex items-center gap-1 animate-in fade-in">
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Saved to Database</span>
-                  </span>
+
+                {onBackToMarketplace && (
+                  <button
+                    type="button"
+                    onClick={onBackToMarketplace}
+                    className="text-xs font-semibold text-slate-600 hover:text-[#F85606] transition flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>← Back to Shopping</span>
+                  </button>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="font-semibold text-slate-700 block mb-1">Full Legal Name</label>
-                  <input
-                    type="text"
-                    value={profileForm.name}
-                    onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-                    required
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
-                  />
+              {/* Status Alert Messages */}
+              {profileSuccess && (
+                <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 animate-in fade-in">
+                  <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span>{profileSuccess}</span>
                 </div>
-                <div>
-                  <label className="font-semibold text-slate-700 block mb-1">Mobile Phone (Nepal)</label>
-                  <input
-                    type="tel"
-                    value={profileForm.phone}
-                    onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                    required
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="font-semibold text-slate-700 block mb-1">Email Address</label>
-                  <input
-                    type="email"
-                    value={profileForm.email}
-                    onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-                    required
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="font-semibold text-slate-700 block mb-1">Province (Nepal)</label>
-                  <select
-                    value={profileForm.province}
-                    onChange={(e) => setProfileForm({ ...profileForm, province: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none bg-white"
-                  >
-                    <option value="Bagmati Province">Bagmati Province (Kathmandu, Lalitpur, Bhaktapur...)</option>
-                    <option value="Gandaki Province">Gandaki Province (Pokhara, Kaski...)</option>
-                    <option value="Koshi Province">Koshi Province (Biratnagar, Dharan...)</option>
-                    <option value="Madhesh Province">Madhesh Province (Janakpur, Birgunj...)</option>
-                    <option value="Lumbini Province">Lumbini Province (Butwal, Bhairahawa...)</option>
-                    <option value="Karnali Province">Karnali Province (Surkhet, Jumla...)</option>
-                    <option value="Sudurpashchim Province">Sudurpashchim Province (Dhangadhi, Mahendranagar...)</option>
-                  </select>
-                </div>
+              )}
 
-                <div>
-                  <label className="font-semibold text-slate-700 block mb-1">City / Municipality</label>
-                  <input
-                    type="text"
-                    value={profileForm.city}
-                    onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })}
-                    placeholder="e.g. Kathmandu"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
-                  />
+              {profileError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 animate-in fade-in">
+                  <AlertTriangle className="w-4 h-4 text-red-600 flex-shrink-0" />
+                  <span>{profileError}</span>
                 </div>
+              )}
 
-                <div>
-                  <label className="font-semibold text-slate-700 block mb-1">Postal / ZIP Code</label>
-                  <input
-                    type="text"
-                    value={profileForm.postal_code}
-                    onChange={(e) => setProfileForm({ ...profileForm, postal_code: e.target.value })}
-                    placeholder="e.g. 44600"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none font-mono"
-                  />
-                </div>
+              {/* SECTION 1: Profile Photo Upload */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-3">
+                  1. Profile Photo & Avatar
+                </h4>
 
-                <div>
-                  <label className="font-semibold text-slate-700 block mb-1">Nearby Landmark (Optional)</label>
-                  <input
-                    type="text"
-                    value={profileForm.landmark}
-                    onChange={(e) => setProfileForm({ ...profileForm, landmark: e.target.value })}
-                    placeholder="e.g. Near Bhatbhateni Supermarket"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
-                  />
-                </div>
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                  {/* Photo Display with overlay */}
+                  <div className="relative group flex-shrink-0">
+                    <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-orange-100 shadow-md bg-gradient-to-tr from-orange-400 to-[#F85606] flex items-center justify-center text-white text-3xl font-black">
+                      {profileForm.avatar ? (
+                        <img 
+                          src={profileForm.avatar} 
+                          alt="Customer Avatar" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span>{profileForm.name ? profileForm.name[0].toUpperCase() : 'U'}</span>
+                      )}
+                    </div>
 
-                <div className="sm:col-span-2">
-                  <label className="font-semibold text-slate-700 block mb-1">Doorstep Street Address / Tole</label>
+                    <button
+                      type="button"
+                      onClick={() => avatarInputRef.current?.click()}
+                      className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-slate-900 hover:bg-[#F85606] text-white flex items-center justify-center shadow-lg transition cursor-pointer border-2 border-white"
+                      title="Upload new photo"
+                    >
+                      <Camera className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Hidden Input File */}
                   <input
-                    type="text"
-                    value={profileForm.address}
-                    onChange={(e) => setProfileForm({ ...profileForm, address: e.target.value })}
-                    placeholder="e.g. Ward #10, Baneshwor Height"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
+                    type="file"
+                    ref={avatarInputRef}
+                    onChange={handleAvatarFileChange}
+                    accept="image/*"
+                    className="hidden"
                   />
+
+                  {/* Actions & Explanations */}
+                  <div className="space-y-2 text-center sm:text-left flex-1">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                      <button
+                        type="button"
+                        onClick={() => avatarInputRef.current?.click()}
+                        className="px-3.5 py-1.5 bg-[#F85606] hover:bg-[#e04e05] text-white font-bold rounded-lg text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Upload New Photo</span>
+                      </button>
+
+                      {profileForm.avatar && (
+                        <button
+                          type="button"
+                          onClick={handleRemoveAvatar}
+                          className="px-3 py-1.5 border border-slate-200 text-slate-600 hover:text-red-600 hover:border-red-200 rounded-lg text-xs transition cursor-pointer"
+                        >
+                          Remove Photo
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-slate-500">
+                      Supports JPG, PNG, or WebP (max 2MB). Your photo will appear in your orders, reviews, and header navigation.
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex justify-end">
+              {/* SECTION 2: Personal Identification */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400">
+                  2. Personal Identification
+                </h4>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">Full Legal Name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={profileForm.name}
+                      onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                      placeholder="e.g. Prashanna Ghimire"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">Mobile Phone (Nepal +977) *</label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-2 font-mono text-slate-400 font-bold">+977</span>
+                      <input
+                        type="tel"
+                        required
+                        maxLength={10}
+                        value={profileForm.phone}
+                        onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value.replace(/\D/g, '') })}
+                        placeholder="98XXXXXXXX"
+                        className="w-full pl-14 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none font-mono font-medium"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1 flex items-center justify-between">
+                      <span>Email Address *</span>
+                      <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold flex items-center gap-0.5">
+                        <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                        <span>Verified Account</span>
+                      </span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={profileForm.email}
+                      onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
+                      placeholder="e.g. customer@example.com"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">Gender</label>
+                    <select
+                      value={profileForm.gender}
+                      onChange={(e) => setProfileForm({ ...profileForm, gender: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none bg-white"
+                    >
+                      <option value="Not Specified">Prefer not to say</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1 flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Date of Birth (Optional)</span>
+                    </label>
+                    <input
+                      type="date"
+                      value={profileForm.dob}
+                      onChange={(e) => setProfileForm({ ...profileForm, dob: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none bg-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* SECTION 3: Primary Delivery Destination */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400">
+                    3. Primary Doorstep Delivery Destination
+                  </h4>
+                  <span className="text-[10px] text-slate-400">Used for fast 1-click checkout</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">Province (Nepal) *</label>
+                    <select
+                      value={profileForm.province}
+                      onChange={(e) => setProfileForm({ ...profileForm, province: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none bg-white font-medium"
+                    >
+                      <option value="Bagmati Province">Bagmati Province (Kathmandu, Lalitpur, Bhaktapur...)</option>
+                      <option value="Gandaki Province">Gandaki Province (Pokhara, Kaski...)</option>
+                      <option value="Koshi Province">Koshi Province (Biratnagar, Dharan...)</option>
+                      <option value="Madhesh Province">Madhesh Province (Janakpur, Birgunj...)</option>
+                      <option value="Lumbini Province">Lumbini Province (Butwal, Bhairahawa...)</option>
+                      <option value="Karnali Province">Karnali Province (Surkhet, Jumla...)</option>
+                      <option value="Sudurpashchim Province">Sudurpashchim Province (Dhangadhi, Mahendranagar...)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">City / Municipality *</label>
+                    <input
+                      type="text"
+                      value={profileForm.city}
+                      onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })}
+                      placeholder="e.g. Kathmandu, Pokhara, Butwal"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">Postal / ZIP Code</label>
+                    <input
+                      type="text"
+                      value={profileForm.postal_code}
+                      onChange={(e) => setProfileForm({ ...profileForm, postal_code: e.target.value })}
+                      placeholder="e.g. 44600"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">Nearby Landmark / Chowk</label>
+                    <input
+                      type="text"
+                      value={profileForm.landmark}
+                      onChange={(e) => setProfileForm({ ...profileForm, landmark: e.target.value })}
+                      placeholder="e.g. Near Bhatbhateni Supermarket, New Road Gate"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="font-semibold text-slate-700 block mb-1">Doorstep Street Address / Ward / House #</label>
+                    <input
+                      type="text"
+                      value={profileForm.address}
+                      onChange={(e) => setProfileForm({ ...profileForm, address: e.target.value })}
+                      placeholder="e.g. Ward #10, Baneshwor Height, House #42"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* SECTION 4: Password & Security */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                    <Lock className="w-3.5 h-3.5 text-slate-500" />
+                    <span>4. Change Password & Security</span>
+                  </h4>
+                  <span className="text-[10px] text-slate-400">Leave blank if keeping existing password</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">Current Password</label>
+                    <div className="relative">
+                      <input
+                        type={showCurrentPw ? "text" : "password"}
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full pl-3 pr-8 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none font-mono"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowCurrentPw(!showCurrentPw)}
+                        className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
+                      >
+                        {showCurrentPw ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">New Password</label>
+                    <div className="relative">
+                      <input
+                        type={showNewPw ? "text" : "password"}
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="Min 6 characters"
+                        className="w-full pl-3 pr-8 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none font-mono"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPw(!showNewPw)}
+                        className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
+                      >
+                        {showNewPw ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="font-semibold text-slate-700 block mb-1">Confirm New Password</label>
+                    <div className="relative">
+                      <input
+                        type={showConfirmPw ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Repeat new password"
+                        className="w-full pl-3 pr-8 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none font-mono"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPw(!showConfirmPw)}
+                        className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
+                      >
+                        {showConfirmPw ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* SECTION 5: Notification Preferences */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
+                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                  <Bell className="w-3.5 h-3.5 text-slate-500" />
+                  <span>5. Order & Delivery Alerts</span>
+                </h4>
+
+                <div className="space-y-2 text-xs">
+                  <label className="flex items-center gap-2 text-slate-700 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={smsAlerts}
+                      onChange={(e) => setSmsAlerts(e.target.checked)}
+                      className="w-4 h-4 text-[#F85606] rounded border-slate-300 focus:ring-orange-500"
+                    />
+                    <span>Receive instant SMS alerts when parcel is dispatched or out for delivery</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 text-slate-700 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={emailAlerts}
+                      onChange={(e) => setEmailAlerts(e.target.checked)}
+                      className="w-4 h-4 text-[#F85606] rounded border-slate-300 focus:ring-orange-500"
+                    />
+                    <span>Receive official digital tax invoice and email tracking receipts from <strong>bhanjonepal@gmail.com</strong></span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Form Action Controls */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+                <span className="text-xs text-slate-500">
+                  All updates are instantly saved and synchronized across your account.
+                </span>
+
                 <button
                   type="submit"
                   disabled={isSavingProfile}
-                  className="bg-[#F85606] hover:bg-[#e04e05] text-white font-bold px-5 py-2 rounded-lg transition flex items-center gap-1.5 shadow-xs disabled:opacity-50"
+                  className="w-full sm:w-auto px-6 py-2.5 bg-[#F85606] hover:bg-[#e04e05] text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
                 >
                   {isSavingProfile ? (
                     <>
-                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                      <span>Saving to Server...</span>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span>Saving Profile to Database...</span>
                     </>
                   ) : (
-                    <span>Save Profile Changes</span>
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>Save & Update Profile</span>
+                    </>
                   )}
                 </button>
               </div>
+
             </form>
           )}
 

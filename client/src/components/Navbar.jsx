@@ -283,11 +283,15 @@ export const Navbar = ({
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex items-center gap-1.5 font-bold text-slate-800 hover:text-[#F85606] transition"
                 >
-                  <div className="w-4 h-4 rounded-full bg-[#F85606] text-white text-[9px] flex items-center justify-center font-black">
-                    {user.name ? user.name[0].toUpperCase() : 'U'}
+                  <div className="w-5 h-5 rounded-full overflow-hidden bg-[#F85606] text-white text-[10px] flex items-center justify-center font-black flex-shrink-0 shadow-xs border border-orange-200">
+                    {user.avatar ? (
+                      <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                    ) : (
+                      user.name ? user.name[0].toUpperCase() : 'U'
+                    )}
                   </div>
-                  <span>{t('hiUser')}, {user.name.split(' ')[0]}</span>
-                  <ChevronDown className="w-3 h-3" />
+                  <span className="max-w-[110px] truncate">{t('hiUser')}, {user.name.split(' ')[0]}</span>
+                  <ChevronDown className="w-3 h-3 text-slate-400" />
                 </button>
               ) : (
                 <button 
@@ -301,82 +305,85 @@ export const Navbar = ({
 
               {/* User Dropdown Menu */}
               {isUserMenuOpen && user && (
-                <div className="absolute right-0 top-full mt-1.5 w-48 bg-white rounded-xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in text-xs space-y-1">
-                  <div className="p-2 border-b border-slate-100">
-                    <div className="font-bold text-slate-900 truncate">{user.name}</div>
-                    <div className="text-[10px] text-slate-400 truncate">{user.email || user.phone}</div>
+                <div className="absolute right-0 top-full mt-1.5 w-56 bg-white rounded-xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in text-xs space-y-1">
+                  <div className="p-2.5 border-b border-slate-100 flex items-center gap-2.5 bg-orange-50/40 rounded-lg">
+                    <div className="w-9 h-9 rounded-full overflow-hidden bg-[#F85606] text-white text-xs flex items-center justify-center font-bold flex-shrink-0 shadow-xs">
+                      {user.avatar ? (
+                        <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                      ) : (
+                        user.name ? user.name[0].toUpperCase() : 'U'
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-bold text-slate-900 truncate">{user.name}</div>
+                      <div className="text-[10px] text-slate-500 truncate">{user.email || user.phone}</div>
+                    </div>
                   </div>
 
+                  {/* 1. My Profile & Settings (Highlighted) */}
+                  <button
+                    onClick={() => {
+                      setActiveView('profile');
+                      setIsUserMenuOpen(false);
+                    }}
+                    className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] text-slate-800 transition flex items-center justify-between font-semibold"
+                  >
+                    <div className="flex items-center gap-2">
+                      <User className="w-3.5 h-3.5 text-[#F85606]" />
+                      <span>My Profile & Settings</span>
+                    </div>
+                    <span className="text-[9px] bg-orange-100 text-[#F85606] font-bold px-1.5 py-0.5 rounded">Edit</span>
+                  </button>
+
+                  {/* 2. My Orders */}
                   <button
                     onClick={() => {
                       setActiveView('my-orders');
                       setIsUserMenuOpen(false);
                     }}
-                    className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] transition flex items-center gap-2 font-medium"
+                    className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] text-slate-700 transition flex items-center gap-2 font-medium"
                   >
                     <Package className="w-3.5 h-3.5 text-[#F85606]" />
                     <span>My Orders ({userOrders.length})</span>
                   </button>
 
+                  {/* 3. My Wishlist */}
                   <button
                     onClick={() => {
-                      setActiveView('my-orders');
+                      setActiveView('wishlist');
                       setIsUserMenuOpen(false);
                     }}
-                    className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] transition flex items-center gap-2 font-medium"
+                    className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] text-slate-700 transition flex items-center gap-2 font-medium"
                   >
                     <Heart className="w-3.5 h-3.5 text-red-500" />
                     <span>My Wishlist ({wishlist.length})</span>
                   </button>
 
+                  {/* 4. Saved Delivery Addresses */}
+                  <button
+                    onClick={() => {
+                      setActiveView('addresses');
+                      setIsUserMenuOpen(false);
+                    }}
+                    className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] text-slate-700 transition flex items-center gap-2 font-medium"
+                  >
+                    <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Delivery Addresses</span>
+                  </button>
+
+                  {/* 5. Track Parcels */}
                   <button
                     onClick={() => {
                       onOpenTrackOrder('');
                       setIsUserMenuOpen(false);
                     }}
-                    className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] transition flex items-center gap-2 font-medium"
+                    className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] text-slate-700 transition flex items-center gap-2 font-medium"
                   >
                     <Truck className="w-3.5 h-3.5 text-blue-500" />
                     <span>Track Parcels</span>
                   </button>
 
-                  {isAdmin ? (
-                    <>
-                      <button
-                        onClick={() => {
-                          setActiveView('seller-center');
-                          setIsUserMenuOpen(false);
-                        }}
-                        className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] transition flex items-center gap-2 font-medium"
-                      >
-                        <Store className="w-3.5 h-3.5 text-amber-500" />
-                        <span>Store Manager (Catalog & Orders)</span>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setAdminMode(false);
-                          setIsUserMenuOpen(false);
-                        }}
-                        className="w-full text-left p-2 rounded-lg hover:bg-emerald-50 text-emerald-700 transition flex items-center gap-2 font-semibold"
-                      >
-                        <Eye className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>Switch to Customer View</span>
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        if (onOpenAdminUnlock) onOpenAdminUnlock();
-                        setIsUserMenuOpen(false);
-                      }}
-                      className="w-full text-left p-2 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition flex items-center gap-2 font-medium"
-                    >
-                      <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Store Admin Portal</span>
-                    </button>
-                  )}
-
+                  {/* Sign Out */}
                   <div className="pt-1 border-t border-slate-100">
                     <button
                       onClick={() => {

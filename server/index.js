@@ -398,7 +398,7 @@ app.post('/api/auth/register-verify', async (req, res) => {
   }
 });
 
-// Update Customer Profile (Name, Phone, Address, City, Province, Postal Code)
+// Update Customer Profile (Name, Phone, Email, Address, City, Province, Postal Code, Landmark, Gender, DOB, Avatar, Password)
 app.put('/api/auth/profile/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -406,32 +406,61 @@ app.put('/api/auth/profile/:id', authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized to modify this profile.' });
     }
 
-    const { name, phone, address, city, province, postal_code, avatar } = req.body;
+    const { 
+      name, phone, email, address, city, province, postal_code, 
+      landmark, gender, dob, avatar,
+      current_password, new_password 
+    } = req.body;
 
     const existingUser = db.prepare('SELECT * FROM users WHERE id = ?').get(id);
     if (!existingUser) {
       return res.status(404).json({ error: 'User profile not found.' });
     }
 
-    const updatedName = name !== undefined ? name : existingUser.name;
-    const updatedPhone = phone !== undefined ? phone : existingUser.phone;
-    const updatedAddress = address !== undefined ? address : existingUser.address;
-    const updatedCity = city !== undefined ? city : existingUser.city;
+    // Optional password change
+    if (new_password) {
+      if (!current_password) {
+        return res.status(400).json({ error: 'Please enter your current password to set a new password.' });
+      }
+      if (new_password.length < 6) {
+        return res.status(400).json({ error: 'New password must be at least 6 characters long.' });
+      }
+      const isMatch = await bcrypt.compare(current_password, existingUser.password);
+      if (!isMatch) {
+        return res.status(400).json({ error: 'Current password does not match our records.' });
+      }
+      const salt = await bcrypt.genSalt(10);
+      const hashed = await bcrypt.hash(new_password, salt);
+      db.prepare('UPDATE users SET password = ? WHERE id = ?').run(hashed, id);
+    }
+
+    const updatedName = name !== undefined ? name.trim() : existingUser.name;
+    const updatedPhone = phone !== undefined ? phone.toString().trim() : existingUser.phone;
+    const updatedEmail = email !== undefined ? email.toLowerCase().trim() : existingUser.email;
+    const updatedAddress = address !== undefined ? address.trim() : existingUser.address;
+    const updatedCity = city !== undefined ? city.trim() : existingUser.city;
     const updatedProvince = province !== undefined ? province : existingUser.province;
-    const updatedPostalCode = postal_code !== undefined ? postal_code : existingUser.postal_code;
+    const updatedPostalCode = postal_code !== undefined ? postal_code.trim() : existingUser.postal_code;
+    const updatedLandmark = landmark !== undefined ? landmark.trim() : (existingUser.landmark || '');
+    const updatedGender = gender !== undefined ? gender : (existingUser.gender || 'Not Specified');
+    const updatedDob = dob !== undefined ? dob : (existingUser.dob || '');
     const updatedAvatar = avatar !== undefined ? avatar : existingUser.avatar;
 
     db.prepare(`
       UPDATE users 
-      SET name = ?, phone = ?, address = ?, city = ?, province = ?, postal_code = ?, avatar = ?
+      SET name = ?, phone = ?, email = ?, address = ?, city = ?, province = ?, postal_code = ?, landmark = ?, gender = ?, dob = ?, avatar = ?
       WHERE id = ?
     `).run(
       updatedName,
       updatedPhone,
+      updatedEmail,
       updatedAddress,
       updatedCity,
       updatedProvince,
       updatedPostalCode,
+      updatedLandmark,
+      updatedGender,
+      updatedDob,
       updatedAvatar,
       id
     );
@@ -439,11 +468,11 @@ app.put('/api/auth/profile/:id', authenticateToken, async (req, res) => {
     const updatedUser = db.prepare('SELECT * FROM users WHERE id = ?').get(id);
     const { password: _, ...safeUser } = updatedUser;
 
-    console.log(`✅ [PROFILE UPDATED] User ${safeUser.name} (ID: ${id})`);
+    console.log(`✅ [PROFILE UPDATED] User ${safeUser.name} (${safeUser.email})`);
 
     res.json({
       success: true,
-      message: 'Profile updated successfully',
+      message: new_password ? 'Profile & password updated successfully!' : 'Profile updated successfully!',
       user: safeUser
     });
   } catch (err) {
@@ -710,31 +739,7 @@ app.get('/api/auth/me', authenticateToken, (req, res) => {
   }
 });
 
-// Update Profile
-app.put('/api/auth/profile/:id', (req, res) => {
-  try {
-    const { name, phone, email, address, city, province, postal_code } = req.body;
-    const stmt = db.prepare(`
-      UPDATE users 
-      SET name = COALESCE(?, name),
-          phone = COALESCE(?, phone),
-          email = COALESCE(?, email),
-          address = COALESCE(?, address),
-          city = COALESCE(?, city),
-          province = COALESCE(?, province),
-          postal_code = COALESCE(?, postal_code)
-      WHERE id = ?
-    `);
-    stmt.run(name, phone, email, address, city, province, postal_code, req.params.id);
 
-    const updatedUser = db.prepare('SELECT * FROM users WHERE id = ?').get(req.params.id);
-    if (!updatedUser) return res.status(404).json({ error: 'User not found' });
-    const { password: _, ...safe } = updatedUser;
-    res.json({ success: true, message: 'Profile updated successfully', user: safe });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 // 3. Seller Registration API
 app.post('/api/sellers/register', (req, res) => {

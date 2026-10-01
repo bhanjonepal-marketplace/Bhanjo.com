@@ -103,6 +103,15 @@ try {
   // column already exists
 }
 try {
+  db.exec(`ALTER TABLE users ADD COLUMN landmark TEXT;`);
+} catch (e) {}
+try {
+  db.exec(`ALTER TABLE users ADD COLUMN gender TEXT;`);
+} catch (e) {}
+try {
+  db.exec(`ALTER TABLE users ADD COLUMN dob TEXT;`);
+} catch (e) {}
+try {
   db.exec(`ALTER TABLE orders ADD COLUMN user_id TEXT;`);
 } catch (e) {
   // column already exists

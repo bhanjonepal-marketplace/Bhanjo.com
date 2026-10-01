@@ -404,11 +404,13 @@ export function App() {
       {/* 3. Main Content Container */}
       <main className="flex-1 max-w-7xl mx-auto px-3 sm:px-6 w-full py-3">
         
-        {/* Personal Account & Orders Dashboard */}
-        {activeView === 'my-orders' || activeView === 'dashboard' ? (
+        {/* Personal Account, Profile, Wishlist & Orders Dashboard */}
+        {['my-orders', 'dashboard', 'profile', 'wishlist', 'addresses'].includes(activeView) ? (
           <MyOrdersDashboard
+            initialTab={activeView === 'my-orders' || activeView === 'dashboard' ? 'orders' : activeView}
             onOpenTrackOrder={handleOpenTrackOrder}
             onSelectProduct={handleSelectProduct}
+            onBackToMarketplace={() => setActiveView('marketplace')}
           />
         ) : activeView === 'seller-center' ? (
           <SellerCentralDashboard
