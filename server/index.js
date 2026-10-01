@@ -68,6 +68,31 @@ export const authenticateToken = (req, res, next) => {
   }
 };
 
+// Middleware: Verify Customer Token or Authenticated Session
+export const authenticateCustomer = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      req.user = decoded;
+      return next();
+    } catch (err) {
+      // Continue to check fallback
+    }
+  }
+
+  // Fallback for user ID header (e.g. from local session)
+  const headerUserId = req.headers['x-user-id'];
+  if (headerUserId) {
+    req.user = { id: headerUserId };
+    return next();
+  }
+
+  return res.status(401).json({ error: 'Please log in to manage your cart and wishlist.' });
+};
+
 // Middleware: Optional Authentication (attaches user if token present)
 export const optionalAuth = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -1560,6 +1585,344 @@ app.post('/api/upload/image', async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: 'Upload handler error: ' + err.message });
+  }
+});
+
+// ==========================================
+// 10. Dedicated Customer Cart & Wishlist APIs (Separated per User in SQLite)
+// ==========================================
+
+// --- Cart: Get Customer Cart ---
+app.get('/api/cart', authenticateCustomer, (req, res) => {
+  try {
+    const userId = req.user.id;
+    const rows = db.prepare(`
+      SELECT * FROM customer_cart 
+      WHERE user_id = ? 
+      ORDER BY updated_at DESC, created_at DESC
+    `).all(userId);
+
+    const items = rows.map(r => {
+      let product = null;
+      try {
+        if (r.item_data_json) product = JSON.parse(r.item_data_json);
+      } catch (e) {}
+
+      return {
+        id: r.id,
+        productId: r.product_id,
+        title: r.title,
+        image: r.image,
+        unitPrice: r.unit_price,
+        unitPriceUSD: r.unit_price,
+        quantity: r.quantity,
+        totalPrice: r.quantity * r.unit_price,
+        orderType: r.order_type,
+        customNotes: r.custom_notes || '',
+        product: product || {
+          id: r.product_id,
+          title: r.title,
+          images: [r.image],
+          samplePrice: r.unit_price
+        }
+      };
+    });
+
+    res.json({ success: true, items });
+  } catch (err) {
+    console.error('Fetch cart error:', err);
+    res.status(500).json({ error: 'Failed to fetch cart items' });
+  }
+});
+
+// --- Cart: Add Item to Customer Cart ---
+app.post('/api/cart', authenticateCustomer, (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { product, quantity = 1, orderType = 'retail', customNotes = '' } = req.body;
+
+    if (!product || !product.id) {
+      return res.status(400).json({ error: 'Valid product is required' });
+    }
+
+    const productId = product.id;
+    const title = product.title || 'Bhanjo Item';
+    const image = product.images?.[0] || product.image || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400';
+    const unitPrice = parseFloat(product.samplePrice || product.unitPrice || 20);
+    const itemDataJson = JSON.stringify(product);
+
+    // Check if item already exists in this customer's cart
+    const existing = db.prepare(`
+      SELECT id, quantity FROM customer_cart 
+      WHERE user_id = ? AND product_id = ? AND order_type = ?
+    `).get(userId, productId, orderType);
+
+    if (existing) {
+      const newQty = existing.quantity + quantity;
+      db.prepare(`
+        UPDATE customer_cart 
+        SET quantity = ?, unit_price = ?, item_data_json = ?, custom_notes = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `).run(newQty, unitPrice, itemDataJson, customNotes, existing.id);
+    } else {
+      const newId = `cart-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+      db.prepare(`
+        INSERT INTO customer_cart 
+        (id, user_id, product_id, title, image, unit_price, quantity, order_type, custom_notes, item_data_json, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      `).run(newId, userId, productId, title, image, unitPrice, quantity, orderType, customNotes, itemDataJson);
+    }
+
+    // Return the customer's updated cart
+    const rows = db.prepare(`
+      SELECT * FROM customer_cart 
+      WHERE user_id = ? 
+      ORDER BY updated_at DESC, created_at DESC
+    `).all(userId);
+
+    const items = rows.map(r => {
+      let prod = null;
+      try {
+        if (r.item_data_json) prod = JSON.parse(r.item_data_json);
+      } catch (e) {}
+
+      return {
+        id: r.id,
+        productId: r.product_id,
+        title: r.title,
+        image: r.image,
+        unitPrice: r.unit_price,
+        unitPriceUSD: r.unit_price,
+        quantity: r.quantity,
+        totalPrice: r.quantity * r.unit_price,
+        orderType: r.order_type,
+        customNotes: r.custom_notes || '',
+        product: prod || { id: r.product_id, title: r.title, images: [r.image], samplePrice: r.unit_price }
+      };
+    });
+
+    res.json({ success: true, message: 'Item added to cart', items });
+  } catch (err) {
+    console.error('Add to cart error:', err);
+    res.status(500).json({ error: 'Failed to add item to cart' });
+  }
+});
+
+// --- Cart: Update Quantity ---
+app.put('/api/cart/:productId', authenticateCustomer, (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { productId } = req.params;
+    const { quantity, orderType = 'retail' } = req.body;
+
+    if (quantity <= 0) {
+      db.prepare(`
+        DELETE FROM customer_cart 
+        WHERE user_id = ? AND (product_id = ? OR id = ?) AND order_type = ?
+      `).run(userId, productId, productId, orderType);
+    } else {
+      db.prepare(`
+        UPDATE customer_cart 
+        SET quantity = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = ? AND (product_id = ? OR id = ?) AND order_type = ?
+      `).run(quantity, userId, productId, productId, orderType);
+    }
+
+    const rows = db.prepare(`
+      SELECT * FROM customer_cart 
+      WHERE user_id = ? 
+      ORDER BY updated_at DESC, created_at DESC
+    `).all(userId);
+
+    const items = rows.map(r => {
+      let prod = null;
+      try {
+        if (r.item_data_json) prod = JSON.parse(r.item_data_json);
+      } catch (e) {}
+
+      return {
+        id: r.id,
+        productId: r.product_id,
+        title: r.title,
+        image: r.image,
+        unitPrice: r.unit_price,
+        unitPriceUSD: r.unit_price,
+        quantity: r.quantity,
+        totalPrice: r.quantity * r.unit_price,
+        orderType: r.order_type,
+        customNotes: r.custom_notes || '',
+        product: prod || { id: r.product_id, title: r.title, images: [r.image], samplePrice: r.unit_price }
+      };
+    });
+
+    res.json({ success: true, items });
+  } catch (err) {
+    console.error('Update cart error:', err);
+    res.status(500).json({ error: 'Failed to update cart' });
+  }
+});
+
+// --- Cart: Remove Item ---
+app.delete('/api/cart/:productId', authenticateCustomer, (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { productId } = req.params;
+
+    db.prepare(`
+      DELETE FROM customer_cart 
+      WHERE user_id = ? AND (product_id = ? OR id = ?)
+    `).run(userId, productId, productId);
+
+    const rows = db.prepare(`
+      SELECT * FROM customer_cart 
+      WHERE user_id = ? 
+      ORDER BY updated_at DESC, created_at DESC
+    `).all(userId);
+
+    const items = rows.map(r => {
+      let prod = null;
+      try {
+        if (r.item_data_json) prod = JSON.parse(r.item_data_json);
+      } catch (e) {}
+
+      return {
+        id: r.id,
+        productId: r.product_id,
+        title: r.title,
+        image: r.image,
+        unitPrice: r.unit_price,
+        unitPriceUSD: r.unit_price,
+        quantity: r.quantity,
+        totalPrice: r.quantity * r.unit_price,
+        orderType: r.order_type,
+        customNotes: r.custom_notes || '',
+        product: prod || { id: r.product_id, title: r.title, images: [r.image], samplePrice: r.unit_price }
+      };
+    });
+
+    res.json({ success: true, message: 'Item removed from cart', items });
+  } catch (err) {
+    console.error('Remove from cart error:', err);
+    res.status(500).json({ error: 'Failed to remove item from cart' });
+  }
+});
+
+// --- Cart: Clear Customer Cart ---
+app.delete('/api/cart', authenticateCustomer, (req, res) => {
+  try {
+    const userId = req.user.id;
+    db.prepare(`DELETE FROM customer_cart WHERE user_id = ?`).run(userId);
+    res.json({ success: true, message: 'Cart cleared', items: [] });
+  } catch (err) {
+    console.error('Clear cart error:', err);
+    res.status(500).json({ error: 'Failed to clear cart' });
+  }
+});
+
+// --- Wishlist: Get Customer Wishlist ---
+app.get('/api/wishlist', authenticateCustomer, (req, res) => {
+  try {
+    const userId = req.user.id;
+    const rows = db.prepare(`
+      SELECT * FROM customer_wishlist 
+      WHERE user_id = ? 
+      ORDER BY created_at DESC
+    `).all(userId);
+
+    const items = rows.map(r => {
+      try {
+        return JSON.parse(r.product_data_json);
+      } catch (e) {
+        return { id: r.product_id };
+      }
+    });
+
+    res.json({ success: true, items });
+  } catch (err) {
+    console.error('Fetch wishlist error:', err);
+    res.status(500).json({ error: 'Failed to fetch wishlist' });
+  }
+});
+
+// --- Wishlist: Toggle Item in Customer Wishlist ---
+app.post('/api/wishlist/toggle', authenticateCustomer, (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { product } = req.body;
+
+    if (!product || !product.id) {
+      return res.status(400).json({ error: 'Valid product is required' });
+    }
+
+    const productId = product.id;
+    const existing = db.prepare(`
+      SELECT id FROM customer_wishlist 
+      WHERE user_id = ? AND product_id = ?
+    `).get(userId, productId);
+
+    let isInWishlist = false;
+    if (existing) {
+      db.prepare(`DELETE FROM customer_wishlist WHERE id = ?`).run(existing.id);
+      isInWishlist = false;
+    } else {
+      const newId = `wish-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+      db.prepare(`
+        INSERT INTO customer_wishlist (id, user_id, product_id, product_data_json, created_at)
+        VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+      `).run(newId, userId, productId, JSON.stringify(product));
+      isInWishlist = true;
+    }
+
+    const rows = db.prepare(`
+      SELECT * FROM customer_wishlist 
+      WHERE user_id = ? 
+      ORDER BY created_at DESC
+    `).all(userId);
+
+    const items = rows.map(r => {
+      try {
+        return JSON.parse(r.product_data_json);
+      } catch (e) {
+        return { id: r.product_id };
+      }
+    });
+
+    res.json({ success: true, isInWishlist, items });
+  } catch (err) {
+    console.error('Toggle wishlist error:', err);
+    res.status(500).json({ error: 'Failed to update wishlist' });
+  }
+});
+
+// --- Wishlist: Delete Item from Customer Wishlist ---
+app.delete('/api/wishlist/:productId', authenticateCustomer, (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { productId } = req.params;
+
+    db.prepare(`
+      DELETE FROM customer_wishlist 
+      WHERE user_id = ? AND product_id = ?
+    `).run(userId, productId);
+
+    const rows = db.prepare(`
+      SELECT * FROM customer_wishlist 
+      WHERE user_id = ? 
+      ORDER BY created_at DESC
+    `).all(userId);
+
+    const items = rows.map(r => {
+      try {
+        return JSON.parse(r.product_data_json);
+      } catch (e) {
+        return { id: r.product_id };
+      }
+    });
+
+    res.json({ success: true, message: 'Item removed from wishlist', items });
+  } catch (err) {
+    console.error('Delete wishlist item error:', err);
+    res.status(500).json({ error: 'Failed to remove from wishlist' });
   }
 });
 

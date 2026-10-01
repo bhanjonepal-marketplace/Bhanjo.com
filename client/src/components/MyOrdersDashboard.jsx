@@ -595,9 +595,9 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
                         <button
                           onClick={() => {
                             addToCart(item, 1, 'retail');
-                            alert(`Added "${item.title}" to cart!`);
+                            confetti({ particleCount: 35, spread: 50 });
                           }}
-                          className="flex-1 bg-[#F85606] hover:bg-[#e04e05] text-white font-bold text-xs py-2 rounded-lg transition flex items-center justify-center gap-1 shadow-xs"
+                          className="flex-1 bg-[#F85606] hover:bg-[#e04e05] text-white font-bold text-xs py-2 rounded-lg transition flex items-center justify-center gap-1 shadow-xs cursor-pointer"
                         >
                           <ShoppingCart className="w-3.5 h-3.5" />
                           <span>Add to Cart</span>

@@ -84,7 +84,40 @@ db.exec(`
     status TEXT DEFAULT 'new',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS customer_cart (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    image TEXT,
+    unit_price REAL NOT NULL,
+    quantity INTEGER NOT NULL DEFAULT 1,
+    order_type TEXT DEFAULT 'retail',
+    custom_notes TEXT DEFAULT '',
+    item_data_json TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, product_id, order_type)
+  );
+
+  CREATE TABLE IF NOT EXISTS customer_wishlist (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    product_data_json TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, product_id)
+  );
 `);
+
+// Create indexes for instant fast lookups per customer
+try {
+  db.exec(`CREATE INDEX IF NOT EXISTS idx_customer_cart_user ON customer_cart(user_id);`);
+} catch (e) {}
+try {
+  db.exec(`CREATE INDEX IF NOT EXISTS idx_customer_wishlist_user ON customer_wishlist(user_id);`);
+} catch (e) {}
 
 // Safe migrations for existing databases
 try {
