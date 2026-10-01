@@ -680,20 +680,6 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
                 <span>Chat with Bhanjo Support</span>
               </button>
 
-              {/* Remove Product from Bhanjo Button */}
-              {onDeleteProduct && (
-                <button
-                  onClick={(e) => {
-                    onDeleteProduct(product.id, e);
-                    onClose();
-                  }}
-                  className="w-full mt-2.5 py-2 px-3 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer"
-                  title="Remove this product from Bhanjo catalog"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  <span>Remove Product from Catalog</span>
-                </button>
-              )}
             </div>
 
           </div>
