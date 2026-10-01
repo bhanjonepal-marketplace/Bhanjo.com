@@ -279,7 +279,8 @@ app.post('/api/auth/register-initiate', async (req, res) => {
     sendEmailNotification({
       to: cleanEmail,
       code: emailCode,
-      name: name.trim()
+      name: name.trim(),
+      type: 'customer'
     }).catch(err => {
       console.error('Customer email OTP background error:', err.message);
     });
@@ -594,7 +595,7 @@ app.post('/api/admin/auth/initiate', async (req, res) => {
     sendSmsNotification({ to: user.phone, code: smsCode }).catch(err => {
       console.error('SMS Dispatch background error:', err.message);
     });
-    sendEmailNotification({ to: user.email, code: emailCode, name: user.name }).catch(err => {
+    sendEmailNotification({ to: user.email, code: emailCode, name: user.name, type: 'admin' }).catch(err => {
       console.error('Email Dispatch background error:', err.message);
     });
 
