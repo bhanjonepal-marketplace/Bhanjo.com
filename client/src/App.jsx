@@ -21,25 +21,67 @@ import { AlibabaImporterModal } from './components/AlibabaImporterModal';
 import { AlibabaGlobalSection } from './components/AlibabaGlobalSection';
 import { ProductEditModal } from './components/ProductEditModal';
 import { CategoriesSection } from './components/CategoriesSection';
-import { AdminTopBar } from './components/AdminTopBar';
-import { AdminUnlockModal } from './components/AdminUnlockModal';
+import { AdminLoginPortal } from './components/AdminLoginPortal';
+import { AdminCommandCenter } from './components/AdminCommandCenter';
 
 import { CATEGORIES } from './data/categories';
 import { PRODUCTS } from './data/products';
 import { SUPPLIERS } from './data/suppliers';
 
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, ShieldCheck } from 'lucide-react';
 import { useCurrency } from './context/CurrencyContext';
 import { useAuth } from './context/AuthContext';
 import { matchesProductSearch } from './utils/searchMatcher';
 
 export function App() {
   const { currentCurrency, language, t } = useCurrency();
-  const { isAdmin, setAdminMode } = useAuth();
-  const [isAdminUnlockModalOpen, setIsAdminUnlockModalOpen] = useState(false);
+  const { user, isAdmin, setAdminMode } = useAuth();
 
-  // Navigation: 'marketplace', 'my-orders', 'seller-center'
-  const [activeView, setActiveView] = useState('marketplace');
+  // Navigation: 'marketplace', 'my-orders', 'seller-center', 'admin'
+  const [activeView, setActiveView] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase();
+      const params = new URLSearchParams(window.location.search);
+      if (path === '/admin' || params.has('admin')) {
+        return 'admin';
+      }
+    }
+    return 'marketplace';
+  });
+
+  // Secret Master Admin shortcut: Ctrl + Shift + A (or Cmd + Shift + A)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        setActiveView(prev => {
+          const next = prev === 'admin' ? 'marketplace' : 'admin';
+          if (next === 'admin') {
+            window.history.pushState(null, '', '/admin');
+          } else {
+            window.history.pushState(null, '', '/');
+          }
+          return next;
+        });
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Sync browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.toLowerCase();
+      if (path === '/admin') {
+        setActiveView('admin');
+      } else if (activeView === 'admin') {
+        setActiveView('marketplace');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [activeView]);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   
@@ -264,14 +306,51 @@ export function App() {
 
   const activeCategoryObj = CATEGORIES.find(c => c.id === selectedCategoryId);
 
+  // Dedicated Full-Screen Master Admin Portal & Command Center
+  if (activeView === 'admin') {
+    if (isAdmin && user?.role === 'admin') {
+      return (
+        <AdminCommandCenter
+          onBackToStore={() => {
+            setActiveView('marketplace');
+            window.history.pushState(null, '', '/');
+          }}
+          onSelectProduct={handleSelectProduct}
+        />
+      );
+    }
+    return (
+      <AdminLoginPortal
+        onLoginSuccess={() => {
+          setActiveView('admin');
+          showToast('Welcome, Master Admin Prashanna! Dual 2FA verified.');
+        }}
+        onBackToStore={() => {
+          setActiveView('marketplace');
+          window.history.pushState(null, '', '/');
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F5F5] font-sans antialiased text-[#212121]">
       
-      {/* Admin Control Bar (Only appears when Admin Mode is active) */}
-      <AdminTopBar 
-        onOpenImporter={handleOpenImporter}
-        onOpenSellerCenter={() => setActiveView('seller-center')}
-      />
+      {/* Discreet floating return to Command Center only if already logged in as Admin */}
+      {user?.role === 'admin' && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <button
+            onClick={() => {
+              setActiveView('admin');
+              window.history.pushState(null, '', '/admin');
+            }}
+            className="bg-slate-900 hover:bg-black text-orange-400 border border-orange-500/40 px-3.5 py-2 rounded-full text-xs font-bold shadow-xl transition flex items-center gap-2 cursor-pointer"
+          >
+            <ShieldCheck className="w-4 h-4 text-orange-400" />
+            <span>Master Admin Command Center</span>
+          </button>
+        </div>
+      )}
 
       {/* 1. Global Navigation Bar */}
       <Navbar
@@ -281,7 +360,6 @@ export function App() {
         onOpenTrackOrder={handleOpenTrackOrder}
         onOpenAuthModal={() => handleRequireAuth(() => {})}
         onOpenAlibabaImporter={handleOpenImporter}
-        onOpenAdminUnlock={() => setIsAdminUnlockModalOpen(true)}
         onSelectCategory={handleSelectCategory}
         searchQuery={searchQuery}
         onSearch={(query) => {
@@ -736,14 +814,6 @@ export function App() {
           setSelectedCategoryId(catId);
           setActiveView('marketplace');
         }}
-        onOpenAdminUnlock={() => setIsAdminUnlockModalOpen(true)}
-      />
-
-      {/* Admin Mode Unlock Modal */}
-      <AdminUnlockModal
-        isOpen={isAdminUnlockModalOpen}
-        onClose={() => setIsAdminUnlockModalOpen(false)}
-        onUnlocked={() => showToast('Admin Mode Unlocked! Store management tools are now active.')}
       />
 
     </div>

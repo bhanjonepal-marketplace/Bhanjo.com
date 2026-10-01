@@ -98,17 +98,10 @@ export const Footer = ({ onSelectCategory, onOpenAdminUnlock }) => {
 
         </div>
 
-        {/* Bottom Copyright & Discreet Admin Access */}
+        {/* Bottom Copyright */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-400">
           <div>© 2026 Bhanjo.com Ltd. All rights reserved. Nepal's No. 1 Online Shopping Platform.</div>
-          {onOpenAdminUnlock && (
-            <button
-              onClick={onOpenAdminUnlock}
-              className="text-slate-400 hover:text-slate-700 transition flex items-center gap-1 cursor-pointer text-[10px]"
-            >
-              <span>🔒 Staff / Store Admin Portal</span>
-            </button>
-          )}
+          <div className="text-slate-400 text-[10px]">Kathmandu, Nepal • 100% Authentic Marketplace</div>
         </div>
 
       </div>

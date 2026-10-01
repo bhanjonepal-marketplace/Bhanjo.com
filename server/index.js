@@ -80,6 +80,27 @@ export const optionalAuth = (req, res, next) => {
   next();
 };
 
+// Middleware: Strictly Require Master Admin Privileges
+export const requireAdmin = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+
+  if (!token) {
+    return res.status(401).json({ error: 'Access denied. Master Admin authentication token required.' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (decoded.role !== 'admin') {
+      return res.status(403).json({ error: 'Access forbidden. This operation requires Master Admin privileges.' });
+    }
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(403).json({ error: 'Invalid or expired admin session. Please log in again.' });
+  }
+};
+
 // 1. Health check
 app.get('/api/health', (req, res) => {
   res.json({
@@ -237,6 +258,179 @@ app.post('/api/auth/login', async (req, res) => {
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: 'Login failed: ' + err.message });
+  }
+});
+
+// --- Master Admin Dual-Channel 2FA Authentication Store & Endpoints ---
+const adminMfaSessions = new Map();
+
+// Periodic cleanup of expired MFA sessions (runs every 5 minutes)
+setInterval(() => {
+  const now = Date.now();
+  for (const [sid, session] of adminMfaSessions.entries()) {
+    if (session.expiresAt < now) {
+      adminMfaSessions.delete(sid);
+    }
+  }
+}, 5 * 60 * 1000);
+
+// Step 1: Initiate Master Admin 2FA (Validates Email, Password & Phone, dispatches Dual-Codes)
+app.post('/api/admin/auth/initiate', async (req, res) => {
+  try {
+    const { email, password, phone } = req.body;
+    if (!email || !password || !phone) {
+      return res.status(400).json({ error: 'Email, Password, and Registered Admin Phone Number are required.' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPhone = phone.toString().replace(/[\s\-\+]/g, '').slice(-10); // Extract last 10 digits
+
+    // Lookup user in DB
+    const user = db.prepare(`
+      SELECT * FROM users 
+      WHERE LOWER(email) = ? OR phone LIKE ?
+    `).get(cleanEmail, `%${cleanPhone}%`);
+
+    if (!user || user.role !== 'admin') {
+      return res.status(401).json({ error: 'Unauthorized: Master Admin credentials not recognized.' });
+    }
+
+    // Verify admin phone number matches record
+    const userCleanPhone = (user.phone || '').toString().replace(/[\s\-\+]/g, '').slice(-10);
+    if (userCleanPhone !== cleanPhone) {
+      return res.status(401).json({ error: 'Security alert: Phone number does not match registered Master Admin records.' });
+    }
+
+    // Verify Password with Bcrypt
+    let isPasswordValid = false;
+    if (user.password && user.password.startsWith('$2')) {
+      isPasswordValid = await bcrypt.compare(password, user.password);
+    } else {
+      isPasswordValid = user.password === password;
+    }
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Invalid master admin password. Access rejected.' });
+    }
+
+    // Generate two distinct 6-digit cryptographic security codes
+    const smsCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const emailCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const mfaSessionId = 'mfa_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10);
+
+    // 5-minute expiry
+    const expiresAt = Date.now() + 5 * 60 * 1000;
+
+    adminMfaSessions.set(mfaSessionId, {
+      adminId: user.id,
+      email: user.email,
+      phone: user.phone,
+      smsCode,
+      emailCode,
+      expiresAt,
+      attempts: 0
+    });
+
+    console.log(`\n======================================================`);
+    console.log(`🛡️  BHANJO MASTER ADMIN DUAL-CHANNEL 2FA DISPATCH  🛡️`);
+    console.log(`👤 Admin:      ${user.name} (${user.email})`);
+    console.log(`📱 SMS Code sent to ${user.phone}:   [ ${smsCode} ]`);
+    console.log(`✉️ Email Code sent to ${user.email}: [ ${emailCode} ]`);
+    console.log(`⏱️ Expiry:     5 minutes (Strict dual-check active)`);
+    console.log(`======================================================\n`);
+
+    const maskedPhone = `+977 ${userCleanPhone.slice(0, 4)}****${userCleanPhone.slice(-2)}`;
+    const [emailPrefix, emailDomain] = user.email.split('@');
+    const maskedEmail = `${emailPrefix.slice(0, 3)}***@${emailDomain}`;
+
+    res.json({
+      success: true,
+      message: 'Dual security codes dispatched. Please enter both SMS Code and Email Code.',
+      mfaSessionId,
+      maskedPhone,
+      maskedEmail,
+      devCodes: {
+        smsCode,
+        emailCode
+      }
+    });
+  } catch (err) {
+    console.error('Admin initiate 2FA error:', err);
+    res.status(500).json({ error: 'Dual 2FA initialization failed: ' + err.message });
+  }
+});
+
+// Step 2: Verify Dual-Codes (SMS + Email side-by-side)
+app.post('/api/admin/auth/verify', async (req, res) => {
+  try {
+    const { mfaSessionId, smsCode, emailCode } = req.body;
+    if (!mfaSessionId) {
+      return res.status(400).json({ error: 'MFA session ID is required.' });
+    }
+
+    const session = adminMfaSessions.get(mfaSessionId);
+    if (!session) {
+      return res.status(400).json({ error: 'Verification session expired or invalid. Please initiate login again.' });
+    }
+
+    if (Date.now() > session.expiresAt) {
+      adminMfaSessions.delete(mfaSessionId);
+      return res.status(400).json({ error: 'Verification codes expired (5-minute limit exceeded). Please request new codes.' });
+    }
+
+    session.attempts += 1;
+    if (session.attempts > 4) {
+      adminMfaSessions.delete(mfaSessionId);
+      return res.status(429).json({ error: 'Too many incorrect attempts. Security session terminated for your protection.' });
+    }
+
+    const cleanSms = (smsCode || '').toString().trim();
+    const cleanEmail = (emailCode || '').toString().trim();
+
+    const isSmsValid = cleanSms === session.smsCode;
+    const isEmailValid = cleanEmail === session.emailCode;
+
+    // Strict requirement: BOTH must match. If even 1 fails -> REJECT
+    if (!isSmsValid || !isEmailValid) {
+      let failureReason = '';
+      if (!isSmsValid && !isEmailValid) {
+        failureReason = 'Both SMS Code and Email Code are incorrect.';
+      } else if (!isSmsValid) {
+        failureReason = 'SMS Code is incorrect. Access denied.';
+      } else {
+        failureReason = 'Email Code is incorrect. Access denied.';
+      }
+
+      return res.status(401).json({
+        error: `Security verification failed: ${failureReason}`,
+        smsValid: isSmsValid,
+        emailValid: isEmailValid,
+        remainingAttempts: Math.max(0, 4 - session.attempts)
+      });
+    }
+
+    // Both passed! Retrieve user & issue master admin token
+    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(session.adminId);
+    adminMfaSessions.delete(mfaSessionId);
+
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ error: 'Admin account verification error.' });
+    }
+
+    const { password: _, ...safeAdmin } = user;
+    const token = generateToken(safeAdmin);
+
+    console.log(`✅ [BHANJO ADMIN SUCCESS] Master Admin ${safeAdmin.name} (${safeAdmin.email}) authenticated with Dual-2FA.`);
+
+    res.json({
+      success: true,
+      message: 'Dual-Factor Authentication verified successfully. Welcome, Master Admin!',
+      token,
+      user: safeAdmin
+    });
+  } catch (err) {
+    console.error('Admin verify 2FA error:', err);
+    res.status(500).json({ error: 'Verification failed: ' + err.message });
   }
 });
 

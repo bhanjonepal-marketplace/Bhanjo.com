@@ -253,8 +253,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Store Admin Mode (Default: false / Customer Mode)
-  const [isAdmin, setIsAdmin] = useState(() => {
+  // Master Admin State (Active if user.role === 'admin' or stored flag)
+  const [adminModeState, setAdminModeState] = useState(() => {
     try {
       return localStorage.getItem('bhanjo_admin_mode') === 'true';
     } catch {
@@ -262,20 +262,51 @@ export const AuthProvider = ({ children }) => {
     }
   });
 
+  const isAdmin = (user && user.role === 'admin') || adminModeState;
+
   const setAdminMode = (enabled) => {
-    setIsAdmin(!!enabled);
+    setAdminModeState(!!enabled);
     try {
       localStorage.setItem('bhanjo_admin_mode', String(!!enabled));
     } catch (e) {}
   };
 
-  const verifyAdminPasskey = (passkey) => {
-    const cleanKey = (passkey || '').trim().toLowerCase();
-    if (cleanKey === 'bhanjo' || cleanKey === 'admin123' || cleanKey === 'bhanjo123' || cleanKey === 'admin') {
-      setAdminMode(true);
-      return { success: true };
+  // Step 1: Initiate Admin Login (validates credentials & sends Dual-2FA codes)
+  const initiateAdminLogin = async ({ email, password, phone }) => {
+    const res = await fetch('/api/admin/auth/initiate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, phone })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to initiate admin login.');
     }
-    return { success: false, message: 'Incorrect passkey. Try "bhanjo" or "admin123".' };
+    return data;
+  };
+
+  // Step 2: Verify Dual-Codes (SMS + Email side-by-side)
+  const verifyAdminMfa = async ({ mfaSessionId, smsCode, emailCode }) => {
+    const res = await fetch('/api/admin/auth/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mfaSessionId, smsCode, emailCode })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      const err = new Error(data.error || 'Security verification failed.');
+      err.smsValid = data.smsValid;
+      err.emailValid = data.emailValid;
+      throw err;
+    }
+    if (data.user && data.token) {
+      setUser(data.user);
+      setToken(data.token);
+      localStorage.setItem('bhanjo_user', JSON.stringify(data.user));
+      localStorage.setItem('bhanjo_token', data.token);
+      setAdminMode(true);
+      return data.user;
+    }
   };
 
   return (
@@ -285,7 +316,8 @@ export const AuthProvider = ({ children }) => {
       getAuthHeaders,
       isAdmin,
       setAdminMode,
-      verifyAdminPasskey,
+      initiateAdminLogin,
+      verifyAdminMfa,
       login,
       register,
       updateProfile,
