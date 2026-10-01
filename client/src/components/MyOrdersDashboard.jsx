@@ -62,7 +62,11 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
   }, [user]);
 
   const loadBackendOrders = () => {
-    fetch('/api/orders')
+    if (!user?.id) {
+      setBackendOrders([]);
+      return;
+    }
+    fetch(`/api/orders?user_id=${encodeURIComponent(user.id)}`)
       .then(res => res.json())
       .then(data => {
         if (data.success && Array.isArray(data.orders)) {
@@ -93,7 +97,7 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
 
   useEffect(() => {
     loadBackendOrders();
-  }, []);
+  }, [user?.id]);
 
   // Merge unique orders
   const allUserOrders = React.useMemo(() => {
@@ -176,7 +180,7 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
-              📱 {user?.phone || "+977-98XXXXXXXX"} • ✉️ {user?.email || "user@bhanjo.com"}
+              📱 {user?.phone ? `+977 ${user.phone}` : "No phone saved"} • ✉️ {user?.email || "No email saved"}
             </p>
           </div>
         </div>
@@ -538,15 +542,29 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
                     </button>
                   </div>
                 </div>
-              ) : (
+              ) : user?.address ? (
                 <div className="p-4 rounded-xl border-2 border-orange-400 bg-orange-50/40 space-y-1.5 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900">{user?.name || "Prashant Sharma"} (Primary Home)</span>
+                    <span className="font-bold text-slate-900">{user?.name || "Bhanjo Customer"} (Primary Delivery Address)</span>
                     <span className="bg-[#F85606] text-white text-[9px] font-bold px-2 py-0.5 rounded">Default</span>
                   </div>
-                  <div className="text-slate-700">📍 {user?.address || "New Road, Ward #22, Kathmandu Valley, Bagmati Province"}</div>
-                  <div className="text-slate-500">Phone: {user?.phone || "+977-9841234567"}</div>
-                  <div className="text-slate-500">Region: {user?.city || "Kathmandu"}, {user?.province || "Bagmati Province"} (Postal: 44600)</div>
+                  <div className="text-slate-700">📍 {user.address}</div>
+                  <div className="text-slate-500">Phone: {user?.phone ? `+977 ${user.phone}` : 'N/A'}</div>
+                  <div className="text-slate-500">Region: {user?.city || "Kathmandu"}, {user?.province || "Bagmati Province"} {user?.postal_code ? `(Postal: ${user.postal_code})` : ''}</div>
+                </div>
+              ) : (
+                <div className="p-6 rounded-xl border-2 border-dashed border-slate-200 text-center space-y-2">
+                  <MapPin className="w-8 h-8 text-slate-400 mx-auto" />
+                  <p className="font-bold text-slate-700 text-sm">No Delivery Address Saved Yet</p>
+                  <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                    Add your delivery street address, city, and province to speed up your doorstep deliveries.
+                  </p>
+                  <button
+                    onClick={() => setIsEditingAddress(true)}
+                    className="px-4 py-2 bg-[#F85606] text-white font-bold rounded-xl text-xs hover:bg-[#e04e05] cursor-pointer inline-flex items-center gap-1.5 mt-2"
+                  >
+                    <span>+ Add Delivery Address</span>
+                  </button>
                 </div>
               )}
             </div>

@@ -26,7 +26,6 @@ export const AuthModal = ({ isOpen, onClose, onSuccess, initialMode = 'login', m
   const [signupSessionId, setSignupSessionId] = useState('');
   const [maskedEmail, setMaskedEmail] = useState('');
   const [emailCode, setEmailCode] = useState('');
-  const [devCode, setDevCode] = useState('');
 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -98,9 +97,6 @@ export const AuthModal = ({ isOpen, onClose, onSuccess, initialMode = 'login', m
 
       setSignupSessionId(data.signupSessionId);
       setMaskedEmail(data.maskedEmail || email);
-      if (data.devCode?.emailCode) {
-        setDevCode(data.devCode.emailCode);
-      }
       setSignupStep(2);
       setError('');
     } catch (err) {
@@ -137,23 +133,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess, initialMode = 'login', m
     }
   };
 
-  const handleQuickDemoLogin = async () => {
-    setIsLoading(true);
-    try {
-      const res = await fetch('/api/auth/demo', { method: 'POST' });
-      const data = await res.json();
-      if (data.success && data.user) {
-        await login(data.user);
-      }
-      confetti({ particleCount: 50, spread: 60 });
-      if (onSuccess) onSuccess();
-      onClose();
-    } catch (e) {
-      console.log('Demo login error:', e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
 
   return (
     <div className="fixed inset-0 z-[100] overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150">
@@ -288,17 +268,6 @@ export const AuthModal = ({ isOpen, onClose, onSuccess, initialMode = 'login', m
               )}
             </button>
 
-            {/* Quick Demo Login */}
-            <div className="pt-2 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={handleQuickDemoLogin}
-                className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition text-center flex items-center justify-center gap-1.5 cursor-pointer text-xs"
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span>1-Click Quick Demo Login (Prashant Sharma)</span>
-              </button>
-            </div>
           </form>
         )}
 
@@ -416,21 +385,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess, initialMode = 'login', m
               </p>
             </div>
 
-            {/* Dev Mode Code Preview Banner */}
-            {devCode && (
-              <div className="bg-slate-900 text-slate-200 p-2.5 rounded-xl text-center text-xs flex items-center justify-between">
-                <span className="font-mono text-amber-400 font-bold">
-                  Dev Code: {devCode}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setEmailCode(devCode)}
-                  className="bg-orange-600 hover:bg-orange-500 text-white font-bold px-2 py-0.5 rounded text-[10px] cursor-pointer"
-                >
-                  Auto-Fill
-                </button>
-              </div>
-            )}
+
 
             <div>
               <label className="font-semibold text-slate-700 block mb-1 text-center">

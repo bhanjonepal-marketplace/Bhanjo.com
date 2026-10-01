@@ -292,10 +292,7 @@ app.post('/api/auth/register-initiate', async (req, res) => {
       success: true,
       message: `A 6-digit verification code has been dispatched to ${maskedEmail}`,
       signupSessionId,
-      maskedEmail,
-      devCode: {
-        emailCode
-      }
+      maskedEmail
     });
   } catch (err) {
     console.error('Customer registration initiate error:', err);
@@ -694,33 +691,9 @@ app.post('/api/admin/auth/verify', async (req, res) => {
   }
 });
 
-// Demo login endpoint
+// Demo login endpoint - deactivated in production for real customer authentication
 app.post('/api/auth/demo', (req, res) => {
-  try {
-    const demoUser = db.prepare('SELECT * FROM users WHERE id = ? OR phone = ?').get('user-prashant', '9841987654');
-    let safe;
-    if (demoUser) {
-      const { password: _, ...rest } = demoUser;
-      safe = rest;
-    } else {
-      safe = {
-        id: 'user-prashant',
-        name: 'Prashant Sharma',
-        email: 'prashant@bhanjo.com',
-        phone: '9841987654',
-        role: 'customer',
-        address: 'New Road Gate, Ward #22',
-        city: 'Kathmandu',
-        province: 'Bagmati Province',
-        postal_code: '44600',
-        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'
-      };
-    }
-    const token = generateToken(safe);
-    res.json({ success: true, token, user: safe });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  res.status(403).json({ error: 'Demo customer login is disabled. Please create a new account or log in with verified credentials.' });
 });
 
 // Get current authenticated user profile using JWT token
@@ -900,11 +873,17 @@ app.patch('/api/orders/:id/cancel', (req, res) => {
   }
 });
 
-// Get all orders
+// Get orders (optionally filtered by user_id)
 app.get('/api/orders', (req, res) => {
   try {
-    const stmt = db.prepare('SELECT * FROM orders ORDER BY created_at DESC');
-    const orders = stmt.all().map(o => ({
+    const { user_id } = req.query;
+    let ordersRaw;
+    if (user_id) {
+      ordersRaw = db.prepare('SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC').all(user_id);
+    } else {
+      ordersRaw = db.prepare('SELECT * FROM orders ORDER BY created_at DESC').all();
+    }
+    const orders = ordersRaw.map(o => ({
       ...o,
       items: o.items_json ? JSON.parse(o.items_json) : [],
       timeline: o.timeline_json ? JSON.parse(o.timeline_json) : []
