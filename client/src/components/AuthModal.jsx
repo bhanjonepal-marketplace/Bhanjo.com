@@ -154,7 +154,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess, initialMode = 'login', m
               <p className="text-[11px] text-white/90">
                 {message || (mode === 'login' 
                   ? 'Enter phone/email to continue your order' 
-                  : (signupStep === 1 ? 'Enter your details to receive your free verification code' : `Enter the 6-digit code sent to ${maskedEmail}`))}
+                  : (signupStep === 1 ? 'Enter your details to create your account' : `Enter the 6-digit code sent to ${maskedEmail}`))}
               </p>
             </div>
           </div>
@@ -309,7 +309,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess, initialMode = 'login', m
             </div>
 
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Email Address (For Verification Code) *</label>
+              <label className="font-semibold text-slate-700 block mb-1">Email Address *</label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                 <input
@@ -321,9 +321,6 @@ export const AuthModal = ({ isOpen, onClose, onSuccess, initialMode = 'login', m
                   className="w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-xl focus:outline-none focus:border-[#F85606] transition"
                 />
               </div>
-              <p className="text-[10px] text-emerald-600 font-medium mt-0.5">
-                ✓ Free instant code will be sent to this email address.
-              </p>
             </div>
 
             <div>
@@ -362,7 +359,7 @@ export const AuthModal = ({ isOpen, onClose, onSuccess, initialMode = 'login', m
                 </>
               ) : (
                 <>
-                  <span>Send Free Verification Code</span>
+                  <span>Send Verification Code</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
