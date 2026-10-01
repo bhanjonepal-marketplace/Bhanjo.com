@@ -34,7 +34,9 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
     email: user?.email || '',
     address: user?.address || '',
     city: user?.city || 'Kathmandu',
-    province: user?.province || 'Bagmati Province'
+    province: user?.province || 'Bagmati Province',
+    postal_code: user?.postal_code || '44600',
+    landmark: user?.landmark || ''
   });
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState('');
@@ -51,7 +53,9 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
         email: user.email || '',
         address: user.address || '',
         city: user.city || 'Kathmandu',
-        province: user.province || 'Bagmati Province'
+        province: user.province || 'Bagmati Province',
+        postal_code: user.postal_code || '44600',
+        landmark: user.landmark || ''
       });
       setNewAddressInput(user.address || '');
     }
@@ -598,20 +602,62 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct }) => {
                   />
                 </div>
                 <div>
+                  <label className="font-semibold text-slate-700 block mb-1">Province (Nepal)</label>
+                  <select
+                    value={profileForm.province}
+                    onChange={(e) => setProfileForm({ ...profileForm, province: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none bg-white"
+                  >
+                    <option value="Bagmati Province">Bagmati Province (Kathmandu, Lalitpur, Bhaktapur...)</option>
+                    <option value="Gandaki Province">Gandaki Province (Pokhara, Kaski...)</option>
+                    <option value="Koshi Province">Koshi Province (Biratnagar, Dharan...)</option>
+                    <option value="Madhesh Province">Madhesh Province (Janakpur, Birgunj...)</option>
+                    <option value="Lumbini Province">Lumbini Province (Butwal, Bhairahawa...)</option>
+                    <option value="Karnali Province">Karnali Province (Surkhet, Jumla...)</option>
+                    <option value="Sudurpashchim Province">Sudurpashchim Province (Dhangadhi, Mahendranagar...)</option>
+                  </select>
+                </div>
+
+                <div>
                   <label className="font-semibold text-slate-700 block mb-1">City / Municipality</label>
                   <input
                     type="text"
                     value={profileForm.city}
                     onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })}
+                    placeholder="e.g. Kathmandu"
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
                   />
                 </div>
+
+                <div>
+                  <label className="font-semibold text-slate-700 block mb-1">Postal / ZIP Code</label>
+                  <input
+                    type="text"
+                    value={profileForm.postal_code}
+                    onChange={(e) => setProfileForm({ ...profileForm, postal_code: e.target.value })}
+                    placeholder="e.g. 44600"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-semibold text-slate-700 block mb-1">Nearby Landmark (Optional)</label>
+                  <input
+                    type="text"
+                    value={profileForm.landmark}
+                    onChange={(e) => setProfileForm({ ...profileForm, landmark: e.target.value })}
+                    placeholder="e.g. Near Bhatbhateni Supermarket"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
+                  />
+                </div>
+
                 <div className="sm:col-span-2">
-                  <label className="font-semibold text-slate-700 block mb-1">Street Address / Landmark</label>
+                  <label className="font-semibold text-slate-700 block mb-1">Doorstep Street Address / Tole</label>
                   <input
                     type="text"
                     value={profileForm.address}
                     onChange={(e) => setProfileForm({ ...profileForm, address: e.target.value })}
+                    placeholder="e.g. Ward #10, Baneshwor Height"
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
                   />
                 </div>

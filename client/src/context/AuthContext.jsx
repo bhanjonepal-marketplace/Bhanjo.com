@@ -113,6 +113,40 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Customer Email OTP Registration (Step 1: Initiate)
+  const initiateCustomerRegister = async (userData) => {
+    const res = await fetch('/api/auth/register-initiate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData)
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to send verification code.');
+    }
+    return data;
+  };
+
+  // Customer Email OTP Registration (Step 2: Verify & Create Account)
+  const verifyCustomerRegister = async ({ signupSessionId, emailCode }) => {
+    const res = await fetch('/api/auth/register-verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ signupSessionId, emailCode })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Verification failed. Please check the code.');
+    }
+    if (data.user && data.token) {
+      setUser(data.user);
+      setToken(data.token);
+      localStorage.setItem('bhanjo_user', JSON.stringify(data.user));
+      localStorage.setItem('bhanjo_token', data.token);
+      return data.user;
+    }
+  };
+
   const register = async (userData) => {
     try {
       const res = await fetch('/api/auth/register', {
@@ -320,6 +354,8 @@ export const AuthProvider = ({ children }) => {
       verifyAdminMfa,
       login,
       register,
+      initiateCustomerRegister,
+      verifyCustomerRegister,
       updateProfile,
       logout,
       wishlist,

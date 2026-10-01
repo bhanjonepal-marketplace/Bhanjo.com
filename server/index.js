@@ -10,6 +10,8 @@ import {
   parseGlobalSourcingUrl, parseAlibabaUrl, parse1688Url, ALIBABA_TRENDING_CATALOG,
   get1688Cookie, set1688Cookie, clear1688Cookie, test1688Cookie 
 } from './alibabaEngine.js';
+import { sendSmsNotification } from './smsService.js';
+import { sendEmailNotification } from './emailService.js';
 import { CATEGORIES } from '../client/src/data/categories.js';
 
 const app = express();
@@ -203,6 +205,255 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
+// --- Customer Email OTP Registration Store & Endpoints ---
+const customerOtpSessions = new Map();
+
+// Periodic cleanup of expired customer signup sessions
+setInterval(() => {
+  const now = Date.now();
+  for (const [sid, session] of customerOtpSessions.entries()) {
+    if (session.expiresAt < now) {
+      customerOtpSessions.delete(sid);
+    }
+  }
+}, 5 * 60 * 1000);
+
+// Step 1: Customer Signup Initiation (Validates inputs, generates 6-digit Email code)
+app.post('/api/auth/register-initiate', async (req, res) => {
+  try {
+    const { name, email, phone, password } = req.body;
+    if (!name || !email || !phone || !password) {
+      return res.status(400).json({ error: 'Name, Phone Number, Email, and Password are all required.' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters long.' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPhone = phone.toString().replace(/[\s\-\+]/g, '').slice(-10);
+
+    if (cleanPhone.length < 10) {
+      return res.status(400).json({ error: 'Please enter a valid 10-digit mobile phone number.' });
+    }
+
+    // Check if phone or email already registered
+    const existingPhone = db.prepare('SELECT id FROM users WHERE phone LIKE ?').get(`%${cleanPhone}%`);
+    if (existingPhone) {
+      return res.status(400).json({ error: 'This mobile phone number is already registered. Please login.' });
+    }
+
+    const existingEmail = db.prepare('SELECT id FROM users WHERE LOWER(email) = ?').get(cleanEmail);
+    if (existingEmail) {
+      return res.status(400).json({ error: 'This email address is already registered. Please login.' });
+    }
+
+    // Hash password with bcrypt
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Generate 6-digit random verification code
+    const emailCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const signupSessionId = 'cust_reg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+    const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+    customerOtpSessions.set(signupSessionId, {
+      name: name.trim(),
+      email: cleanEmail,
+      phone: cleanPhone,
+      password: hashedPassword,
+      emailCode,
+      expiresAt,
+      attempts: 0
+    });
+
+    console.log(`\n======================================================`);
+    console.log(`✉️  [CUSTOMER SIGNUP EMAIL OTP DISPATCH]`);
+    console.log(`👤 Customer:   ${name} (${cleanEmail})`);
+    console.log(`📱 Mobile:     +977 ${cleanPhone}`);
+    console.log(`🔑 OTP Code:   [ ${emailCode} ]`);
+    console.log(`⏱️ Expiry:     10 minutes`);
+    console.log(`======================================================\n`);
+
+    // Dispatch real email via emailService
+    sendEmailNotification({
+      to: cleanEmail,
+      code: emailCode,
+      name: name.trim()
+    }).catch(err => {
+      console.error('Customer email OTP background error:', err.message);
+    });
+
+    const [emailPrefix, emailDomain] = cleanEmail.split('@');
+    const maskedEmail = `${emailPrefix.slice(0, 3)}***@${emailDomain}`;
+
+    res.json({
+      success: true,
+      message: `A 6-digit verification code has been dispatched to ${maskedEmail}`,
+      signupSessionId,
+      maskedEmail,
+      devCode: {
+        emailCode
+      }
+    });
+  } catch (err) {
+    console.error('Customer registration initiate error:', err);
+    res.status(500).json({ error: 'Failed to initiate registration: ' + err.message });
+  }
+});
+
+// Step 2: Customer Signup Verification & Account Creation
+app.post('/api/auth/register-verify', async (req, res) => {
+  try {
+    const { signupSessionId, emailCode } = req.body;
+    if (!signupSessionId || !emailCode) {
+      return res.status(400).json({ error: 'Session ID and verification code are required.' });
+    }
+
+    const session = customerOtpSessions.get(signupSessionId);
+    if (!session) {
+      return res.status(400).json({ error: 'Verification session expired. Please sign up again.' });
+    }
+
+    if (Date.now() > session.expiresAt) {
+      customerOtpSessions.delete(signupSessionId);
+      return res.status(400).json({ error: 'Verification code expired (10-minute limit exceeded). Please request a new code.' });
+    }
+
+    session.attempts += 1;
+    if (session.attempts > 5) {
+      customerOtpSessions.delete(signupSessionId);
+      return res.status(429).json({ error: 'Too many incorrect attempts. Please try registering again.' });
+    }
+
+    const cleanInputCode = emailCode.toString().trim();
+    if (cleanInputCode !== session.emailCode) {
+      return res.status(401).json({ 
+        error: 'Incorrect verification code. Please check your email and try again.',
+        remainingAttempts: Math.max(0, 5 - session.attempts)
+      });
+    }
+
+    // Code is valid! Create the real customer account in SQLite & Supabase
+    customerOtpSessions.delete(signupSessionId);
+
+    const userId = `user-${Date.now()}`;
+    const insertStmt = db.prepare(`
+      INSERT INTO users (id, name, email, phone, password, role, address, city, province, postal_code, avatar)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    const userObj = {
+      id: userId,
+      name: session.name,
+      email: session.email,
+      phone: session.phone,
+      password: session.password,
+      role: 'customer',
+      address: 'Kathmandu, Nepal',
+      city: 'Kathmandu',
+      province: 'Bagmati Province',
+      postal_code: '44600',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'
+    };
+
+    insertStmt.run(
+      userObj.id,
+      userObj.name,
+      userObj.email,
+      userObj.phone,
+      userObj.password,
+      userObj.role,
+      userObj.address,
+      userObj.city,
+      userObj.province,
+      userObj.postal_code,
+      userObj.avatar
+    );
+
+    const safeUser = {
+      id: userObj.id,
+      name: userObj.name,
+      email: userObj.email,
+      phone: userObj.phone,
+      role: userObj.role,
+      address: userObj.address,
+      city: userObj.city,
+      province: userObj.province,
+      postal_code: userObj.postal_code,
+      avatar: userObj.avatar
+    };
+
+    const token = generateToken(safeUser);
+
+    console.log(`✅ [NEW CUSTOMER REGISTERED] ${safeUser.name} (${safeUser.email}, Phone: ${safeUser.phone})`);
+
+    res.status(201).json({
+      success: true,
+      message: 'Account verified and created successfully! Welcome to Bhanjo.com.',
+      token,
+      user: safeUser
+    });
+  } catch (err) {
+    console.error('Customer registration verify error:', err);
+    res.status(500).json({ error: 'Failed to verify account: ' + err.message });
+  }
+});
+
+// Update Customer Profile (Name, Phone, Address, City, Province, Postal Code)
+app.put('/api/auth/profile/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (req.user.id !== id && req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Unauthorized to modify this profile.' });
+    }
+
+    const { name, phone, address, city, province, postal_code, avatar } = req.body;
+
+    const existingUser = db.prepare('SELECT * FROM users WHERE id = ?').get(id);
+    if (!existingUser) {
+      return res.status(404).json({ error: 'User profile not found.' });
+    }
+
+    const updatedName = name !== undefined ? name : existingUser.name;
+    const updatedPhone = phone !== undefined ? phone : existingUser.phone;
+    const updatedAddress = address !== undefined ? address : existingUser.address;
+    const updatedCity = city !== undefined ? city : existingUser.city;
+    const updatedProvince = province !== undefined ? province : existingUser.province;
+    const updatedPostalCode = postal_code !== undefined ? postal_code : existingUser.postal_code;
+    const updatedAvatar = avatar !== undefined ? avatar : existingUser.avatar;
+
+    db.prepare(`
+      UPDATE users 
+      SET name = ?, phone = ?, address = ?, city = ?, province = ?, postal_code = ?, avatar = ?
+      WHERE id = ?
+    `).run(
+      updatedName,
+      updatedPhone,
+      updatedAddress,
+      updatedCity,
+      updatedProvince,
+      updatedPostalCode,
+      updatedAvatar,
+      id
+    );
+
+    const updatedUser = db.prepare('SELECT * FROM users WHERE id = ?').get(id);
+    const { password: _, ...safeUser } = updatedUser;
+
+    console.log(`✅ [PROFILE UPDATED] User ${safeUser.name} (ID: ${id})`);
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      user: safeUser
+    });
+  } catch (err) {
+    console.error('Profile update error:', err);
+    res.status(500).json({ error: 'Failed to update profile: ' + err.message });
+  }
+});
+
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { phoneOrEmail, password } = req.body;
@@ -338,6 +589,14 @@ app.post('/api/admin/auth/initiate', async (req, res) => {
     console.log(`✉️ Email Code sent to ${user.email}: [ ${emailCode} ]`);
     console.log(`⏱️ Expiry:     5 minutes (Strict dual-check active)`);
     console.log(`======================================================\n`);
+
+    // Dispatch Live SMS & Live Email to physical devices
+    sendSmsNotification({ to: user.phone, code: smsCode }).catch(err => {
+      console.error('SMS Dispatch background error:', err.message);
+    });
+    sendEmailNotification({ to: user.email, code: emailCode, name: user.name }).catch(err => {
+      console.error('Email Dispatch background error:', err.message);
+    });
 
     const maskedPhone = `+977 ${userCleanPhone.slice(0, 4)}****${userCleanPhone.slice(-2)}`;
     const [emailPrefix, emailDomain] = user.email.split('@');
