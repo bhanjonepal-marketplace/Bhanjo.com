@@ -85,11 +85,10 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
                 if (catalogElem) catalogElem.scrollIntoView({ behavior: 'smooth' });
               }
             }}
-            className="text-xs font-bold text-[#FF6A00] hover:text-[#EE5007] flex items-center gap-1 transition cursor-pointer bg-orange-50 hover:bg-orange-100 px-3 py-1.5 rounded-lg border border-orange-200"
+            className="px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer border bg-white hover:bg-orange-50 text-slate-700 hover:text-[#F85606] border-slate-300 shadow-2xs"
             title="View all Global Direct products in catalog"
           >
-            <span>View All ({alibabaProducts.length})</span>
-            <ChevronRight className="w-3.5 h-3.5" />
+            <span>👁️ {language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'}</span>
           </button>
         </div>
       </div>

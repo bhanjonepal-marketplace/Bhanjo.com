@@ -682,7 +682,7 @@ export function App() {
                     }`}
                     title="View every single product saved till now"
                   >
-                    <span>👁️ {language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'} ({allProducts.length})</span>
+                    <span>👁️ {language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'}</span>
                   </button>
 
                   {/* Mode Toggle: View All vs Paginated */}
@@ -838,7 +838,7 @@ export function App() {
                               onClick={() => { setPageSize('all'); setCurrentPage(1); }}
                               className="px-2.5 py-1.5 rounded-lg bg-orange-100 text-[#F85606] font-bold hover:bg-[#F85606] hover:text-white transition mr-2 cursor-pointer"
                             >
-                              👁️ View All ({filteredProducts.length})
+                              👁️ {language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'}
                             </button>
                             <button
                               disabled={currentPage <= 1}
