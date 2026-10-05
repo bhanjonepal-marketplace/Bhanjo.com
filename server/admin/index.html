@@ -819,9 +819,10 @@
         document.getElementById('step2-form').classList.remove('hidden');
         startCountdown(300);
 
-        // Pre-fill dev codes if available in development mode
-        if (data.devCodes) {
-          console.log('🛡️ Dual 2FA Codes:', data.devCodes);
+        // Pre-fill simulated dev SMS code if no live carrier gateway is connected yet
+        if (data.devCodes && data.devCodes.smsCode) {
+          console.log('🛡️ Dual 2FA Dispatched:', data.devCodes);
+          document.getElementById('sms-code').value = data.devCodes.smsCode;
         }
 
       } catch (err) {
