@@ -7,6 +7,7 @@ import { DarazFlashSale } from './components/DarazFlashSale';
 import { DarazMall } from './components/DarazMall';
 import { NepaliPavilion } from './components/NepaliPavilion';
 import { CatalogFilterSidebar } from './components/CatalogFilterSidebar';
+import { CatalogTopFilterBar } from './components/CatalogTopFilterBar';
 import { ProductCard } from './components/ProductCard';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { TrackOrderModal } from './components/TrackOrderModal';
@@ -739,174 +740,168 @@ export function App() {
                 </div>
               </div>
 
-              {/* Layout: Sidebar (3 cols) + Product Grid (9 cols) */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                
-                {/* Left Filter Sidebar */}
-                <div className="hidden lg:block lg:col-span-3">
-                  <CatalogFilterSidebar
-                    priceRange={priceRange}
-                    onPriceFilter={(min, max) => setPriceRange({ min, max })}
-                    filterOnlyNepal={filterOnlyNepal}
-                    setFilterOnlyNepal={setFilterOnlyNepal}
-                    filterAlibabaOnly={filterAlibabaOnly}
-                    setFilterAlibabaOnly={setFilterAlibabaOnly}
-                    filterFreeDelivery={filterFreeDelivery}
-                    setFilterFreeDelivery={setFilterFreeDelivery}
-                    filterMallOnly={filterMallOnly}
-                    setFilterMallOnly={setFilterMallOnly}
-                    minRating={minRating}
-                    setMinRating={setMinRating}
-                    onResetFilters={handleResetFilters}
-                  />
-                </div>
+              {/* Modern Sleek Top Filter Bar */}
+              <CatalogTopFilterBar
+                priceRange={priceRange}
+                onPriceFilter={(min, max) => setPriceRange({ min, max })}
+                filterOnlyNepal={filterOnlyNepal}
+                setFilterOnlyNepal={setFilterOnlyNepal}
+                filterAlibabaOnly={filterAlibabaOnly}
+                setFilterAlibabaOnly={setFilterAlibabaOnly}
+                filterFreeDelivery={filterFreeDelivery}
+                setFilterFreeDelivery={setFilterFreeDelivery}
+                filterMallOnly={filterMallOnly}
+                setFilterMallOnly={setFilterMallOnly}
+                minRating={minRating}
+                setMinRating={setMinRating}
+                onResetFilters={handleResetFilters}
+                activeFilterCount={activeFilterCount}
+              />
 
-                {/* Right Product Grid (9 cols) */}
-                <div className="lg:col-span-9">
-                  {filteredProducts.length === 0 ? (
-                    <div className="bg-white rounded-2xl p-12 text-center border border-slate-200 shadow-xs">
-                      <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-orange-50 border border-orange-200 flex items-center justify-center text-2xl">
-                        📦
-                      </div>
-                      <h3 className="text-base font-bold text-slate-800">
-                        {allProducts.length === 0 ? t('catalogClearedReady') : t('noMatchFilters')}
-                      </h3>
-                      <p className="text-xs text-slate-500 mt-1.5 max-w-md mx-auto">
-                        {allProducts.length === 0 
-                          ? t('catalogClearedDesc')
-                          : t('noMatchDesc')}
-                      </p>
-                      {allProducts.length > 0 && (
-                        <button
-                          onClick={handleResetFilters}
-                          className="mt-4 bg-[#F85606] hover:bg-[#E04E05] text-white font-bold text-xs px-4 py-2 rounded-lg transition"
-                        >
-                          {t('resetFilters')}
-                        </button>
-                      )}
+              {/* Full-Width Product Grid (Spanning from Left to Right) */}
+              <div className="w-full">
+                {filteredProducts.length === 0 ? (
+                  <div className="bg-white rounded-2xl p-12 text-center border border-slate-200 shadow-xs">
+                    <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-orange-50 border border-orange-200 flex items-center justify-center text-2xl">
+                      📦
                     </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                        {displayedProducts.map((product) => (
-                          <ProductCard
-                            key={product.id}
-                            product={product}
-                            onSelectProduct={handleSelectProduct}
-                            onQuickChat={handleOpenQuickChat}
-                            onQuickAdd={(p) => showToast(`Added "${p.title.slice(0, 24)}..." to cart!`)}
-                            onRequireAuth={handleRequireAuth}
-                            onDeleteProduct={isAdmin ? handleDeleteProduct : undefined}
-                            onEditProduct={isAdmin ? (p) => setEditingProduct(p) : undefined}
-                          />
-                        ))}
-                      </div>
+                    <h3 className="text-base font-bold text-slate-800">
+                      {allProducts.length === 0 ? t('catalogClearedReady') : t('noMatchFilters')}
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-1.5 max-w-md mx-auto">
+                      {allProducts.length === 0 
+                        ? t('catalogClearedDesc')
+                        : t('noMatchDesc')}
+                    </p>
+                    {allProducts.length > 0 && (
+                      <button
+                        onClick={handleResetFilters}
+                        className="mt-4 bg-[#F85606] hover:bg-[#E04E05] text-white font-bold text-xs px-4 py-2 rounded-lg transition cursor-pointer"
+                      >
+                        {t('resetFilters')}
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-3.5">
+                      {displayedProducts.map((product) => (
+                        <ProductCard
+                          key={product.id}
+                          product={product}
+                          onSelectProduct={handleSelectProduct}
+                          onQuickChat={handleOpenQuickChat}
+                          onQuickAdd={(p) => showToast(`Added "${p.title.slice(0, 24)}..." to cart!`)}
+                          onRequireAuth={handleRequireAuth}
+                          onDeleteProduct={isAdmin ? handleDeleteProduct : undefined}
+                          onEditProduct={isAdmin ? (p) => setEditingProduct(p) : undefined}
+                        />
+                      ))}
+                    </div>
 
-                      {/* View All / Pagination Bar */}
-                      {pageSize === 'all' ? (
-                        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 bg-gradient-to-r from-orange-50 via-white to-amber-50 p-3.5 sm:p-4 rounded-xl border border-orange-200/80 shadow-2xs">
-                          <div className="text-xs text-slate-700 font-medium flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span>
-                              Showing <strong>all {filteredProducts.length}</strong> products saved in Bhanjo catalog (Every single product is visible)
-                            </span>
+                    {/* View All / Pagination Bar */}
+                    {pageSize === 'all' ? (
+                      <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 bg-gradient-to-r from-orange-50 via-white to-amber-50 p-3.5 sm:p-4 rounded-xl border border-orange-200/80 shadow-2xs">
+                        <div className="text-xs text-slate-700 font-medium flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                          <span>
+                            Showing <strong>all {filteredProducts.length}</strong> products saved in Bhanjo catalog (Every single product is visible)
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          <button
+                            onClick={() => {
+                              const elem = document.getElementById('catalog-section');
+                              if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold bg-white text-slate-700 hover:border-orange-400 hover:text-[#F85606] transition cursor-pointer"
+                          >
+                            ↑ Back to Top
+                          </button>
+                          <button
+                            onClick={() => { setPageSize(36); setCurrentPage(1); }}
+                            className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold bg-white text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+                          >
+                            Switch to 36/page
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      calculatedTotalPages > 1 && (
+                        <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-2xs">
+                          <div className="text-xs text-slate-600 font-medium">
+                            Showing page <span className="font-bold text-[#F85606]">{currentPage}</span> of <span className="font-bold text-slate-800">{calculatedTotalPages}</span> ({filteredProducts.length} products)
                           </div>
-                          <div className="flex items-center gap-2 text-xs">
+
+                          <div className="flex items-center gap-1.5 text-xs">
                             <button
+                              onClick={() => { setPageSize('all'); setCurrentPage(1); }}
+                              className="px-2.5 py-1.5 rounded-lg bg-orange-100 text-[#F85606] font-bold hover:bg-[#F85606] hover:text-white transition mr-2 cursor-pointer"
+                            >
+                              👁️ View All ({filteredProducts.length})
+                            </button>
+                            <button
+                              disabled={currentPage <= 1}
                               onClick={() => {
+                                setCurrentPage(p => Math.max(1, p - 1));
                                 const elem = document.getElementById('catalog-section');
                                 if (elem) elem.scrollIntoView({ behavior: 'smooth' });
                               }}
-                              className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold bg-white text-slate-700 hover:border-orange-400 hover:text-[#F85606] transition cursor-pointer"
+                              className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold hover:bg-slate-50 transition disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer"
                             >
-                              ↑ Back to Top
+                              ← Previous
                             </button>
+
+                            <div className="flex items-center gap-1">
+                              {Array.from({ length: Math.min(5, calculatedTotalPages) }, (_, i) => {
+                                let pageNum;
+                                if (calculatedTotalPages <= 5) {
+                                  pageNum = i + 1;
+                                } else if (currentPage <= 3) {
+                                  pageNum = i + 1;
+                                } else if (currentPage >= calculatedTotalPages - 2) {
+                                  pageNum = calculatedTotalPages - 4 + i;
+                                } else {
+                                  pageNum = currentPage - 2 + i;
+                                }
+
+                                return (
+                                  <button
+                                    key={pageNum}
+                                    onClick={() => {
+                                      setCurrentPage(pageNum);
+                                      const elem = document.getElementById('catalog-section');
+                                      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                                    }}
+                                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg font-bold text-xs transition cursor-pointer ${
+                                      currentPage === pageNum 
+                                        ? 'bg-[#F85606] text-white shadow-xs' 
+                                        : 'bg-slate-50 hover:bg-slate-100 text-slate-700'
+                                    }`}
+                                  >
+                                    {pageNum}
+                                  </button>
+                                );
+                              })}
+                            </div>
+
                             <button
-                              onClick={() => { setPageSize(36); setCurrentPage(1); }}
-                              className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold bg-white text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+                              disabled={currentPage >= calculatedTotalPages}
+                              onClick={() => {
+                                setCurrentPage(p => Math.min(calculatedTotalPages, p + 1));
+                                const elem = document.getElementById('catalog-section');
+                                if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                              }}
+                              className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold hover:bg-slate-50 transition disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer"
                             >
-                              Switch to 36/page
+                              Next →
                             </button>
                           </div>
                         </div>
-                      ) : (
-                        calculatedTotalPages > 1 && (
-                          <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-2xs">
-                            <div className="text-xs text-slate-600 font-medium">
-                              Showing page <span className="font-bold text-[#F85606]">{currentPage}</span> of <span className="font-bold text-slate-800">{calculatedTotalPages}</span> ({filteredProducts.length} products)
-                            </div>
-
-                            <div className="flex items-center gap-1.5 text-xs">
-                              <button
-                                onClick={() => { setPageSize('all'); setCurrentPage(1); }}
-                                className="px-2.5 py-1.5 rounded-lg bg-orange-100 text-[#F85606] font-bold hover:bg-[#F85606] hover:text-white transition mr-2 cursor-pointer"
-                              >
-                                👁️ View All ({filteredProducts.length})
-                              </button>
-                              <button
-                                disabled={currentPage <= 1}
-                                onClick={() => {
-                                  setCurrentPage(p => Math.max(1, p - 1));
-                                  const elem = document.getElementById('catalog-section');
-                                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-                                }}
-                                className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold hover:bg-slate-50 transition disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer"
-                              >
-                                ← Previous
-                              </button>
-
-                              <div className="flex items-center gap-1">
-                                {Array.from({ length: Math.min(5, calculatedTotalPages) }, (_, i) => {
-                                  let pageNum;
-                                  if (calculatedTotalPages <= 5) {
-                                    pageNum = i + 1;
-                                  } else if (currentPage <= 3) {
-                                    pageNum = i + 1;
-                                  } else if (currentPage >= calculatedTotalPages - 2) {
-                                    pageNum = calculatedTotalPages - 4 + i;
-                                  } else {
-                                    pageNum = currentPage - 2 + i;
-                                  }
-
-                                  return (
-                                    <button
-                                      key={pageNum}
-                                      onClick={() => {
-                                        setCurrentPage(pageNum);
-                                        const elem = document.getElementById('catalog-section');
-                                        if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-                                      }}
-                                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg font-bold text-xs transition cursor-pointer ${
-                                        currentPage === pageNum 
-                                          ? 'bg-[#F85606] text-white shadow-xs' 
-                                          : 'bg-slate-50 hover:bg-slate-100 text-slate-700'
-                                      }`}
-                                    >
-                                      {pageNum}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-
-                              <button
-                                disabled={currentPage >= calculatedTotalPages}
-                                onClick={() => {
-                                  setCurrentPage(p => Math.min(calculatedTotalPages, p + 1));
-                                  const elem = document.getElementById('catalog-section');
-                                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-                                }}
-                                className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold hover:bg-slate-50 transition disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer"
-                              >
-                                Next →
-                              </button>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  )}
-                </div>
-
+                      )
+                    )}
+                  </div>
+                )}
               </div>
 
             </div>
