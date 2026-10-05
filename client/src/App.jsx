@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { MegaMenu } from './components/MegaMenu';
@@ -62,9 +62,10 @@ export function App() {
   const [visualSearch, setVisualSearch] = useState(null);
   const [categoryLayoutMode, setCategoryLayoutMode] = useState('amazon'); // 'amazon' preview or 'classic'
 
-  // Catalog Products (Dynamic paginated from SQLite backend)
+  // Catalog Products (Dynamic from SQLite backend)
   const [allProducts, setAllProducts] = useState(PRODUCTS);
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState('all'); // 'all' displays every single saved product on screen
   const [totalPages, setTotalPages] = useState(1);
   const [totalCatalogCount, setTotalCatalogCount] = useState(PRODUCTS.length);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
@@ -75,7 +76,8 @@ export function App() {
     const searchParam = searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : '';
     const sortParam = sortBy !== 'popular' ? `&sort=${sortBy}` : '';
     
-    fetch(`/api/products?page=${currentPage}&limit=36${catQuery}${searchParam}${sortParam}`)
+    // Always request up to 1000 items so every single product saved in DB is loaded and visible
+    fetch(`/api/products?page=1&limit=1000${catQuery}${searchParam}${sortParam}`)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
@@ -85,15 +87,14 @@ export function App() {
         if (data.success && Array.isArray(data.products) && data.products.length > 0) {
           const validProducts = data.products.filter(p => !deletedIds.has(String(p.id)));
           setAllProducts(validProducts);
-          if (data.pagination) {
-            setTotalPages(data.pagination.totalPages);
-            setTotalCatalogCount(Math.max(0, data.pagination.totalCount - deletedIds.size));
-          }
+          setTotalCatalogCount(validProducts.length);
+          setTotalPages(Math.max(1, Math.ceil(validProducts.length / 36)));
         } else {
           // If no products in DB or empty, fallback to catalog
           const validProducts = PRODUCTS.filter(p => !deletedIds.has(String(p.id)));
           setAllProducts(validProducts);
           setTotalCatalogCount(validProducts.length);
+          setTotalPages(Math.max(1, Math.ceil(validProducts.length / 36)));
         }
       })
       .catch(err => {
@@ -102,15 +103,66 @@ export function App() {
         const validProducts = PRODUCTS.filter(p => !deletedIds.has(String(p.id)));
         setAllProducts(validProducts);
         setTotalCatalogCount(validProducts.length);
+        setTotalPages(Math.max(1, Math.ceil(validProducts.length / 36)));
       })
       .finally(() => setIsLoadingProducts(false));
-  }, [selectedCategoryId, searchQuery, currentPage, sortBy]);
+  }, [selectedCategoryId, searchQuery, sortBy]);
+
+  const handleViewAllGlobal = () => {
+    setSelectedCategoryId('all');
+    setSearchQuery('');
+    setFilterAlibabaOnly(true);
+    setFilterOnlyNepal(false);
+    setFilterMallOnly(false);
+    setFilterFreeDelivery(false);
+    setMinRating(0);
+    setPriceRange({ min: 0, max: Infinity });
+    setVisualSearch(null);
+    setPageSize('all');
+    setCurrentPage(1);
+    setActiveView('marketplace');
+    setTimeout(() => {
+      const catalogElem = document.getElementById('catalog-section');
+      if (catalogElem) {
+        catalogElem.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 60);
+    const globalCount = allProducts.filter(p => p.isAlibabaImport || p.is1688Import || p.id?.startsWith('ali-') || p.id?.startsWith('1688-')).length;
+    showToast(`Showing all ${globalCount} Global Direct products (including Hoodies & Winterwear)!`);
+  };
+
+  const handleViewAllEveryProduct = () => {
+    setSelectedCategoryId('all');
+    setSearchQuery('');
+    setFilterAlibabaOnly(false);
+    setFilterOnlyNepal(false);
+    setFilterMallOnly(false);
+    setFilterFreeDelivery(false);
+    setMinRating(0);
+    setPriceRange({ min: 0, max: Infinity });
+    setVisualSearch(null);
+    setPageSize('all');
+    setCurrentPage(1);
+    setActiveView('marketplace');
+    setTimeout(() => {
+      const catalogElem = document.getElementById('catalog-section');
+      if (catalogElem) {
+        catalogElem.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 60);
+    showToast(`Showing all ${allProducts.length} products saved in Bhanjo catalog!`);
+  };
 
   const handleSelectCategory = (catId, subCategoryKeyword = '') => {
     setSelectedCategoryId(catId);
     if (subCategoryKeyword) {
       setSearchQuery(subCategoryKeyword);
+    } else if (catId === 'all') {
+      setSearchQuery('');
+      setFilterAlibabaOnly(false);
+      setFilterOnlyNepal(false);
     }
+    setPageSize('all');
     setCurrentPage(1);
     setActiveView('marketplace');
     setTimeout(() => {
@@ -246,36 +298,83 @@ export function App() {
   };
 
   // Filtered Products (Supports Visual Search & Standard Filters)
-  const filteredProducts = (visualSearch && visualSearch.matchedProducts && visualSearch.matchedProducts.length > 0)
-    ? visualSearch.matchedProducts
-    : allProducts.filter(prod => {
-    const matchesCategory = selectedCategoryId === 'all' || 
-      prod.categoryId === selectedCategoryId ||
-      (selectedCategoryId === 'gift-kids-toys' && (prod.categoryId === 'gifts-crafts' || prod.categoryId === 'parents-kids-toys')) ||
-      (selectedCategoryId === 'phone-laptop-cases' && (prod.categoryId === 'consumer-electronics' || prod.categoryId === 'phone-laptop-cases')) ||
-      (selectedCategoryId === 'luggage-bags-cases' && (prod.categoryId === 'luggage-bags' || prod.categoryId === 'luggage-bags-cases')) ||
-      (selectedCategoryId === 'vehicle-parts-accessories' && (prod.categoryId === 'vehicles-accessories' || prod.categoryId === 'vehicle-parts-accessories' || prod.categoryId === 'vehicles-transportation'));
-    const matchesSearch = matchesProductSearch(prod, searchQuery);
-    const matchesNepal = !filterOnlyNepal || prod.isHimalayanExport;
-    const matchesAlibaba = !filterAlibabaOnly || prod.isAlibabaImport || prod.id?.startsWith('ali-');
-    const matchesMall = !filterMallOnly || prod.isMall || !prod.isAlibabaImport;
-    const matchesFreeDelivery = !filterFreeDelivery || prod.freeDelivery !== false;
-    const matchesRating = minRating === 0 || (prod.rating || 4.5) >= minRating;
-    
-    const retailPrice = prod.samplePrice || 20;
-    const matchesPrice = retailPrice >= priceRange.min && retailPrice <= priceRange.max;
+  const filteredProducts = useMemo(() => {
+    if (visualSearch && visualSearch.matchedProducts && visualSearch.matchedProducts.length > 0) {
+      return visualSearch.matchedProducts;
+    }
 
-    return matchesCategory && matchesSearch && matchesNepal && matchesAlibaba && matchesMall && matchesFreeDelivery && matchesRating && matchesPrice;
-  }).sort((a, b) => {
-    const priceA = a.samplePrice || 20;
-    const priceB = b.samplePrice || 20;
-    if (sortBy === 'price-low') return priceA - priceB;
-    if (sortBy === 'price-high') return priceB - priceA;
-    // Put imported Alibaba and newly added products right at top when viewing popular/default
-    if (a.isAlibabaImport && !b.isAlibabaImport) return -1;
-    if (!a.isAlibabaImport && b.isAlibabaImport) return 1;
-    return (b.rating || 4.5) - (a.rating || 4.5);
-  });
+    const matched = allProducts.filter(prod => {
+      const matchesCategory = selectedCategoryId === 'all' || 
+        prod.categoryId === selectedCategoryId ||
+        (selectedCategoryId === 'gift-kids-toys' && (prod.categoryId === 'gifts-crafts' || prod.categoryId === 'parents-kids-toys')) ||
+        (selectedCategoryId === 'phone-laptop-cases' && (prod.categoryId === 'consumer-electronics' || prod.categoryId === 'phone-laptop-cases')) ||
+        (selectedCategoryId === 'luggage-bags-cases' && (prod.categoryId === 'luggage-bags' || prod.categoryId === 'luggage-bags-cases')) ||
+        (selectedCategoryId === 'vehicle-parts-accessories' && (prod.categoryId === 'vehicles-accessories' || prod.categoryId === 'vehicle-parts-accessories' || prod.categoryId === 'vehicles-transportation'));
+      const matchesSearch = matchesProductSearch(prod, searchQuery);
+      const matchesNepal = !filterOnlyNepal || prod.isHimalayanExport;
+      const matchesAlibaba = !filterAlibabaOnly || prod.isAlibabaImport || prod.id?.startsWith('ali-') || prod.is1688Import;
+      const matchesMall = !filterMallOnly || prod.isMall || !prod.isAlibabaImport;
+      const matchesFreeDelivery = !filterFreeDelivery || prod.freeDelivery !== false;
+      const matchesRating = minRating === 0 || (prod.rating || 4.5) >= minRating;
+      
+      const retailPrice = prod.samplePrice || 20;
+      const matchesPrice = retailPrice >= priceRange.min && retailPrice <= priceRange.max;
+
+      return matchesCategory && matchesSearch && matchesNepal && matchesAlibaba && matchesMall && matchesFreeDelivery && matchesRating && matchesPrice;
+    });
+
+    if (sortBy === 'price-low') {
+      return matched.sort((a, b) => (a.samplePrice || 20) - (b.samplePrice || 20));
+    }
+    if (sortBy === 'price-high') {
+      return matched.sort((a, b) => (b.samplePrice || 20) - (a.samplePrice || 20));
+    }
+    if (sortBy === 'rating') {
+      return matched.sort((a, b) => (b.rating || 4.5) - (a.rating || 4.5));
+    }
+
+    // Default 'popular' sort: When viewing all categories, interleave categories so Hoodies, Bags, Tech, Shoes are all visible from the top
+    if (selectedCategoryId === 'all' && !searchQuery) {
+      const byCategory = {};
+      for (const p of matched) {
+        const cat = p.categoryId || 'other';
+        if (!byCategory[cat]) byCategory[cat] = [];
+        byCategory[cat].push(p);
+      }
+      const categories = Object.keys(byCategory);
+      const interleaved = [];
+      const maxLen = Math.max(...categories.map(c => byCategory[c].length), 0);
+      for (let i = 0; i < maxLen; i++) {
+        for (const cat of categories) {
+          if (byCategory[cat][i]) {
+            interleaved.push(byCategory[cat][i]);
+          }
+        }
+      }
+      return interleaved.length > 0 ? interleaved : matched;
+    }
+
+    return matched.sort((a, b) => {
+      if (a.isAlibabaImport && !b.isAlibabaImport) return -1;
+      if (!a.isAlibabaImport && b.isAlibabaImport) return 1;
+      return (b.rating || 4.5) - (a.rating || 4.5);
+    });
+  }, [allProducts, selectedCategoryId, searchQuery, filterOnlyNepal, filterAlibabaOnly, filterMallOnly, filterFreeDelivery, minRating, priceRange, sortBy, visualSearch]);
+
+  const displayedProducts = useMemo(() => {
+    if (pageSize === 'all') {
+      return filteredProducts;
+    }
+    const limit = typeof pageSize === 'number' ? pageSize : 36;
+    const start = (currentPage - 1) * limit;
+    return filteredProducts.slice(start, start + limit);
+  }, [filteredProducts, pageSize, currentPage]);
+
+  const calculatedTotalPages = useMemo(() => {
+    if (pageSize === 'all') return 1;
+    const limit = typeof pageSize === 'number' ? pageSize : 36;
+    return Math.max(1, Math.ceil(filteredProducts.length / limit));
+  }, [filteredProducts.length, pageSize]);
 
   const selectedProduct = allProducts.find(p => p.id === selectedProductId) || PRODUCTS.find(p => p.id === selectedProductId);
 
@@ -299,6 +398,8 @@ export function App() {
     setMinRating(0);
     setPriceRange({ min: 0, max: Infinity });
     setVisualSearch(null);
+    setPageSize('all');
+    setCurrentPage(1);
   };
 
   const handleVisualSearch = (searchResult) => {
@@ -416,6 +517,7 @@ export function App() {
             {selectedCategoryId === 'all' && !searchQuery && (
               <HeroSection
                 onSelectCategory={handleSelectCategory}
+                onViewAll={handleViewAllEveryProduct}
               />
             )}
 
@@ -487,6 +589,7 @@ export function App() {
               <AlibabaGlobalSection
                 products={allProducts}
                 onSelectProduct={handleSelectProduct}
+                onViewAll={handleViewAllGlobal}
               />
             )}
 
@@ -535,10 +638,10 @@ export function App() {
               
               <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200 mb-4">
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
                       {selectedCategoryId === 'all' 
-                        ? (searchQuery ? `"${searchQuery}"` : t('justForYou')) 
+                        ? (searchQuery ? `"${searchQuery}"` : (filterAlibabaOnly ? '✈️ All Bhanjo Global Direct Products' : t('justForYou'))) 
                         : (language === 'ne' ? (activeCategoryObj?.nepaliName || activeCategoryObj?.name) : activeCategoryObj?.name)}
                     </h2>
                     {searchQuery && (
@@ -551,17 +654,56 @@ export function App() {
                         <span>✕</span>
                       </button>
                     )}
+                    {filterAlibabaOnly && (
+                      <button
+                        onClick={() => setFilterAlibabaOnly(false)}
+                        className="inline-flex items-center gap-1 bg-amber-100 text-amber-900 hover:bg-amber-200 px-2.5 py-0.5 rounded-full text-xs font-bold transition cursor-pointer"
+                        title="Clear Global filter to view all products"
+                      >
+                        <span>✈️ Global Direct Only</span>
+                        <span>✕</span>
+                      </button>
+                    )}
                   </div>
                   <span className="text-xs text-slate-500">
-                    {totalCatalogCount.toLocaleString()} {t('productsAvailable')} {selectedCategoryId === 'all' ? t('acrossAll38') : (language === 'ne' ? activeCategoryObj?.nepaliName : activeCategoryObj?.name)}
+                    {filteredProducts.length.toLocaleString()} {t('productsAvailable')} {selectedCategoryId === 'all' ? (filterAlibabaOnly ? 'in Global Direct' : t('acrossAll38')) : (language === 'ne' ? activeCategoryObj?.nepaliName : activeCategoryObj?.name)}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs">
+                <div className="flex items-center gap-2 text-xs flex-wrap">
+                  {/* View All Products Button */}
+                  <button
+                    onClick={handleViewAllEveryProduct}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer border ${
+                      pageSize === 'all' && selectedCategoryId === 'all' && !searchQuery && !filterAlibabaOnly
+                        ? 'bg-gradient-to-r from-[#F85606] to-amber-500 text-white border-transparent shadow-xs'
+                        : 'bg-white hover:bg-orange-50 text-slate-700 hover:text-[#F85606] border-slate-300'
+                    }`}
+                    title="View every single product saved till now"
+                  >
+                    <span>👁️ {language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'} ({allProducts.length})</span>
+                  </button>
+
+                  {/* Mode Toggle: View All vs Paginated */}
+                  <div className="hidden sm:inline-flex items-center bg-slate-100 p-0.5 rounded-lg text-xs font-semibold">
+                    <button
+                      onClick={() => { setPageSize('all'); setCurrentPage(1); }}
+                      className={`px-2.5 py-1 rounded-md transition cursor-pointer ${pageSize === 'all' ? 'bg-white text-[#F85606] font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900'}`}
+                    >
+                      All ({filteredProducts.length})
+                    </button>
+                    <button
+                      onClick={() => { setPageSize(36); setCurrentPage(1); }}
+                      className={`px-2.5 py-1 rounded-md transition cursor-pointer ${pageSize === 36 ? 'bg-white text-[#F85606] font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900'}`}
+                    >
+                      36 / page
+                    </button>
+                  </div>
+
                   {/* Mobile Filters Toggle Button */}
                   <button
                     onClick={() => setIsMobileFilterOpen(true)}
-                    className="lg:hidden flex items-center gap-1.5 px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:border-[#F85606] transition shadow-xs cursor-pointer"
+                    className="lg:hidden flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:border-[#F85606] transition shadow-xs cursor-pointer"
                   >
                     <Filter className="w-3.5 h-3.5 text-[#F85606]" />
                     <span>{t('filters')}</span>
@@ -575,7 +717,7 @@ export function App() {
                   {selectedCategoryId !== 'all' && (
                     <button
                       onClick={() => handleSelectCategory('all')}
-                      className="bg-[#F85606] text-white font-bold px-2.5 py-1 rounded text-xs flex items-center gap-1 hover:bg-[#e04e05] transition"
+                      className="bg-[#F85606] text-white font-bold px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-1 hover:bg-[#e04e05] transition cursor-pointer"
                     >
                       <span>{language === 'ne' ? activeCategoryObj?.nepaliName : activeCategoryObj?.name}</span>
                       <span>✕</span>
@@ -646,7 +788,7 @@ export function App() {
                   ) : (
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                        {filteredProducts.map((product) => (
+                        {displayedProducts.map((product) => (
                           <ProductCard
                             key={product.id}
                             product={product}
@@ -660,72 +802,106 @@ export function App() {
                         ))}
                       </div>
 
-                      {/* Modern Pagination Bar */}
-                      {totalPages > 1 && (
-                        <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-2xs">
-                          <div className="text-xs text-slate-600 font-medium">
-                            Showing page <span className="font-bold text-[#F85606]">{currentPage}</span> of <span className="font-bold text-slate-800">{totalPages}</span> ({totalCatalogCount.toLocaleString()} products in {selectedCategoryId === 'all' ? 'All Categories' : activeCategoryObj?.name})
+                      {/* View All / Pagination Bar */}
+                      {pageSize === 'all' ? (
+                        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 bg-gradient-to-r from-orange-50 via-white to-amber-50 p-3.5 sm:p-4 rounded-xl border border-orange-200/80 shadow-2xs">
+                          <div className="text-xs text-slate-700 font-medium flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>
+                              Showing <strong>all {filteredProducts.length}</strong> products saved in Bhanjo catalog (Every single product is visible)
+                            </span>
                           </div>
-
-                          <div className="flex items-center gap-1.5 text-xs">
+                          <div className="flex items-center gap-2 text-xs">
                             <button
-                              disabled={currentPage <= 1}
                               onClick={() => {
-                                setCurrentPage(p => Math.max(1, p - 1));
                                 const elem = document.getElementById('catalog-section');
                                 if (elem) elem.scrollIntoView({ behavior: 'smooth' });
                               }}
-                              className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold hover:bg-slate-50 transition disabled:opacity-40 disabled:hover:bg-transparent"
+                              className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold bg-white text-slate-700 hover:border-orange-400 hover:text-[#F85606] transition cursor-pointer"
                             >
-                              ← Previous
+                              ↑ Back to Top
                             </button>
-
-                            <div className="flex items-center gap-1">
-                              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                let pageNum;
-                                if (totalPages <= 5) {
-                                  pageNum = i + 1;
-                                } else if (currentPage <= 3) {
-                                  pageNum = i + 1;
-                                } else if (currentPage >= totalPages - 2) {
-                                  pageNum = totalPages - 4 + i;
-                                } else {
-                                  pageNum = currentPage - 2 + i;
-                                }
-
-                                return (
-                                  <button
-                                    key={pageNum}
-                                    onClick={() => {
-                                      setCurrentPage(pageNum);
-                                      const elem = document.getElementById('catalog-section');
-                                      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-                                    }}
-                                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg font-bold text-xs transition ${
-                                      currentPage === pageNum 
-                                        ? 'bg-[#F85606] text-white shadow-xs' 
-                                        : 'bg-slate-50 hover:bg-slate-100 text-slate-700'
-                                    }`}
-                                  >
-                                    {pageNum}
-                                  </button>
-                                );
-                              })}
-                            </div>
-
                             <button
-                              disabled={currentPage >= totalPages}
-                              onClick={() => {
-                                setCurrentPage(p => Math.min(totalPages, p + 1));
-                                const elem = document.getElementById('catalog-section');
-                                if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-                              }}
-                              className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold hover:bg-slate-50 transition disabled:opacity-40 disabled:hover:bg-transparent"
+                              onClick={() => { setPageSize(36); setCurrentPage(1); }}
+                              className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold bg-white text-slate-700 hover:bg-slate-50 transition cursor-pointer"
                             >
-                              Next →
+                              Switch to 36/page
                             </button>
                           </div>
                         </div>
+                      ) : (
+                        calculatedTotalPages > 1 && (
+                          <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-2xs">
+                            <div className="text-xs text-slate-600 font-medium">
+                              Showing page <span className="font-bold text-[#F85606]">{currentPage}</span> of <span className="font-bold text-slate-800">{calculatedTotalPages}</span> ({filteredProducts.length} products)
+                            </div>
+
+                            <div className="flex items-center gap-1.5 text-xs">
+                              <button
+                                onClick={() => { setPageSize('all'); setCurrentPage(1); }}
+                                className="px-2.5 py-1.5 rounded-lg bg-orange-100 text-[#F85606] font-bold hover:bg-[#F85606] hover:text-white transition mr-2 cursor-pointer"
+                              >
+                                👁️ View All ({filteredProducts.length})
+                              </button>
+                              <button
+                                disabled={currentPage <= 1}
+                                onClick={() => {
+                                  setCurrentPage(p => Math.max(1, p - 1));
+                                  const elem = document.getElementById('catalog-section');
+                                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                                }}
+                                className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold hover:bg-slate-50 transition disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer"
+                              >
+                                ← Previous
+                              </button>
+
+                              <div className="flex items-center gap-1">
+                                {Array.from({ length: Math.min(5, calculatedTotalPages) }, (_, i) => {
+                                  let pageNum;
+                                  if (calculatedTotalPages <= 5) {
+                                    pageNum = i + 1;
+                                  } else if (currentPage <= 3) {
+                                    pageNum = i + 1;
+                                  } else if (currentPage >= calculatedTotalPages - 2) {
+                                    pageNum = calculatedTotalPages - 4 + i;
+                                  } else {
+                                    pageNum = currentPage - 2 + i;
+                                  }
+
+                                  return (
+                                    <button
+                                      key={pageNum}
+                                      onClick={() => {
+                                        setCurrentPage(pageNum);
+                                        const elem = document.getElementById('catalog-section');
+                                        if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                                      }}
+                                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg font-bold text-xs transition cursor-pointer ${
+                                        currentPage === pageNum 
+                                          ? 'bg-[#F85606] text-white shadow-xs' 
+                                          : 'bg-slate-50 hover:bg-slate-100 text-slate-700'
+                                      }`}
+                                    >
+                                      {pageNum}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+
+                              <button
+                                disabled={currentPage >= calculatedTotalPages}
+                                onClick={() => {
+                                  setCurrentPage(p => Math.min(calculatedTotalPages, p + 1));
+                                  const elem = document.getElementById('catalog-section');
+                                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                                }}
+                                className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold hover:bg-slate-50 transition disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer"
+                              >
+                                Next →
+                              </button>
+                            </div>
+                          </div>
+                        )
                       )}
                     </div>
                   )}

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { ChevronRight, ShieldCheck, Globe } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 
-export const AlibabaGlobalSection = ({ products = [], onSelectProduct }) => {
+export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll }) => {
   const { formatPrice, t, language } = useCurrency();
   const [globalSortBy, setGlobalSortBy] = useState('popular');
 
@@ -20,7 +20,25 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct }) => {
     if (globalSortBy === 'rating') {
       return list.sort((a, b) => (b.rating || 4.5) - (a.rating || 4.5));
     }
-    return list;
+    
+    // Balanced multi-category showcase (Hoodies, Tech, Bags, Shoes, etc.)
+    const byCategory = {};
+    for (const p of list) {
+      const cat = p.categoryId || 'other';
+      if (!byCategory[cat]) byCategory[cat] = [];
+      byCategory[cat].push(p);
+    }
+    const categories = Object.keys(byCategory);
+    const interleaved = [];
+    const maxLen = Math.max(...categories.map(c => byCategory[c].length), 0);
+    for (let i = 0; i < maxLen; i++) {
+      for (const cat of categories) {
+        if (byCategory[cat][i]) {
+          interleaved.push(byCategory[cat][i]);
+        }
+      }
+    }
+    return interleaved.length > 0 ? interleaved : list;
   }, [alibabaProducts, globalSortBy]);
 
   if (alibabaProducts.length === 0) return null;
@@ -60,10 +78,15 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct }) => {
           {/* View All Button */}
           <button 
             onClick={() => {
-              const catalogElem = document.getElementById('catalog-section');
-              if (catalogElem) catalogElem.scrollIntoView({ behavior: 'smooth' });
+              if (onViewAll) {
+                onViewAll();
+              } else {
+                const catalogElem = document.getElementById('catalog-section');
+                if (catalogElem) catalogElem.scrollIntoView({ behavior: 'smooth' });
+              }
             }}
-            className="text-xs font-bold text-[#FF6A00] hover:text-[#EE5007] flex items-center transition cursor-pointer"
+            className="text-xs font-bold text-[#FF6A00] hover:text-[#EE5007] flex items-center gap-1 transition cursor-pointer bg-orange-50 hover:bg-orange-100 px-3 py-1.5 rounded-lg border border-orange-200"
+            title="View all Global Direct products in catalog"
           >
             <span>View All ({alibabaProducts.length})</span>
             <ChevronRight className="w-3.5 h-3.5" />

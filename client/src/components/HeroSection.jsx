@@ -10,7 +10,7 @@ const HERO_ICON_MAP = {
   Briefcase, Shirt, Footprints, Watch, Gift, Car, Smartphone, Layers
 };
 
-export const HeroSection = ({ onSelectCategory }) => {
+export const HeroSection = ({ onSelectCategory, onViewAll }) => {
   const { language } = useCurrency();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -120,7 +120,13 @@ export const HeroSection = ({ onSelectCategory }) => {
           {/* Bottom Sticky Link */}
           <div className="p-2.5 border-t border-slate-100 bg-slate-50/80">
             <button
-              onClick={() => onSelectCategory('all')}
+              onClick={() => {
+                if (onViewAll) {
+                  onViewAll();
+                } else {
+                  onSelectCategory('all');
+                }
+              }}
               className="w-full text-center text-xs font-bold text-[#F85606] hover:text-[#e04e05] py-1 transition block cursor-pointer"
             >
               {language === 'ne' ? 'सबै सामानहरू हेर्नुहोस् →' : 'View All Products →'}

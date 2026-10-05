@@ -1612,7 +1612,8 @@ app.get('/api/products', (req, res) => {
     if (sort === 'price-high') orderBy = 'ORDER BY price DESC';
 
     const pageNum = parseInt(page) || 1;
-    const limitNum = Math.min(200, Math.max(1, parseInt(limit) || 40));
+    const requestedLimit = limit === 'all' ? 1000 : (parseInt(limit) || 200);
+    const limitNum = Math.min(1000, Math.max(1, requestedLimit));
     const offset = (pageNum - 1) * limitNum;
 
     const query = `SELECT data_json FROM products ${baseWhere} ${orderBy} LIMIT ? OFFSET ?`;
