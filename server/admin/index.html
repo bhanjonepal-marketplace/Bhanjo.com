@@ -614,6 +614,32 @@
 
 
   <!-- ========================================== -->
+  <!-- MODAL: 30-MINUTE IDLE WARNING -->
+  <!-- ========================================== -->
+  <div id="idle-warning-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-card max-w-sm w-full rounded-2xl border border-amber-500/50 p-6 text-center space-y-4 shadow-2xl">
+      <div class="w-12 h-12 bg-amber-500/20 text-amber-400 rounded-full mx-auto flex items-center justify-center border border-amber-500/40">
+        <i data-lucide="clock" class="w-6 h-6 animate-pulse"></i>
+      </div>
+      <div>
+        <h3 class="text-base font-bold text-white">Inactivity Security Warning</h3>
+        <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+          You have been idle for almost 30 minutes. To protect your store data, your session will automatically lock in <strong id="idle-countdown-sec" class="text-amber-400 font-mono">120</strong> seconds.
+        </p>
+      </div>
+      <div class="pt-2 flex flex-col gap-2">
+        <button onclick="resetIdleTimer()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-2.5 rounded-xl text-xs shadow-lg transition cursor-pointer">
+          I'm Still Here (Stay Logged In)
+        </button>
+        <button onclick="handleLogout('🔒 Logged out manually.')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs py-2 rounded-xl transition cursor-pointer">
+          Lock & Logout Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
   <!-- JAVASCRIPT LOGIC -->
   <!-- ========================================== -->
   <script>
@@ -627,6 +653,86 @@
     let sellersData = [];
     let inquiriesData = [];
 
+    // ==========================================
+    // 30-MINUTE INACTIVITY IDLE SECURITY SHIELD
+    // ==========================================
+    const IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+    const IDLE_WARNING_MS = 28 * 60 * 1000; // 28 minutes (2-minute warning)
+    let idleTimer = null;
+    let idleWarningTimer = null;
+    let warningCountdownInterval = null;
+
+    function resetIdleTimer() {
+      if (!authToken) return;
+
+      localStorage.setItem('bhanjo_admin_last_active', Date.now().toString());
+
+      clearTimeout(idleTimer);
+      clearTimeout(idleWarningTimer);
+      clearInterval(warningCountdownInterval);
+      hideIdleWarningModal();
+
+      // Show warning at 28 minutes
+      idleWarningTimer = setTimeout(() => {
+        showIdleWarningModal();
+      }, IDLE_WARNING_MS);
+
+      // Auto logout at 30 minutes
+      idleTimer = setTimeout(() => {
+        handleIdleTimeout();
+      }, IDLE_TIMEOUT_MS);
+    }
+
+    function showIdleWarningModal() {
+      const modal = document.getElementById('idle-warning-modal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+
+      let secondsLeft = 120;
+      const countEl = document.getElementById('idle-countdown-sec');
+      clearInterval(warningCountdownInterval);
+      warningCountdownInterval = setInterval(() => {
+        secondsLeft -= 1;
+        if (countEl) countEl.innerText = secondsLeft;
+        if (secondsLeft <= 0) {
+          clearInterval(warningCountdownInterval);
+        }
+      }, 1000);
+    }
+
+    function hideIdleWarningModal() {
+      const modal = document.getElementById('idle-warning-modal');
+      if (modal) modal.classList.add('hidden');
+      clearInterval(warningCountdownInterval);
+    }
+
+    function handleIdleTimeout() {
+      hideIdleWarningModal();
+      handleLogout('🔒 Inactivity Security Shield: Session auto-locked after 30 minutes of idle inactivity. Please verify your credentials to continue.');
+    }
+
+    function checkIdleOnLoad() {
+      const lastActiveStr = localStorage.getItem('bhanjo_admin_last_active');
+      if (lastActiveStr) {
+        const elapsed = Date.now() - parseInt(lastActiveStr, 10);
+        if (elapsed > IDLE_TIMEOUT_MS) {
+          handleLogout('🔒 Session Expired: More than 30 minutes passed since your last activity.');
+          return false;
+        }
+      }
+      return true;
+    }
+
+    // User activity listeners: mouse, keyboard, touch, scroll
+    ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'].forEach(evt => {
+      window.addEventListener(evt, () => {
+        if (authToken && !document.getElementById('dashboard-container').classList.contains('hidden')) {
+          resetIdleTimer();
+        }
+      }, { passive: true });
+    });
+
     // Initialize Lucide icons
     lucide.createIcons();
 
@@ -634,6 +740,7 @@
     window.addEventListener('DOMContentLoaded', async () => {
       calculateMargin();
       if (authToken) {
+        if (!checkIdleOnLoad()) return;
         const isValid = await verifyTokenSession();
         if (isValid) {
           showDashboard();
@@ -674,6 +781,7 @@
         document.getElementById('admin-email').innerText = currentAdminUser.email || '';
       }
       lucide.createIcons();
+      resetIdleTimer();
       loadAllDashboardData();
     }
 
@@ -790,12 +898,25 @@
       }, 1000);
     }
 
-    function handleLogout() {
+    function handleLogout(reason) {
+      clearTimeout(idleTimer);
+      clearTimeout(idleWarningTimer);
+      clearInterval(warningCountdownInterval);
+      hideIdleWarningModal();
       localStorage.removeItem('bhanjo_admin_token');
+      localStorage.removeItem('bhanjo_admin_last_active');
       document.cookie = 'bhanjo_admin_token=; path=/; max-age=0;';
       authToken = '';
       currentAdminUser = null;
       showLogin();
+
+      if (reason) {
+        const alertBox = document.getElementById('login-alert');
+        if (alertBox) {
+          alertBox.innerText = reason;
+          alertBox.className = 'mb-4 p-3 rounded-xl text-xs font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-300 block';
+        }
+      }
     }
 
     // Tab Switching
