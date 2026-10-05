@@ -1968,8 +1968,8 @@ app.post('/api/1688/distributor/start-import', async (req, res) => {
         try {
           currentJob.currentItem = prod.title || `Item #${i + 1}`;
           
-          const safeId = prod.id || `1688-${prod.offerId || Date.now()}-${i}`;
-          const safeTitle = prod.title || '1688 Factory Direct Product';
+          const safeId = prod.id || `direct-${prod.offerId || Date.now()}-${i}`;
+          const safeTitle = prod.title || 'Global Direct Quality Product';
           const safeCat = categoryId || prod.categoryId || 'luggage-bags-cases';
           const safePrice = parseFloat(prod.samplePrice) || parseFloat(prod.price) || 15.0;
 
@@ -2092,7 +2092,7 @@ app.post('/api/alibaba/import', async (req, res) => {
     if (customTitle && String(customTitle).trim()) {
       parsed.title = String(customTitle).trim();
     }
-    const safeTitle = (parsed.title && String(parsed.title).trim()) || '1688 Factory Direct Product';
+    const safeTitle = (parsed.title && String(parsed.title).trim()) || 'Global Direct Quality Product';
     parsed.title = safeTitle;
 
     // 3. Sanitize Category

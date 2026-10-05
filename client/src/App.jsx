@@ -618,7 +618,7 @@ export function App() {
                         : `Showing similar ${visualSearch.detectedCategory || 'products'} matching your photo`}
                     </h3>
                     <p className="text-xs text-orange-100/90 mt-0.5">
-                      Color Detected: <strong>{visualSearch.detectedColor}</strong> • Found <strong>{visualSearch.matchedProducts?.length || 0}</strong> products from Bhanjo & 1688 Direct
+                      Color Detected: <strong>{visualSearch.detectedColor}</strong> • Found <strong>{visualSearch.matchedProducts?.length || 0}</strong> products from Bhanjo Global Direct
                     </p>
                   </div>
                 </div>

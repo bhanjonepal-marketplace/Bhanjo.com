@@ -204,18 +204,6 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
             {product.supplierCountry}
           </span>
         </div>
-
-        {/* Admin-Only Distributor Intel Chip (Strictly Hidden from Public) */}
-        {isAdmin && (product.distributorShopId || product.distributorName || product.is1688Import) && (
-          <div className="mt-1.5 pt-1 border-t border-purple-100 flex items-center justify-between text-[9px] font-mono text-purple-800 bg-purple-50/90 px-1.5 py-0.5 rounded border border-purple-200">
-            <span className="truncate max-w-[110px] font-bold" title={product.distributorName || '1688 Factory'}>
-              🏭 {product.distributorShopId || (product.distributorName ? product.distributorName.slice(0, 14) : '1688 Factory')}
-            </span>
-            {(product.priceRMB || product.original1688PriceRMB) && (
-              <span className="text-amber-700 font-black ml-1">¥{product.priceRMB || product.original1688PriceRMB}</span>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );

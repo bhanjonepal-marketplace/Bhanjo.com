@@ -307,8 +307,8 @@ export const ImageSearchModal = ({
               </div>
               <p className="text-xs text-slate-500">
                 {language === 'ne' 
-                  ? 'तस्बिर अपलोड गर्नुहोस् र भान्जो क्याटलग वा १६८८ फ्याक्ट्रीबाट समान सामानहरू तुरुन्तै पत्ता लगाउनुहोस्'
-                  : 'Upload any photo to find exact or visually similar items across Bhanjo & 1688 Factory Direct'}
+                  ? 'तस्बिर अपलोड गर्नुहोस् र भान्जो क्याटलगबाट समान सामानहरू तुरुन्तै पत्ता लगाउनुहोस्'
+                  : 'Upload any photo to find exact or visually similar items across Bhanjo Global Catalog'}
               </p>
             </div>
           </div>
@@ -382,7 +382,7 @@ export const ImageSearchModal = ({
                     type="url"
                     value={imageUrlInput}
                     onChange={(e) => setImageUrlInput(e.target.value)}
-                    placeholder="Or paste an image web URL (e.g. from 1688, Taobao, Alibaba)..."
+                    placeholder="Or paste an image web URL..."
                     className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#F85606]"
                   />
                   <button
@@ -542,7 +542,7 @@ export const ImageSearchModal = ({
                       </div>
 
                       <div className="text-xs text-slate-400 pt-1">
-                        Found <strong className="text-white">{matchedResults.length} visually matching products</strong> in the Bhanjo database and 1688 manufacturer lines.
+                        Found <strong className="text-white">{matchedResults.length} visually matching products</strong> in the Bhanjo catalog.
                       </div>
                     </div>
                   ) : null}
@@ -583,9 +583,9 @@ export const ImageSearchModal = ({
                           </div>
 
                           {/* Origin Badge */}
-                          {product.is1688Import && (
+                          {(product.is1688Import || product.isAlibabaImport) && (
                             <div className="absolute top-2 right-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded">
-                              1688 Factory
+                              Global Direct
                             </div>
                           )}
                         </div>
@@ -613,11 +613,6 @@ export const ImageSearchModal = ({
                               <span className="text-sm font-black text-[#F85606]">
                                 {formatPrice(product.samplePrice || product.price || product.priceNPR || 999)}
                               </span>
-                              {product.original1688PriceRMB && (
-                                <span className="text-[10px] text-slate-400 font-mono">
-                                  ¥{product.original1688PriceRMB}
-                                </span>
-                              )}
                             </div>
 
                             {/* Action Buttons */}

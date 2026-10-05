@@ -577,10 +577,9 @@ export async function parseAlibabaUrl(url, markupPercent = 200, requestedCategor
   let ladderPrices = null;
 
   const extractedSpecs = {
-    'Source Platform': 'Alibaba.com Factory Direct',
     'Customs Clearance': 'Handled to Kathmandu Hub (DDP Terms Included)',
-    'Quality Standard': 'CE / ISO 9001 Audited Factory Direct',
-    'Trade Assurance': '100% Payment Escrow Protection & On-Time Dispatch'
+    'Quality Standard': 'CE / ISO 9001 Audited Export Standard',
+    'Buyer Protection': 'Bhanjo Safe Delivery & 100% Quality Guarantee'
   };
 
   if (fetchedOk && rawHtml) {
@@ -784,25 +783,14 @@ export async function parseAlibabaUrl(url, markupPercent = 200, requestedCategor
 
   // 5. Generate Full Formatted Product Description
   const specLines = Object.entries(extractedSpecs)
-    .filter(([k]) => !['Source Platform', 'Customs Clearance'].includes(k))
+    .filter(([k]) => !['Source Platform', 'Customs Clearance', 'Original Factory Price'].includes(k))
     .map(([k, v]) => `• ${k}: ${v}`)
     .join('\n');
 
-  const fullDescription = `Official Alibaba Verified Factory Direct SKU: ${extractedTitle}
+  const fullDescription = `Bhanjo Global Direct Quality SKU: ${extractedTitle}
 
 OVERVIEW & SPECIFICATIONS:
-${specLines || '• 100% Factory Direct Quality Inspected\n• International Export Grade Standard'}
-
-MANUFACTURING & SUPPLIER DETAILS:
-• Verified Manufacturer: ${extractedSupplier} (${extractedSupplierYears} Yrs Gold Audited Supplier)
-• Factory Origin: Zhejiang / Guangdong Industrial Sourcing Cluster, China
-• Rating & Assurance: ★ ${extractedSupplierRating} (${extractedSupplierReviews} Verified Reviews)
-• Escrow Protection: Alibaba Trade Assurance Guaranteed with 100% Refund Coverage
-
-CUSTOMIZATION & OEM/ODM SERVICES:
-• Custom Logo Branding & Screen/Heat-Transfer Printing
-• Custom Retail Packaging & Private Label Barcoding
-• Color, Sizing & Technical Specification Customization Available
+${specLines || '• 100% Export Grade Quality Inspected\n• International Standard'}
 
 LOGISTICS & DELIVERY TO NEPAL:
 • Complete DDP (Delivered Duty Paid) Door-to-Door Delivery directly to Kathmandu Hub & all Nepal Provinces
@@ -1798,12 +1786,12 @@ export async function parse1688Url(url, markupPercent = 200, requestedCategoryId
       extractedTitle = matchedPreset.title;
     }
   } else {
-    extractedTitle = `1688 Verified Factory Direct SKU #${offerId || '7128'}`;
+    extractedTitle = `Global Direct Quality SKU #${offerId || '7128'}`;
   }
 
   // Ensure title is never empty
   if (!extractedTitle || extractedTitle.trim().length < 5) {
-    extractedTitle = matchedPreset ? matchedPreset.title : `1688 Factory Direct Wholesale SKU #${offerId || '7128'}`;
+    extractedTitle = matchedPreset ? matchedPreset.title : `Global Direct Quality SKU #${offerId || '7128'}`;
   }
 
   // 7. Factory Price Resolution in RMB
@@ -1869,30 +1857,22 @@ export async function parse1688Url(url, markupPercent = 200, requestedCategoryId
   ];
 
   const extractedSpecs = {
-    'Source Platform': '1688.com China Factory Direct (阿里巴巴中国内贸批发)',
-    'Original Factory Price': `¥${extractedPriceRMB.toFixed(2)} RMB (~$${baseCostUSD} USD)`,
     'Minimum Order Quantity': `${extractedMoq} ${extractedUnit}`,
     'Customs Clearance': 'Handled to Kathmandu Hub (DDP Door-to-Door Terms)',
-    'Quality Standard': 'China GB/T Audited Factory Direct Standard',
-    'Escrow Protection': '1688 Trade Escrow Guaranteed',
+    'Quality Standard': 'International Export Grade Audited Standard',
+    'Escrow Protection': 'Bhanjo Safe Delivery & 100% Quality Guarantee',
     ...(matchedPreset?.specs || {})
   };
 
   const specLines = Object.entries(extractedSpecs)
-    .filter(([k]) => !['Source Platform', 'Customs Clearance'].includes(k))
+    .filter(([k]) => !['Source Platform', 'Original Factory Price', 'Customs Clearance'].includes(k))
     .map(([k, v]) => `• ${k}: ${v}`)
     .join('\n');
 
-  const fullDescription = `Official 1688.com Factory Direct SKU: ${extractedTitle}
+  const fullDescription = `Bhanjo Global Direct Quality SKU: ${extractedTitle}
 
 OVERVIEW & SPECIFICATIONS:
 ${specLines}
-
-FACTORY & SOURCING DETAILS:
-• Verified Direct Manufacturer: ${extractedSupplier} (${extractedSupplierYears} Yrs 1688 Verified)
-• Industrial Cluster: Yiwu / Shenzhen / Dongguan / Guangzhou, China
-• Factory Base Price: ¥${extractedPriceRMB.toFixed(2)} RMB (Wholesale Tier Available)
-• Escrow Protection: 1688 Buyer Protection Guaranteed with 100% Quality Inspection
 
 LOGISTICS & DELIVERY TO NEPAL:
 • Complete DDP (Delivered Duty Paid) Door-to-Door Direct to Kathmandu Hub & all Nepal Provinces
@@ -1903,10 +1883,10 @@ LOGISTICS & DELIVERY TO NEPAL:
     id: productId,
     title: extractedTitle,
     nepaliTitle: extractedTitle,
-    chineseTitle: rawChineseTitle || null,
+    chineseTitle: null,
     categoryId: matchedCategory.id,
     categoryName: matchedCategory.name,
-    supplierName: extractedSupplier,
+    supplierName: 'Bhanjo Global Partner',
     supplierCountry: 'China',
     supplierFlag: '🇨🇳',
     verifiedYear: extractedSupplierYears,
@@ -1930,15 +1910,15 @@ LOGISTICS & DELIVERY TO NEPAL:
     specs: {
       ...extractedSpecs,
       'Category': matchedCategory.name,
-      'Factory Origin': 'Verified Industrial Cluster, China',
+      'Origin': 'International Direct Import',
       'Lead Time': `${extractedLeadTime} to Kathmandu`
     },
     description: fullDescription,
     isAlibabaImport: true, // Show in Global Sourcing
     is1688Import: true,    // Highlight 1688 origin
-    platform: '1688',
+    platform: 'Global Direct',
     alibabaSourceUrl: cleanUrl.startsWith('http') ? cleanUrl : `https://${cleanUrl}`,
-    source: '1688.com Factory Direct'
+    source: 'Bhanjo Global Direct'
   };
 }
 

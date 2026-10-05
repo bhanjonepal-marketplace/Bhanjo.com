@@ -37,7 +37,7 @@ export const DarazChannels = ({
       id: "global",
       title: "Bhanjo Global",
       subtitle: "Direct Factory Import",
-      badge: "1688 / Direct",
+      badge: "Global Direct",
       icon: Globe,
       cardStyle: "bg-gradient-to-br from-blue-50/80 via-white to-sky-50/50 border border-blue-200/80 hover:border-blue-400 hover:shadow-md",
       iconBg: "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-sm",

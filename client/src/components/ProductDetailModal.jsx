@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   X, Star, MessageSquare, ShoppingCart, Truck, 
   RotateCcw, CheckCircle2, MapPin, Zap, ShieldCheck, 
@@ -9,6 +9,113 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { SUPPLIERS } from '../data/suppliers';
 import confetti from 'canvas-confetti';
+
+export const cleanProductDescription = (desc, productTitle) => {
+  if (!desc || typeof desc !== 'string') {
+    return `Bhanjo Global Direct Quality Collection: ${productTitle || 'Premium Imported Product'}
+
+OVERVIEW & SPECIFICATIONS:
+• Quality Standard: Audited Premium Quality Standard
+• Buyer Protection: Bhanjo 100% Safe Delivery & Quality Guarantee
+
+LOGISTICS & DELIVERY TO NEPAL:
+• Complete DDP (Delivered Duty Paid) Door-to-Door Delivery directly to Kathmandu Hub & all Nepal Provinces
+• Customs Clearance, Import Tariffs, and Cross-Border Transit Fully Coordinated
+• Estimated Courier Lead Time: 6-10 Days Express Delivery`;
+  }
+
+  let lines = desc.split('\n');
+  let inForbiddenSection = false;
+  let newLines = [];
+
+  for (let line of lines) {
+    const trimmed = line.trim();
+
+    // Check section headers to omit
+    if (/(FACTORY\s*&\s*SOURCING\s*DETAILS|MANUFACTURING\s*&\s*SUPPLIER\s*DETAILS)/i.test(trimmed)) {
+      inForbiddenSection = true;
+      continue;
+    }
+    if (/^(OVERVIEW\s*&\s*SPECIFICATIONS|LOGISTICS\s*&\s*DELIVERY|CUSTOMIZATION)/i.test(trimmed)) {
+      inForbiddenSection = false;
+    }
+
+    if (inForbiddenSection) continue;
+
+    // Strict omit: any mention of 1688, distributor, manufacturer, supplier names, factory RMB prices, wholesale margin
+    if (/\b1688\b/i.test(line)) continue;
+    if (/(distributor|manufactur|supplier|factory direct sku|verified direct|audited supplier|super factory)/i.test(line)) continue;
+    if (/([¥￥]|RMB|Factory Base Price|Original Factory Price|Direct Sourcing Margin|Wholesale Tier Discounts)/i.test(line)) continue;
+    if (/[\u4e00-\u9fa5]/.test(line)) continue;
+    if (/(个体工商户|工作室|阿里巴巴|源头工厂|箱包厂|制造厂)/.test(line)) continue;
+
+    // Clean up wording
+    line = line.replace(/### Factory Direct/gi, '### Bhanjo Global Direct');
+    line = line.replace(/Official (1688\.com|Global Direct\.com) Factory Direct SKU:/gi, 'Bhanjo Global Direct Quality SKU:');
+    line = line.replace(/1688 Trade Escrow Guaranteed/gi, 'Bhanjo 100% Safe Delivery & Quality Guarantee');
+    line = line.replace(/1688 Buyer Protection Guaranteed/gi, 'Bhanjo 100% Quality & Buyer Protection Guarantee');
+    line = line.replace(/Guaranteed factory direct/gi, 'Guaranteed premium export');
+    line = line.replace(/\(Global Direct Factory Direct\)/gi, '');
+    line = line.replace(/\(Factory SKU #\d+\)/gi, '');
+    line = line.replace(/\s*\([\u4e00-\u9fa5\s/,-]+\)/g, '');
+    line = line.replace(/[\u4e00-\u9fa5]+/g, '').trim();
+
+    if (line.trim()) {
+      newLines.push(line);
+    }
+  }
+
+  let cleaned = newLines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  if (!cleaned || cleaned.length < 25) {
+    cleaned = `### Bhanjo Global Direct: ${productTitle || 'Premium Imported Product'}
+
+OVERVIEW & SPECIFICATIONS:
+• Quality Standard: Audited Premium Export Standard
+• Buyer Protection: Bhanjo 100% Safe Delivery & Quality Guarantee
+• Door-to-Door Delivery: Handled directly to Kathmandu Hub & all Nepal Provinces
+• Estimated Courier Lead Time: 6-10 Days Express Delivery`;
+  }
+  return cleaned;
+};
+
+export const cleanProductSpecs = (specs) => {
+  if (!specs || typeof specs !== 'object') return {};
+  const cleaned = {};
+  const forbiddenKeyRegex = /(1688|source platform|factory price|base price|manufacturer|manufactur|distributor|supplier|store link|factory verification|production hub|wholesale moq)/i;
+
+  for (let [k, v] of Object.entries(specs)) {
+    if (forbiddenKeyRegex.test(k)) continue;
+
+    // Rename Factory SKU to SKU Code
+    if (/Factory SKU/i.test(k)) {
+      k = 'SKU Code';
+    }
+
+    if (typeof v === 'string') {
+      if (/\b1688\b/i.test(v)) continue;
+      if (/([¥￥]|RMB)/.test(v)) continue;
+      if (/(distributor|manufactur|super factory|个体工商户|工作室|阿里巴巴|源头工厂)/i.test(v)) continue;
+
+      let cleanVal = v
+        .replace(/\s*\([\u4e00-\u9fa5\s/,-]+\)/g, '')
+        .replace(/[\u4e00-\u9fa5]+/g, '')
+        .trim();
+      
+      if (!cleanVal) continue;
+
+      if (/escrow protection/i.test(k)) {
+        cleanVal = 'Bhanjo 100% Safe Delivery & Quality Guarantee';
+      }
+      if (/quality standard/i.test(k) && /1688/i.test(cleanVal)) {
+        cleanVal = 'Audited Export Standard (CE / GB/T / ISO)';
+      }
+      cleaned[k] = cleanVal;
+    } else {
+      cleaned[k] = v;
+    }
+  }
+  return cleaned;
+};
 
 export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, onRequireAuth, onDeleteProduct, onEditProduct }) => {
   const { formatPrice, formatNPR, formatJPY } = useCurrency();
@@ -39,6 +146,14 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
 
   const retailPrice = currentPriceUSD;
   const originalPrice = currentPriceUSD * 1.4;
+
+  const sanitizedDescription = useMemo(() => {
+    return cleanProductDescription(product?.description, product?.title);
+  }, [product?.description, product?.title]);
+
+  const sanitizedSpecs = useMemo(() => {
+    return cleanProductSpecs(product?.specs);
+  }, [product?.specs]);
 
   const handleSaveInlinePrice = async () => {
     const finalUSD = parseFloat(inlinePriceUSD);
@@ -339,7 +454,7 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
 
                 {product.isAlibabaImport && (
                   <span className="absolute top-2 left-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow-xs z-10 flex items-center gap-1">
-                    <span>{product.is1688Import ? '🇨🇳 1688 Factory Direct' : '🇨🇳 Alibaba Factory Direct'}</span>
+                    <span>✈️ Bhanjo Global Direct</span>
                   </span>
                 )}
 
@@ -361,7 +476,7 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
                   className={`w-14 h-14 rounded-lg overflow-hidden border-2 flex-shrink-0 transition bg-slate-950 flex flex-col items-center justify-center relative ${
                     showVideo ? 'border-[#F85606] ring-2 ring-orange-400' : 'border-slate-300 opacity-80 hover:opacity-100'
                   }`}
-                  title="Play 1688 Showcase Video"
+                  title="Play Product Showcase Video"
                 >
                   <div className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-[9px] font-bold shadow-xs">
                     ▶
@@ -418,14 +533,7 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
                 <span>•</span>
                 <span className="text-slate-600">{product.reviewsCount + reviews.length} Ratings</span>
                 <span>•</span>
-                {isAdmin ? (
-                  <span className="text-purple-700 bg-purple-50 px-2 py-0.5 rounded font-bold border border-purple-200 text-[10px] flex items-center gap-1" title={product.distributorName || '1688 Manufacturer'}>
-                    <span>🏭</span>
-                    <span className="truncate max-w-[140px]">{product.distributorShopId || product.distributorName || supplier.name.slice(0, 22)}</span>
-                  </span>
-                ) : (
-                  <span className="text-[#F85606] font-semibold">Bhanjo.com Official Store</span>
-                )}
+                <span className="text-[#F85606] font-semibold">Bhanjo.com Official Store</span>
               </div>
 
               {/* Pricing Box with Inline Price Editing & Multi-Currency */}
@@ -776,105 +884,20 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
           <h3 className="font-bold text-xs text-slate-900 uppercase tracking-wider mb-2">
             Product Details & Specifications
           </h3>
-          <p className="text-xs text-slate-600 mb-3">{product.description}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            {Object.entries(product.specs || {}).map(([k, v], idx) => (
-              <div key={idx} className="flex border-b border-slate-100 py-1.5">
-                <span className="w-44 text-slate-500 font-medium flex-shrink-0">{k}:</span>
-                <span className="text-slate-800 font-semibold">{v}</span>
-              </div>
-            ))}
+          <div className="text-xs text-slate-600 mb-4 whitespace-pre-line leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
+            {sanitizedDescription}
           </div>
+          {Object.keys(sanitizedSpecs).length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              {Object.entries(sanitizedSpecs).map(([k, v], idx) => (
+                <div key={idx} className="flex border-b border-slate-100 py-1.5">
+                  <span className="w-44 text-slate-500 font-medium flex-shrink-0">{k}:</span>
+                  <span className="text-slate-800 font-semibold">{v}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-
-        {/* ADMIN-ONLY 1688 DISTRIBUTOR & FACTORY INTELLIGENCE (Strictly hidden from public customers) */}
-        {isAdmin && (product.is1688Import || product.distributorName || product.distributorUrl || product.alibabaSourceUrl) && (
-          <div className="mx-5 mb-5 p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 border-2 border-purple-500/50 text-white shadow-xl">
-            <div className="flex items-center justify-between gap-3 flex-wrap border-b border-purple-800/60 pb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-purple-600 flex items-center justify-center text-sm font-bold shadow-xs">
-                  🏭
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-black text-xs text-white">🔒 Admin Sourcing Intel: 1688 Distributor</span>
-                    <span className="bg-purple-500/30 text-purple-200 border border-purple-400/40 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">
-                      Admin Confidential • Hidden from Public
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-purple-200/80 mt-0.5">
-                    Internal manufacturer sourcing data visible only to Master Admin credentials.
-                  </p>
-                </div>
-              </div>
-
-              {/* Direct 1688 Links */}
-              <div className="flex items-center gap-2">
-                {product.alibabaSourceUrl && (
-                  <a
-                    href={product.alibabaSourceUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl transition shadow-xs"
-                  >
-                    <span>Open 1688 Product ↗</span>
-                  </a>
-                )}
-                {(product.distributorUrl || product.specs?.['1688 Store Link']) && (
-                  <a
-                    href={product.distributorUrl || product.specs?.['1688 Store Link']}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl transition shadow-xs"
-                  >
-                    <span>Open Distributor Store ↗</span>
-                  </a>
-                )}
-              </div>
-            </div>
-
-            {/* Intel Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 text-xs">
-              <div className="bg-white/5 border border-white/10 p-2.5 rounded-xl">
-                <span className="text-[10px] text-purple-300 font-semibold block uppercase">1688 Manufacturer:</span>
-                <span className="font-extrabold text-white text-xs mt-0.5 block truncate" title={product.distributorName || product.supplier}>
-                  {product.distributorName || product.supplier || product.supplierName || '1688 Direct Factory'}
-                </span>
-                {product.distributorShopId && (
-                  <span className="text-[10px] text-purple-300 font-mono block mt-0.5">Shop ID: {product.distributorShopId}</span>
-                )}
-              </div>
-
-              <div className="bg-white/5 border border-white/10 p-2.5 rounded-xl">
-                <span className="text-[10px] text-purple-300 font-semibold block uppercase">Factory Cost (RMB):</span>
-                <span className="font-extrabold text-amber-400 text-sm mt-0.5 block">
-                  ¥{product.priceRMB || product.original1688PriceRMB || Math.round((currentPriceUSD / 3.0) * 7.2 * 10) / 10} RMB
-                </span>
-                <span className="text-[10px] text-slate-400">
-                  ~Rs. {Math.round(((product.priceRMB || (currentPriceUSD / 3.0) * 7.2) / 7.2) * 133.5).toLocaleString()} Base Cost
-                </span>
-              </div>
-
-              <div className="bg-white/5 border border-white/10 p-2.5 rounded-xl">
-                <span className="text-[10px] text-purple-300 font-semibold block uppercase">Bhanjo Retail Price (3.0x):</span>
-                <span className="font-extrabold text-emerald-400 text-sm mt-0.5 block">
-                  {formatNPR(currentPriceUSD)}
-                </span>
-                <span className="text-[10px] text-emerald-300 font-bold">
-                  200% Profit Margin (~Rs. {Math.round(currentPriceUSD * 133.5 * 0.66).toLocaleString()})
-                </span>
-              </div>
-
-              <div className="bg-white/5 border border-white/10 p-2.5 rounded-xl">
-                <span className="text-[10px] text-purple-300 font-semibold block uppercase">Factory Origin / Hub:</span>
-                <span className="font-semibold text-white text-xs mt-0.5 block truncate" title={product.supplierLocation || product.distributorLocation}>
-                  {product.distributorLocation || product.supplierLocation || product.specs?.['Factory Origin'] || 'China Luggage & Bag Hub'}
-                </span>
-                <span className="text-[10px] text-purple-300">Transit: 7-12 Days to Ktm</span>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Customer Reviews & Feedback Section */}
         <div className="px-5 pb-6 border-t border-slate-200 pt-4 bg-slate-50/50">

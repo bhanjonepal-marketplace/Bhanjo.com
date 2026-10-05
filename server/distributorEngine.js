@@ -566,40 +566,28 @@ export async function scan1688DistributorStore(storeUrl, maxCount = 100, keyword
 
     // Detailed Specifications
     const productSpecs = {
-      'Main Material': fabric.en + ' (' + fabric.zh + ')',
+      'Main Material': fabric.en,
       'Material Tech': fabric.detail,
-      'Bag Style': arch.en + ' (' + arch.zh + ')',
-      'Factory SKU': skuCode,
+      'Bag Style': arch.en,
+      'SKU Code': skuCode,
       'Dimensions': arch.cat === 'tote' ? '36 cm (L) × 12 cm (W) × 30 cm (H)' : (arch.cat === 'backpack' ? '28 cm (L) × 14 cm (W) × 36 cm (H)' : '24 cm (L) × 8 cm (W) × 15 cm (H)'),
-      'Closure Type': arch.cat === 'bucket' ? 'Drawstring & Magnetic Hasp' : 'Smooth Electroplated Metal Zipper (拉链)',
-      'Lining Material': 'Reinforced Anti-Tear Polyester 210D (涤纶)',
-      'Hardness': 'Supple Touch with Structural Hold (软定型)',
+      'Closure Type': arch.cat === 'bucket' ? 'Drawstring & Magnetic Hasp' : 'Smooth Electroplated Metal Zipper',
+      'Lining Material': 'Reinforced Anti-Tear Polyester 210D',
+      'Hardness': 'Supple Touch with Structural Hold',
       'Hardware': 'Light Gold Vacuum-Electroplated Anti-Oxidation Alloy',
-      'Colorway': `${color.en} (${color.zh})`,
-      'Wholesale MOQ': '2 Pieces Minimum Order',
-      'Factory Verification': 'Alibaba 1688 Super Factory Verified (100% Direct)',
-      'Production Hub': storeInfo.location
+      'Colorway': color.en,
+      'Quality Standard': 'International Export Grade Audited Standard'
     };
 
     finalProducts.push({
-      id: `1688-${offerId}`,
+      id: `prod-direct-${offerId}`,
       offerId,
       skuCode,
       url: productUrl,
       title: enTitle,
-      titleZh: zhTitle,
       categoryId: categoryObj.id,
       categoryName: categoryObj.name,
-      supplier: storeInfo.storeNameEn,
-      supplierZh: storeInfo.storeNameZh,
-      supplierLocation: storeInfo.location,
-      distributorName: storeInfo.storeNameEn,
-      distributorNameZh: storeInfo.storeNameZh,
-      distributorShopId: storeInfo.shopId,
-      distributorUrl: storeInfo.rawUrl,
-      distributorLocation: storeInfo.location,
-      original1688PriceRMB: baseCost,
-      priceRMB: baseCost,
+      supplier: 'Bhanjo Global Direct',
       samplePrice: samplePriceUSD,
       price: samplePriceUSD,
       priceNPR: priceNPR,
@@ -613,7 +601,7 @@ export async function scan1688DistributorStore(storeUrl, maxCount = 100, keyword
       salesCount: (300 + ((i * 47) % 18000)) + '+ sold',
       rating: 4.9,
       reviewsCount: 120 + (i % 80),
-      leadTime: '7-12 Days (Factory to Kathmandu Air Express)',
+      leadTime: '7-12 Days (Air Express to Kathmandu)',
       skuColors: swatchColors,
       activeColor: color.en,
       bagCategory: arch.cat,
@@ -623,12 +611,17 @@ export async function scan1688DistributorStore(storeUrl, maxCount = 100, keyword
         { minQty: tier3Min, maxQty: null, price: Math.round(samplePriceUSD * 0.76 * 100) / 100, priceNPR: tier3PriceNPR }
       ],
       specs: productSpecs,
-      description: `### Factory Direct ${enTitle}\n\nManufactured by **${storeInfo.storeNameZh} (${storeInfo.storeNameEn})** located in **${storeInfo.location}**.\n\n- **100% Genuine 1688 Wholesale Factory Cost**: ¥${baseCost} RMB base manufacturer price.\n- **Direct Sourcing Margin**: Bhanjo calibrated wholesale markup (Rs. ${priceNPR.toLocaleString()} NPR).\n- **Premium Material**: ${fabric.en} with ${fabric.detail}.\n- **Wholesale Tier Discounts**: 12% off for 50+ units, 24% off for 200+ units.\n- Guaranteed factory direct quality inspection before dispatch to Kathmandu.`,
+      description: `### Bhanjo Global Direct ${enTitle}
+
+- **Export Grade Material**: ${fabric.en} with ${fabric.detail}.
+- **International Standard**: Crafted with premium fittings, reinforced stitching, and precision hardware.
+- **Wholesale Tier Discounts**: Volume discounts available for orders over 50 units.
+- **Guaranteed Quality**: Comprehensive quality inspection conducted before dispatch to Kathmandu Hub with full door-to-door tracking.`,
       isAlibabaImport: true,
       is1688Import: true,
-      platform: '1688',
+      platform: 'Global Direct',
       alibabaSourceUrl: productUrl,
-      source: '1688.com Factory Direct'
+      source: 'Bhanjo Global Direct'
     });
   }
 

@@ -190,7 +190,7 @@ export const FlashSalePage = ({
                 <div className="flex items-center gap-2">
                   <span className="bg-yellow-400 text-red-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
                     <Flame className="w-3 h-3 fill-current text-red-600" />
-                    <span>Lazada & 1688 Direct Deals</span>
+                    <span>International Direct Deals</span>
                   </span>
                   <span className="text-[11px] text-white/80 hidden sm:inline">
                     🔥 570K+ Sold Across Nepal
