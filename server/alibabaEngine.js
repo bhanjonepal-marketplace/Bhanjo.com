@@ -1028,10 +1028,10 @@ export function translateChineseTitle(chineseTitle) {
 
   if (matchedTerms.length > 0) {
     const cleanMatches = [...new Set(matchedTerms)].slice(0, 5).join(' ');
-    return `${cleanMatches} (1688 Factory Direct)`;
+    return `${cleanMatches}`;
   }
 
-  return '1688 China Factory Direct SKU';
+  return 'Global Direct Imported SKU';
 }
 
 // 24 Curated 1688 Product Presets (covers all top wholesale sectors with authentic photography and pricing)
@@ -1041,7 +1041,7 @@ const FALLBACK_1688_COLLECTIONS = [
     offerIds: ['1060516634917'],
     keywords: ['underarm', 'bag', 'bags', 'handbag', 'crossbody', 'shoulder', 'tote', 'clutch', 'purse', '包', '女包', '双肩包', '腋下包', '斜挎包', '单肩包', '手提包', '包包'],
     categoryId: 'luggage-bags-cases',
-    title: 'New Commuter Solid Color Underarm Bag, Crossbody Bag (1688 Factory Direct)',
+    title: 'New Commuter Solid Color Underarm Bag, Crossbody Bag ',
     chineseTitle: '2025新款韩版纯色通勤女包单肩腋下包斜挎包',
     priceRMB: 10.60,
     videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-holding-a-stylish-leather-handbag-41315-large.mp4',
@@ -1054,7 +1054,7 @@ const FALLBACK_1688_COLLECTIONS = [
       'https://cbu01.alicdn.com/img/ibank/O1CN01D17lWz1L08aCC48kM_!!2216157661236-0-cib.jpg',
       'https://cbu01.alicdn.com/img/ibank/O1CN01aHjh7s1L08aC2M7qM_!!2216157661236-0-cib.jpg'
     ],
-    supplier: 'Gaobeidian Feile Bag Factory (6 Yrs 1688 Gold Supplier)',
+    supplier: 'Gaobeidian Feile Bag Factory (6 Yrs Verified Gold Manufacturer)',
     specs: {
       'Material': 'High-Grade Wear-Resistant Textured PU Leather',
       'Lining Texture': 'Polyester',
@@ -1073,7 +1073,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['backpack', 'travel backpack', 'laptop bag', 'school bag', 'rucksack', '背包', '双肩包', '书包'],
     categoryId: 'luggage-bags-cases',
-    title: '1688 Oxford Waterproof Multi-Compartment Travel & Laptop Backpack',
+    title: 'Oxford Waterproof Multi-Compartment Travel & Laptop Backpack',
     chineseTitle: '大容量防泼水商务电脑双肩包男士出差旅行背包',
     priceRMB: 34.0,
     images: [
@@ -1093,7 +1093,7 @@ const FALLBACK_1688_COLLECTIONS = [
     offerIds: ['782194821049'],
     keywords: ['hoodie', 'sweatshirt', 'fleece', 'pullover', 'apparel', 'clothing', 'streetwear', '卫衣', '外套', '连帽衫'],
     categoryId: 'apparel-accessories',
-    title: '1688 Heavyweight 480GSM Terry Fleece Oversized Streetwear Hoodie',
+    title: 'Heavyweight 480GSM Terry Fleece Oversized Streetwear Hoodie',
     chineseTitle: '2025美式复古480G重磅加绒连帽卫衣男女同款',
     priceRMB: 38.0,
     images: [
@@ -1102,7 +1102,7 @@ const FALLBACK_1688_COLLECTIONS = [
       'https://images.unsplash.com/photo-1523381294911-8d3cead13475?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80'
     ],
-    supplier: 'Guangdong Haoyu Garment Manufacturing Ltd. (1688 Verified)',
+    supplier: 'Guangdong Haoyu Garment Manufacturing Ltd. (Verified Manufacturer)',
     specs: {
       'Fabric Weight': '480 GSM Heavyweight Terry Fleece',
       'Material': '85% Combed Cotton, 15% Polyester',
@@ -1114,7 +1114,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['t-shirt', 'tshirt', 'tee', 'cotton t-shirt', 'short sleeve', 'T恤', '短袖', '纯棉'],
     categoryId: 'apparel-accessories',
-    title: '1688 260GSM 100% Combed Cotton Drop-Shoulder Plain T-Shirt',
+    title: '260GSM 100% Combed Cotton Drop-Shoulder Plain T-Shirt',
     chineseTitle: '260克重磅纯棉纯色圆领短袖T恤落肩打底衫',
     priceRMB: 12.5,
     images: [
@@ -1132,7 +1132,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['earbuds', 'headphone', 'audio', 'bluetooth', 'tws', 'electronics', 'headset', '耳机', '蓝牙', '蓝牙耳机'],
     categoryId: 'consumer-electronics',
-    title: '1688 Hi-Fi ANC Active Noise Cancelling TWS Bluetooth 5.4 Earbuds',
+    title: 'Hi-Fi ANC Active Noise Cancelling TWS Bluetooth 5.4 Earbuds',
     chineseTitle: '新款ANC主动降噪无线蓝牙5.4耳机双麦通话',
     priceRMB: 28.5,
     images: [
@@ -1140,7 +1140,7 @@ const FALLBACK_1688_COLLECTIONS = [
       'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=800&q=80',
       'https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?auto=format&fit=crop&w=800&q=80'
     ],
-    supplier: 'Shenzhen Shidai Acoustics Technology Co., Ltd. (1688 Gold Factory)',
+    supplier: 'Shenzhen Shidai Acoustics Technology Co., Ltd. (Gold Certified Factory)',
     specs: {
       'Bluetooth Version': 'V5.4 Dual Channel Ultra Low Latency 35ms',
       'Noise Cancellation': '-38dB Hybrid ANC + ENC Dual Mic Call Clarity',
@@ -1151,7 +1151,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['charger', 'gan charger', 'fast charger', 'power bank', 'usb cable', 'adapter', '充电器', '充电宝', '快充'],
     categoryId: 'consumer-electronics',
-    title: '1688 65W GaN III Fast Dual USB-C + USB-A Wall Charger',
+    title: '65W GaN III Fast Dual USB-C + USB-A Wall Charger',
     chineseTitle: '65W氮化镓快充三口折叠插脚手机笔记本充电器',
     priceRMB: 22.0,
     images: [
@@ -1169,7 +1169,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['watch', 'watches', 'chronograph', 'quartz watch', 'wristwatch', '手表', '机械表', '石英表'],
     categoryId: 'jewelry-eyewear-watches',
-    title: '1688 Luxury Waterproof Stainless Steel Chronograph Quartz Watch',
+    title: 'Luxury Waterproof Stainless Steel Chronograph Quartz Watch',
     chineseTitle: '全自动防水精钢多功能计时石英男士商务手表',
     priceRMB: 42.0,
     images: [
@@ -1187,7 +1187,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['sunglasses', 'eyewear', 'glasses', 'frames', 'shades', '墨镜', '太阳镜', '眼镜'],
     categoryId: 'jewelry-eyewear-watches',
-    title: '1688 Polarized UV400 Vintage Aviator Titanium Sunglasses',
+    title: 'Polarized UV400 Vintage Aviator Titanium Sunglasses',
     chineseTitle: '复古飞行员偏光防紫外线超轻钛合金太阳眼镜',
     priceRMB: 14.0,
     images: [
@@ -1206,7 +1206,7 @@ const FALLBACK_1688_COLLECTIONS = [
     offerIds: ['712883921920'],
     keywords: ['solar', 'light', 'led', 'lamp', 'outdoor', 'street light', 'floodlight', '灯', '太阳能', '太阳能灯', '路灯'],
     categoryId: 'lights-lighting',
-    title: '1688 High-Lumen Solar Outdoor Waterproof LED Flood Street Light',
+    title: 'High-Lumen Solar Outdoor Waterproof LED Flood Street Light',
     chineseTitle: '高亮太阳能路灯户外防水庭院家用新农村工程大功率',
     priceRMB: 48.0,
     images: [
@@ -1225,7 +1225,7 @@ const FALLBACK_1688_COLLECTIONS = [
     offerIds: ['829104821039'],
     keywords: ['shoe', 'shoes', 'sneakers', 'sneaker', 'running shoes', 'footwear', '鞋', '运动鞋', '跑步鞋', '休闲鞋'],
     categoryId: 'shoes-accessories',
-    title: '1688 Breathable Lightweight Air Cushion Athletic Running Sneakers',
+    title: 'Breathable Lightweight Air Cushion Athletic Running Sneakers',
     chineseTitle: '新款透气飞织气垫男士运动休闲跑步减震防滑运动鞋',
     priceRMB: 26.0,
     images: [
@@ -1244,7 +1244,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['slippers', 'slides', 'sandals', 'eva slippers', '拖鞋', '凉鞋', '一字拖'],
     categoryId: 'shoes-accessories',
-    title: '1688 Cloud Cushion Extra-Thick Sole Non-Slip EVA Slide Slippers',
+    title: 'Cloud Cushion Extra-Thick Sole Non-Slip EVA Slide Slippers',
     chineseTitle: '新款加厚底踩屎感情侣防滑软底浴室居家EVA拖鞋',
     priceRMB: 7.50,
     images: [
@@ -1262,7 +1262,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['air fryer', 'fryer', 'appliance', 'oven', '空气炸锅', '家电', '电烤箱'],
     categoryId: 'home-appliances',
-    title: '1688 8L Touchscreen Visual Air Fryer & Multi-Function Roaster',
+    title: '8L Touchscreen Visual Air Fryer & Multi-Function Roaster',
     chineseTitle: '大容量8L全自动可视无油智能空气炸锅家用多功能',
     priceRMB: 72.0,
     images: [
@@ -1280,7 +1280,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['fan', 'desk fan', 'usb fan', 'electric fan', '风扇', '电风扇', '台扇'],
     categoryId: 'home-appliances',
-    title: '1688 Silent USB Rechargeable 5-Speed Oscillating Desk Fan',
+    title: 'Silent USB Rechargeable 5-Speed Oscillating Desk Fan',
     chineseTitle: '家用静音摇头USB充电多档位大风力桌面循环电风扇',
     priceRMB: 18.0,
     images: [
@@ -1298,7 +1298,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['bottle', 'thermos', 'flask', 'mug', 'tumbler', 'kitchen', 'cup', '保温杯', '水杯', '杯子'],
     categoryId: 'home-garden',
-    title: '1688 316 Stainless Steel Vacuum Insulated Coffee Tumbler & Travel Flask',
+    title: '316 Stainless Steel Vacuum Insulated Coffee Tumbler & Travel Flask',
     chineseTitle: '316医用级不锈钢真空保温杯大容量便携咖啡车载杯',
     priceRMB: 14.5,
     images: [
@@ -1317,7 +1317,7 @@ const FALLBACK_1688_COLLECTIONS = [
     offerIds: ['654817293812'],
     keywords: ['tool', 'drill', 'hardware', 'cordless drill', 'wrench', 'screwdriver', '五金', '电钻', '工具'],
     categoryId: 'tools-hardware',
-    title: '1688 21V Brushless Lithium Cordless Electric Drill & 24-Piece Tool Set',
+    title: '21V Brushless Lithium Cordless Electric Drill & 24-Piece Tool Set',
     chineseTitle: '21V无刷大功率锂电钻手电钻多功能五金工具箱套装',
     priceRMB: 55.0,
     images: [
@@ -1335,7 +1335,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['toy', 'toys', 'rc car', 'remote control', 'blocks', 'lego', 'doll', '玩具', '积木', '遥控车'],
     categoryId: 'parents-kids-toys',
-    title: '1688 4WD High-Speed 2.4GHz Off-Road Stunt RC Remote Control Car',
+    title: '4WD High-Speed 2.4GHz Off-Road Stunt RC Remote Control Car',
     chineseTitle: '四驱特技翻滚遥控汽车儿童玩具大马力越野遥控车',
     priceRMB: 29.5,
     images: [
@@ -1353,7 +1353,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['beauty', 'serum', 'skincare', 'cosmetics', 'niacinamide', 'peptide', 'essence', 'skin repair', '美妆', '护肤', '精华液'],
     categoryId: 'beauty',
-    title: '1688 Niacinamide Glowing Skin Repair Peptide Essence Serum 50ml',
+    title: 'Niacinamide Glowing Skin Repair Peptide Essence Serum 50ml',
     chineseTitle: '烟酰胺多肽修护原液美白提亮面部精华液大桶OEM',
     priceRMB: 16.0,
     images: [
@@ -1371,7 +1371,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['lipstick', 'lip gloss', 'makeup', 'lip balm', '口红', '唇膏', '彩妆'],
     categoryId: 'beauty',
-    title: '1688 Velvet Matte Long-Lasting Waterproof 6-Shade Lipstick Gift Set',
+    title: 'Velvet Matte Long-Lasting Waterproof 6-Shade Lipstick Gift Set',
     chineseTitle: '丝绒哑光雾面不脱色不沾杯六色口红套装唇膏礼盒',
     priceRMB: 11.0,
     images: [
@@ -1389,7 +1389,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['yoga', 'fitness', 'gym', 'sports', 'camping', 'tent', 'dumbbell', '瑜伽', '健身', '瑜伽垫'],
     categoryId: 'sports-entertainment',
-    title: '1688 High-Density Non-Slip Alignment Line TPE Fitness Yoga Mat',
+    title: 'High-Density Non-Slip Alignment Line TPE Fitness Yoga Mat',
     chineseTitle: '高密度加宽加厚TPE瑜伽垫防滑正位线条健身地垫',
     priceRMB: 19.0,
     images: [
@@ -1407,7 +1407,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['tent', 'camping tent', 'camping', 'outdoor', '帐篷', '露营', '户外'],
     categoryId: 'sports-entertainment',
-    title: '1688 Automatic Hydraulic 3-4 Person Pop-Up Waterproof Camping Tent',
+    title: 'Automatic Hydraulic 3-4 Person Pop-Up Waterproof Camping Tent',
     chineseTitle: '全自动液压速开户外露营帐篷3-4人防暴雨野营装备',
     priceRMB: 68.0,
     images: [
@@ -1425,7 +1425,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['pet', 'dog bed', 'cat bed', 'pet bed', 'pets', '宠物', '狗窝', '猫窝'],
     categoryId: 'pet-supplies',
-    title: '1688 Washable Orthopedic Memory Foam Calming Pet Dog & Cat Bed',
+    title: 'Washable Orthopedic Memory Foam Calming Pet Dog & Cat Bed',
     chineseTitle: '四季通用可拆洗大中小型犬记忆棉狗窝猫咪宠物垫',
     priceRMB: 32.0,
     images: [
@@ -1443,7 +1443,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['notebook', 'journal', 'planner', 'pen', 'stationery', 'office', '笔记本', '文具', '本子'],
     categoryId: 'school-office-supplies',
-    title: '1688 A5 Vintage Leather Bound Refillable Executive Journal Notebook',
+    title: 'A5 Vintage Leather Bound Refillable Executive Journal Notebook',
     chineseTitle: '加厚商务A5皮质记事本复古活页会议记录本定制LOGO',
     priceRMB: 9.50,
     images: [
@@ -1461,7 +1461,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['car', 'car vacuum', 'auto', 'automotive', 'cleaner', '车载', '汽车', '吸尘器'],
     categoryId: 'automotive-supplies-tools',
-    title: '1688 120W Wireless High-Suction Portable Rechargeable Car Vacuum',
+    title: '120W Wireless High-Suction Portable Rechargeable Car Vacuum',
     chineseTitle: '车载无线大吸力手持小型迷你汽车家用两用大功率吸尘器',
     priceRMB: 35.0,
     images: [
@@ -1479,7 +1479,7 @@ const FALLBACK_1688_COLLECTIONS = [
   {
     keywords: ['toothbrush', 'electric toothbrush', 'dental', 'teeth', '电动牙刷', '口腔', '牙刷'],
     categoryId: 'personal-care-home-care',
-    title: '1688 Sonic Ultrasonic Waterproof Electric Toothbrush with 8 Brush Heads',
+    title: 'Sonic Ultrasonic Waterproof Electric Toothbrush with 8 Brush Heads',
     chineseTitle: '声波全自动充电式成人情侣防水软毛声波电动牙刷套装',
     priceRMB: 22.0,
     images: [
@@ -1703,7 +1703,7 @@ export async function parse1688Url(url, markupPercent = 200, requestedCategoryId
     // Extract Supplier / Factory Name
     const compMatch = rawHtml.match(/"companyName"\s*:\s*"([^"]+)"/) || rawHtml.match(/"shopName"\s*:\s*"([^"]+)"/);
     if (compMatch) {
-      extractedSupplier = `${compMatch[1]} (1688 Verified)`;
+      extractedSupplier = `${compMatch[1]} (Verified Manufacturer)`;
     }
   }
 
@@ -1742,7 +1742,7 @@ export async function parse1688Url(url, markupPercent = 200, requestedCategoryId
       if (liveData) {
         if (liveData.title && liveData.title.length > 2) rawChineseTitle = liveData.title;
         if (liveData.price && liveData.price > 0) extractedPriceRMB = liveData.price;
-        if (liveData.company) extractedSupplier = `${liveData.company} (1688 Verified)`;
+        if (liveData.company) extractedSupplier = `${liveData.company} (Verified Manufacturer)`;
         if (liveData.video) liveScrapedVideo = liveData.video;
         if (Array.isArray(liveData.images) && liveData.images.length > 0) {
           rawImageCandidates.unshift(...liveData.images);

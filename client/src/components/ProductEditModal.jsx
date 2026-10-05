@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { X, DollarSign, Tag, Save, Sparkles, Check, ArrowRight } from 'lucide-react';
+import { X, DollarSign, Tag, Save, Sparkles, Check, ArrowRight, Trash2 } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 import confetti from 'canvas-confetti';
 
 const USD_TO_NPR = 133.5;
 
-export const ProductEditModal = ({ isOpen, onClose, product, onProductUpdated }) => {
+export const ProductEditModal = ({ isOpen, onClose, product, onProductUpdated, onDeleteProduct }) => {
   const { formatPrice, formatNPR } = useCurrency();
 
   const [title, setTitle] = useState('');
@@ -279,29 +279,47 @@ export const ProductEditModal = ({ isOpen, onClose, product, onProductUpdated })
           </div>
 
           {/* Action Footer */}
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2.5">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
-            >
-              Cancel
-            </button>
+          <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2.5">
+            {onDeleteProduct && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                  onDeleteProduct(product.id, e);
+                }}
+                className="px-3.5 py-2 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer hover:border-red-300 active:scale-95 shadow-2xs"
+                title="Permanently remove this product from Bhanjo.com"
+              >
+                <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                <span>Delete Product</span>
+              </button>
+            )}
 
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="bg-[#F85606] hover:bg-[#e04e05] disabled:opacity-50 text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-sm transition flex items-center gap-1.5 cursor-pointer"
-            >
-              {isSaving ? (
-                <span>Saving Price...</span>
-              ) : (
-                <>
-                  <Save className="w-3.5 h-3.5" />
-                  <span>Save New Price</span>
-                </>
-              )}
-            </button>
+            <div className="flex items-center gap-2 ml-auto">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 rounded-lg border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="bg-[#F85606] hover:bg-[#e04e05] disabled:opacity-50 text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-sm transition flex items-center gap-1.5 cursor-pointer"
+              >
+                {isSaving ? (
+                  <span>Saving Price...</span>
+                ) : (
+                  <>
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Save New Price</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
         </form>

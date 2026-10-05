@@ -21,14 +21,18 @@ import { AlibabaImporterModal } from './components/AlibabaImporterModal';
 import { AlibabaGlobalSection } from './components/AlibabaGlobalSection';
 import { ProductEditModal } from './components/ProductEditModal';
 import { CategoriesSection } from './components/CategoriesSection';
+import { AmazonQuadCatalog } from './components/AmazonQuadCatalog';
 import { AdminLoginPortal } from './components/AdminLoginPortal';
 import { AdminCommandCenter } from './components/AdminCommandCenter';
+import { FlashSalePage } from './components/FlashSalePage';
+import { FlashSaleAdminModal } from './components/FlashSaleAdminModal';
+import { AdminTopBar } from './components/AdminTopBar';
 
 import { CATEGORIES } from './data/categories';
 import { PRODUCTS } from './data/products';
 import { SUPPLIERS } from './data/suppliers';
 
-import { Search, Filter, ShieldCheck } from 'lucide-react';
+import { Search, Filter, ShieldCheck, X, Camera, Sparkles } from 'lucide-react';
 import { useCurrency } from './context/CurrencyContext';
 import { useAuth } from './context/AuthContext';
 import { matchesProductSearch } from './utils/searchMatcher';
@@ -103,6 +107,8 @@ export function App() {
   const [priceRange, setPriceRange] = useState({ min: 0, max: Infinity });
   const [sortBy, setSortBy] = useState('popular');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [visualSearch, setVisualSearch] = useState(null);
+  const [categoryLayoutMode, setCategoryLayoutMode] = useState('amazon'); // 'amazon' preview or 'classic'
 
   // Catalog Products (Dynamic paginated from SQLite backend)
   const [allProducts, setAllProducts] = useState(PRODUCTS);
@@ -118,17 +124,33 @@ export function App() {
     const sortParam = sortBy !== 'popular' ? `&sort=${sortBy}` : '';
     
     fetch(`/api/products?page=${currentPage}&limit=36${catQuery}${searchParam}${sortParam}`)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
       .then(data => {
-        if (data.success && data.products) {
-          setAllProducts(data.products);
+        const deletedIds = new Set(JSON.parse(localStorage.getItem('bhanjo_deleted_product_ids') || '[]').map(String));
+        if (data.success && Array.isArray(data.products) && data.products.length > 0) {
+          const validProducts = data.products.filter(p => !deletedIds.has(String(p.id)));
+          setAllProducts(validProducts);
           if (data.pagination) {
             setTotalPages(data.pagination.totalPages);
-            setTotalCatalogCount(data.pagination.totalCount);
+            setTotalCatalogCount(Math.max(0, data.pagination.totalCount - deletedIds.size));
           }
+        } else {
+          // If no products in DB or empty, fallback to catalog
+          const validProducts = PRODUCTS.filter(p => !deletedIds.has(String(p.id)));
+          setAllProducts(validProducts);
+          setTotalCatalogCount(validProducts.length);
         }
       })
-      .catch(err => console.log('Products fetch note:', err))
+      .catch(err => {
+        console.warn('Backend API note, using fallback catalog:', err);
+        const deletedIds = new Set(JSON.parse(localStorage.getItem('bhanjo_deleted_product_ids') || '[]').map(String));
+        const validProducts = PRODUCTS.filter(p => !deletedIds.has(String(p.id)));
+        setAllProducts(validProducts);
+        setTotalCatalogCount(validProducts.length);
+      })
       .finally(() => setIsLoadingProducts(false));
   }, [selectedCategoryId, searchQuery, currentPage, sortBy]);
 
@@ -154,23 +176,54 @@ export function App() {
 
   const handleDeleteProduct = async (productId, e) => {
     if (e && e.stopPropagation) e.stopPropagation();
-    if (!window.confirm("Are you sure you want to remove this product from Bhanjo?")) return;
     
+    const stringId = String(productId);
+    
+    // 1. Immediately close the detail modal so user gets instant visual confirmation
+    setSelectedProductId(null);
+
+    // 2. Identify target product for descriptive notification
+    const targetProduct = allProducts.find(p => String(p.id) === stringId) || PRODUCTS.find(p => String(p.id) === stringId);
+    const titleSnippet = (targetProduct?.title || 'Product').slice(0, 30);
+
+    // 3. Instant optimistic deletion from frontend catalog state
+    setAllProducts(prev => prev.filter(p => String(p.id) !== stringId));
+    setTotalCatalogCount(prev => Math.max(0, prev - 1));
+    
+    // Also remove from visual search matches if active
+    setVisualSearch(prev => {
+      if (!prev) return null;
+      const updatedMatches = (prev.matchedProducts || []).filter(p => String(p.id) !== stringId);
+      return {
+        ...prev,
+        matchedProducts: updatedMatches,
+        exactProduct: String(prev.exactProduct?.id) === stringId ? null : prev.exactProduct,
+        isExactMatch: String(prev.exactProduct?.id) === stringId ? false : prev.isExactMatch
+      };
+    });
+
+    // 4. Save to persistent deleted list in localStorage
     try {
-      const res = await fetch(`/api/products/${productId}`, { method: 'DELETE' });
-      if (res.ok) {
-        setAllProducts(prev => prev.filter(p => p.id !== productId));
-        setTotalCatalogCount(prev => Math.max(0, prev - 1));
-        showToast("Product removed successfully from catalog!");
-        if (selectedProductId === productId) {
-          setSelectedProductId(null);
-        }
-      } else {
-        showToast("Failed to remove product from server.");
+      const stored = JSON.parse(localStorage.getItem('bhanjo_deleted_product_ids') || '[]');
+      if (!stored.includes(stringId)) {
+        stored.push(stringId);
+        localStorage.setItem('bhanjo_deleted_product_ids', JSON.stringify(stored));
       }
     } catch (err) {
-      console.error('Delete product error:', err);
-      showToast("Error deleting product: " + err.message);
+      console.warn('LocalStorage deletion record error:', err);
+    }
+
+    // 5. Show immediate toast notification
+    showToast(`🗑️ "${titleSnippet}..." deleted from Bhanjo catalog!`);
+
+    // 6. Delete from SQLite database via API
+    try {
+      const res = await fetch(`/api/products/${encodeURIComponent(stringId)}`, { method: 'DELETE' });
+      if (!res.ok) {
+        console.warn('Server delete response note:', res.status);
+      }
+    } catch (err) {
+      console.error('Delete product API error:', err);
     }
   };
 
@@ -182,10 +235,12 @@ export function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authCallback, setAuthCallback] = useState(null);
   const [authMessage, setAuthMessage] = useState('');
+  const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup'
   const [isAlibabaImporterOpen, setIsAlibabaImporterOpen] = useState(false);
   const [importerPlatform, setImporterPlatform] = useState('1688'); // '1688' | 'alibaba'
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [chatContext, setChatContext] = useState({ product: null, supplier: null });
+  const [isFlashSaleAdminOpen, setIsFlashSaleAdminOpen] = useState(false);
 
   const handleOpenImporter = (platform = '1688') => {
     if (!isAdmin) {
@@ -231,9 +286,10 @@ export function App() {
     setIsToastOpen(true);
   };
 
-  const handleRequireAuth = (callback, msg = 'Please login to continue') => {
+  const handleRequireAuth = (callback, msg = 'Please login to continue', mode = 'login') => {
     setAuthCallback(() => callback);
     setAuthMessage(msg);
+    setAuthMode(mode || 'login');
     setIsAuthModalOpen(true);
   };
 
@@ -249,8 +305,10 @@ export function App() {
     setIsTrackOrderOpen(true);
   };
 
-  // Filtered Products
-  const filteredProducts = allProducts.filter(prod => {
+  // Filtered Products (Supports Visual Search & Standard Filters)
+  const filteredProducts = (visualSearch && visualSearch.matchedProducts && visualSearch.matchedProducts.length > 0)
+    ? visualSearch.matchedProducts
+    : allProducts.filter(prod => {
     const matchesCategory = selectedCategoryId === 'all' || 
       prod.categoryId === selectedCategoryId ||
       (selectedCategoryId === 'gift-kids-toys' && (prod.categoryId === 'gifts-crafts' || prod.categoryId === 'parents-kids-toys')) ||
@@ -300,6 +358,25 @@ export function App() {
     setFilterMallOnly(false);
     setMinRating(0);
     setPriceRange({ min: 0, max: Infinity });
+    setVisualSearch(null);
+  };
+
+  const handleVisualSearch = (searchResult) => {
+    setVisualSearch(searchResult);
+    setActiveView('marketplace');
+    setTimeout(() => {
+      const catalogElem = document.getElementById('catalog-section');
+      if (catalogElem) {
+        catalogElem.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 80);
+    showToast(searchResult.isExactMatch 
+      ? '🎯 Exact product found in Bhanjo catalog!' 
+      : `✨ Found ${searchResult.matchedProducts?.length || 0} visually similar products!`);
+  };
+
+  const handleClearVisualSearch = () => {
+    setVisualSearch(null);
   };
 
   const activeFilterCount = [
@@ -359,14 +436,22 @@ export function App() {
         </div>
       )}
 
+      {/* Master Admin Top Bar when admin mode is active */}
+      {isAdmin && (
+        <AdminTopBar
+          onOpenImporter={handleOpenImporter}
+          onOpenSellerCenter={() => setActiveView('seller-center')}
+          onOpenFlashSaleManager={() => setIsFlashSaleAdminOpen(true)}
+        />
+      )}
+
       {/* 1. Global Navigation Bar */}
       <Navbar
         onToggleMegaMenu={() => setIsMegaMenuOpen(!isMegaMenuOpen)}
         isMegaMenuOpen={isMegaMenuOpen}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenTrackOrder={handleOpenTrackOrder}
-        onOpenAuthModal={(msg) => handleRequireAuth(() => {}, msg || 'Please login or sign up to continue')}
-        onOpenAlibabaImporter={handleOpenImporter}
+        onOpenAuthModal={(msg, mode = 'login') => handleRequireAuth(() => {}, msg || 'Please login or sign up to continue', mode)}
         onSelectCategory={handleSelectCategory}
         searchQuery={searchQuery}
         onSearch={(query) => {
@@ -386,6 +471,7 @@ export function App() {
         activeView={activeView}
         setActiveView={setActiveView}
         products={allProducts}
+        onVisualSearch={handleVisualSearch}
       />
 
       {/* 2. Mega Menu Flyout */}
@@ -408,8 +494,8 @@ export function App() {
         </div>
       )}
 
-      {/* 3. Main Content Container */}
-      <main className="flex-1 max-w-7xl mx-auto px-3 sm:px-6 w-full py-3">
+      {/* 3. Main Content Container (Expansive Amazon-width layout) */}
+      <main className={activeView === 'flash-sale' ? 'flex-1 w-full' : 'flex-1 max-w-[1560px] mx-auto px-3 sm:px-5 w-full pt-3 pb-12 sm:pb-16'}>
         
         {/* Personal Account, Profile, Wishlist, Cart & Orders Dashboard (Only when logged in) */}
         {user && ['my-orders', 'dashboard', 'profile', 'wishlist', 'addresses', 'cart'].includes(activeView) ? (
@@ -427,6 +513,14 @@ export function App() {
             onDeleteProduct={handleDeleteProduct}
             onEditProduct={(prod) => setEditingProduct(prod)}
           />
+        ) : activeView === 'flash-sale' ? (
+          <FlashSalePage
+            onBack={() => setActiveView('marketplace')}
+            onSelectProduct={handleSelectProduct}
+            onOpenAdminManager={() => setIsFlashSaleAdminOpen(true)}
+            onRequireAuth={handleRequireAuth}
+            products={allProducts}
+          />
         ) : (
           <div>
             
@@ -441,7 +535,6 @@ export function App() {
             {selectedCategoryId === 'all' && !searchQuery && (
               <DarazChannels
                 onSelectCategory={handleSelectCategory}
-                onOpenAlibabaSourcing={() => handleOpenImporter('alibaba')}
                 onFilterGlobal={() => {
                   setFilterAlibabaOnly(true);
                   const elem = document.getElementById('catalog-section');
@@ -451,10 +544,7 @@ export function App() {
                   showToast("Use voucher code BHANJO10 for 10% off at checkout!");
                   setIsCartOpen(true);
                 }}
-                onScrollToFlashSale={() => {
-                  const elem = document.getElementById('mall-flash-sale') || document.getElementById('catalog-section');
-                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-                }}
+                onScrollToFlashSale={() => setActiveView('flash-sale')}
               />
             )}
 
@@ -464,16 +554,36 @@ export function App() {
                 products={allProducts}
                 onSelectProduct={handleSelectProduct}
                 onSelectCategory={(catId) => setSelectedCategoryId(catId)}
+                onShopAll={() => setActiveView('flash-sale')}
               />
             )}
 
-            {/* 4b. Categories Showcase Grid (All 38 Sectors) */}
+            {/* 4b. Categories Showcase Grid / Amazon Quad Catalog Preview */}
             {selectedCategoryId === 'all' && !searchQuery && (
-              <CategoriesSection
-                onSelectCategory={handleSelectCategory}
-                selectedCategoryId={selectedCategoryId}
-                onOpenMegaMenu={() => setIsMegaMenuOpen(true)}
-              />
+              categoryLayoutMode === 'amazon' ? (
+                <AmazonQuadCatalog
+                  onSelectCategory={handleSelectCategory}
+                  selectedCategoryId={selectedCategoryId}
+                  onSwitchToClassic={() => setCategoryLayoutMode('classic')}
+                />
+              ) : (
+                <div className="relative">
+                  <div className="flex justify-end mb-2">
+                    <button
+                      onClick={() => setCategoryLayoutMode('amazon')}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-orange-50 hover:bg-orange-100 text-[#F85606] border border-orange-200 rounded-xl transition cursor-pointer shadow-2xs"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Preview Amazon Quad Style</span>
+                    </button>
+                  </div>
+                  <CategoriesSection
+                    onSelectCategory={handleSelectCategory}
+                    selectedCategoryId={selectedCategoryId}
+                    onOpenMegaMenu={() => setIsMegaMenuOpen(true)}
+                  />
+                </div>
+              )
             )}
 
             {/* 5. Nepal Himalayan Export Pavilion */}
@@ -489,12 +599,51 @@ export function App() {
               <AlibabaGlobalSection
                 products={allProducts}
                 onSelectProduct={handleSelectProduct}
-                onOpenImporter={() => handleOpenImporter('alibaba')}
               />
             )}
 
+            {/* 5c. Visual Image Search Results Banner */}
+            {visualSearch && (
+              <div className="mb-6 bg-gradient-to-r from-orange-500 via-[#F85606] to-amber-500 rounded-2xl p-4 sm:p-5 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 border border-orange-400/40 animate-in fade-in duration-200">
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-black/40 border-2 border-white/80 flex-shrink-0 shadow-md">
+                    <img src={visualSearch.imageSrc} alt="Searched Target" className="w-full h-full object-cover" />
+                    <span className="absolute bottom-0 inset-x-0 bg-black/75 text-[9px] text-center font-bold text-orange-200 py-0.5">
+                      Your Photo
+                    </span>
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wide ${visualSearch.isExactMatch ? 'bg-emerald-500 text-white' : 'bg-white/25 text-white'}`}>
+                        {visualSearch.isExactMatch ? '🎯 Exact Product Found in Bhanjo' : '✨ Visually Similar Items'}
+                      </span>
+                      <span className="text-xs text-orange-100 font-medium">
+                        {visualSearch.confidence}
+                      </span>
+                    </div>
+                    <h3 className="text-base sm:text-lg font-black tracking-tight mt-1">
+                      {visualSearch.isExactMatch 
+                        ? `Exact Match: "${visualSearch.exactProduct?.title?.slice(0, 55)}..."` 
+                        : `Showing similar ${visualSearch.detectedCategory || 'products'} matching your photo`}
+                    </h3>
+                    <p className="text-xs text-orange-100/90 mt-0.5">
+                      Color Detected: <strong>{visualSearch.detectedColor}</strong> • Found <strong>{visualSearch.matchedProducts?.length || 0}</strong> products from Bhanjo & 1688 Direct
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleClearVisualSearch}
+                  className="w-full sm:w-auto px-4 py-2.5 bg-white/20 hover:bg-white/30 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer flex-shrink-0"
+                >
+                  <span>Clear Visual Search</span>
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
             {/* 6. Catalog Section with Left Filter Sidebar & Right Product Grid */}
-            <div id="catalog-section" className="mt-8 mb-4 scroll-mt-28">
+            <div id="catalog-section" className="mt-12 sm:mt-16 mb-12 sm:mb-16 scroll-mt-28">
               
               <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200 mb-4">
                 <div>
@@ -617,8 +766,8 @@ export function App() {
                             onQuickChat={handleOpenQuickChat}
                             onQuickAdd={(p) => showToast(`Added "${p.title.slice(0, 24)}..." to cart!`)}
                             onRequireAuth={handleRequireAuth}
-                            onDeleteProduct={handleDeleteProduct}
-                            onEditProduct={(p) => setEditingProduct(p)}
+                            onDeleteProduct={isAdmin ? handleDeleteProduct : undefined}
+                            onEditProduct={isAdmin ? (p) => setEditingProduct(p) : undefined}
                           />
                         ))}
                       </div>
@@ -711,6 +860,7 @@ export function App() {
         onClose={() => setIsAuthModalOpen(false)}
         onSuccess={handleAuthSuccess}
         message={authMessage}
+        initialMode={authMode}
       />
 
       {/* Live Track Order Modal */}
@@ -728,8 +878,8 @@ export function App() {
           onOpenChat={handleOpenQuickChat}
           onOpenCart={() => setIsCartOpen(true)}
           onRequireAuth={handleRequireAuth}
-          onDeleteProduct={handleDeleteProduct}
-          onEditProduct={(p) => setEditingProduct(p)}
+          onDeleteProduct={isAdmin ? handleDeleteProduct : undefined}
+          onEditProduct={isAdmin ? (p) => setEditingProduct(p) : undefined}
         />
       )}
 
@@ -739,6 +889,7 @@ export function App() {
         product={editingProduct}
         onClose={() => setEditingProduct(null)}
         onProductUpdated={handleProductUpdated}
+        onDeleteProduct={handleDeleteProduct}
       />
 
       {/* Supplier Chat Modal */}
@@ -770,6 +921,15 @@ export function App() {
             return [importedProd, ...prev];
           });
           showToast(`⚡ Imported "${importedProd.title.slice(0, 24)}..." to ${importedProd.categoryName || 'Bhanjo'}!`);
+        }}
+      />
+
+      {/* Flash Sale Admin Management Modal */}
+      <FlashSaleAdminModal
+        isOpen={isFlashSaleAdminOpen}
+        onClose={() => setIsFlashSaleAdminOpen(false)}
+        onFlashSaleUpdated={() => {
+          showToast('⚡ Flash Sale catalog updated successfully!');
         }}
       />
 

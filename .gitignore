@@ -25,6 +25,12 @@ dist-ssr
 *.db
 *.db-journal
 scratch/
+scratch_*
+server/scratch_*
+server/test_*
+server/1688_session.json
+*.backup
+*.backup.*
 
 # Editor directories and files
 .vscode/*

@@ -52,15 +52,22 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
         )}
 
         {(product.is1688Import || product.id?.startsWith('1688-') || product.isAlibabaImport || product.id?.startsWith('ali-')) && (
-          <span className={`absolute top-2 left-2 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-xs z-10 flex items-center gap-0.5 ${
-            isAdmin 
-              ? (product.is1688Import || product.id?.startsWith('1688-') ? 'bg-[#E60012]' : 'bg-[#FF6A00]')
-              : 'bg-gradient-to-r from-orange-600 to-amber-600'
-          }`}>
-            {isAdmin 
-              ? (product.is1688Import || product.id?.startsWith('1688-') ? '🇨🇳 1688 Factory' : '🇨🇳 Alibaba Direct')
-              : '✈️ Global Direct'
-            }
+          <span className="absolute top-2 left-2 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-xs z-10 flex items-center gap-0.5 bg-gradient-to-r from-orange-600 to-amber-600">
+            ✈️ Global Direct
+          </span>
+        )}
+
+        {/* Visual Search Match Badges */}
+        {product.isExactMatch && (
+          <span className="absolute top-2 right-2 bg-emerald-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm z-10 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+            🎯 Exact Match
+          </span>
+        )}
+        {!product.isExactMatch && product.visualSimilarity && (
+          <span className="absolute top-2 right-2 bg-slate-900/85 backdrop-blur-xs text-white text-[9px] font-black px-2 py-0.5 rounded shadow-sm z-10 flex items-center gap-1 border border-white/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            {product.visualSimilarity}% Similar
           </span>
         )}
 
@@ -104,15 +111,15 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
           </button>
         )}
 
-        {/* Delete / Remove Product Button (Only visible in Admin Mode) */}
+        {/* Delete / Remove Product Button (Admin Only) */}
         {isAdmin && onDeleteProduct && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               onDeleteProduct(product.id, e);
             }}
-            className="absolute top-2 right-16 p-1.5 rounded-full bg-white/90 backdrop-blur-xs shadow-sm hover:scale-110 text-slate-400 hover:text-red-600 hover:bg-red-50 transition z-10 opacity-70 group-hover:opacity-100"
-            title="Remove Product from Catalog (Admin)"
+            className="absolute top-2 right-16 p-1.5 rounded-full bg-white/95 backdrop-blur-xs shadow-md hover:scale-110 text-slate-400 hover:text-red-600 hover:bg-red-50 transition z-10 opacity-0 group-hover:opacity-100 cursor-pointer border border-slate-200 hover:border-red-200"
+            title="Delete this product from Bhanjo.com"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -198,6 +205,17 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
           </span>
         </div>
 
+        {/* Admin-Only Distributor Intel Chip (Strictly Hidden from Public) */}
+        {isAdmin && (product.distributorShopId || product.distributorName || product.is1688Import) && (
+          <div className="mt-1.5 pt-1 border-t border-purple-100 flex items-center justify-between text-[9px] font-mono text-purple-800 bg-purple-50/90 px-1.5 py-0.5 rounded border border-purple-200">
+            <span className="truncate max-w-[110px] font-bold" title={product.distributorName || '1688 Factory'}>
+              🏭 {product.distributorShopId || (product.distributorName ? product.distributorName.slice(0, 14) : '1688 Factory')}
+            </span>
+            {(product.priceRMB || product.original1688PriceRMB) && (
+              <span className="text-amber-700 font-black ml-1">¥{product.priceRMB || product.original1688PriceRMB}</span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

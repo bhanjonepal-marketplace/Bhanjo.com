@@ -1,52 +1,63 @@
-import React from 'react';
-import { Zap, ChevronRight, Star, ShieldCheck, Truck, Plus, ExternalLink, Globe } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { ChevronRight, ShieldCheck, Globe } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
-import { useAuth } from '../context/AuthContext';
 
-export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onOpenImporter }) => {
-  const { formatPrice } = useCurrency();
-  const { isAdmin } = useAuth();
+export const AlibabaGlobalSection = ({ products = [], onSelectProduct }) => {
+  const { formatPrice, t, language } = useCurrency();
+  const [globalSortBy, setGlobalSortBy] = useState('popular');
 
-  // Filter or prioritize Alibaba / imported products
+  // Filter or prioritize imported global products
   const alibabaProducts = products.filter(p => p.isAlibabaImport || p.is1688Import || p.id.startsWith('ali-') || p.id.startsWith('1688-'));
+
+  const sortedAlibabaProducts = useMemo(() => {
+    const list = [...alibabaProducts];
+    if (globalSortBy === 'price-low') {
+      return list.sort((a, b) => (a.samplePrice || 20) - (b.samplePrice || 20));
+    }
+    if (globalSortBy === 'price-high') {
+      return list.sort((a, b) => (b.samplePrice || 20) - (a.samplePrice || 20));
+    }
+    if (globalSortBy === 'rating') {
+      return list.sort((a, b) => (b.rating || 4.5) - (a.rating || 4.5));
+    }
+    return list;
+  }, [alibabaProducts, globalSortBy]);
 
   if (alibabaProducts.length === 0) return null;
 
   return (
-    <section className="my-6">
+    <section className="my-10 sm:my-14 pb-8 border-b border-slate-200/80" id="global-catalog-section">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 px-1 gap-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 px-1 gap-2">
         <div className="flex items-center gap-2.5">
           <div className="flex items-center gap-2">
             <span className="bg-gradient-to-r from-[#FF6A00] via-[#EE5007] to-[#E60012] text-white text-xs font-black px-2 py-0.5 rounded shadow-xs flex items-center gap-1">
-              {isAdmin ? (
-                <span>🇨🇳 ALIBABA & 1688 DIRECT</span>
-              ) : (
-                <span>✈️ BHANJO GLOBAL DIRECT</span>
-              )}
+              <span>✈️ BHANJO GLOBAL DIRECT</span>
             </span>
             <h2 className="text-base font-extrabold text-slate-900 tracking-tight">
-              {isAdmin 
-                ? "Global Factory Sourcing (ग्लोबल सोर्साङ)" 
-                : "International Trending Collection (ग्लोबल कलेक्सन)"
-              }
+              International Trending Collection (ग्लोबल कलेक्सन)
             </h2>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Admin Sourcing Button (Hidden in Customer Mode) */}
-          {isAdmin && onOpenImporter && (
-            <button
-              onClick={onOpenImporter}
-              className="bg-orange-50 hover:bg-orange-100 text-[#FF6A00] border border-orange-200 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-2xs cursor-pointer"
+        <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap sm:flex-nowrap">
+          {/* Sort Dropdown near View All */}
+          <div className="bg-white border border-slate-300 rounded-xl px-2.5 py-1 text-xs shadow-2xs hover:border-orange-400 transition flex items-center">
+            <span className="text-slate-400 mr-1.5 font-medium">{t('sortLabel') || 'Sort:'}</span>
+            <select
+              value={globalSortBy}
+              onChange={(e) => setGlobalSortBy(e.target.value)}
+              className="bg-transparent text-slate-800 font-bold focus:outline-none cursor-pointer"
             >
-              <Zap className="w-3.5 h-3.5 fill-[#FF6A00]" />
-              <span>Import Alibaba / 1688</span>
-            </button>
-          )}
+              <option value="popular">{t('popular') || 'Popular'}</option>
+              <option value="price-low">{t('priceLowToHigh') || 'Price: Low to High'}</option>
+              <option value="price-high">{t('priceHighToLow') || 'Price: High to Low'}</option>
+              <option value="rating">{language === 'ne' ? 'उच्च मूल्याङ्कन' : 'Top Rated'}</option>
+            </select>
+          </div>
 
+          {/* View All Button */}
           <button 
             onClick={() => {
               const catalogElem = document.getElementById('catalog-section');
@@ -60,9 +71,9 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onOpenImp
         </div>
       </div>
 
-      {/* Grid of Cards (Up to 12 Factory SKUs) */}
+      {/* Grid of Cards (Up to 12 Curated SKUs) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        {alibabaProducts.slice(0, 12).map((item) => {
+        {sortedAlibabaProducts.slice(0, 12).map((item) => {
           const displayPrice = item.priceTiers?.[item.priceTiers.length - 1]?.price || item.samplePrice || 25;
           const originalPrice = displayPrice * 1.35;
 
@@ -81,11 +92,11 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onOpenImp
                 />
 
                 <span className="absolute top-1.5 left-1.5 bg-[#FF6A00] text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-xs z-10 flex items-center gap-0.5">
-                  {isAdmin ? '🇨🇳 Factory' : '✈️ Global Direct'}
+                  ✈️ Global Direct
                 </span>
 
                 <span className="absolute bottom-1.5 left-1.5 bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs z-10">
-                  {isAdmin ? `MOQ: ${item.moq || 1} ${item.unit || 'pcs'}` : 'Verified Stock'}
+                  Verified Stock
                 </span>
               </div>
 
@@ -109,7 +120,7 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onOpenImp
                     </span>
                   </div>
                   <span className="text-[10px] text-slate-500 font-medium block">
-                    {isAdmin ? 'FOB China / Landed DDP' : 'Direct Import • Fast Delivery Nepal'}
+                    Direct Import • Fast Delivery Nepal
                   </span>
                 </div>
               </div>
@@ -119,7 +130,7 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onOpenImp
                 <span className="flex items-center gap-0.5 truncate">
                   <ShieldCheck className="w-3 h-3 text-amber-500 flex-shrink-0" />
                   <span className="truncate">
-                    {isAdmin ? `${item.verifiedYear || 8}Y Gold Mfr` : 'Verified Seller'}
+                    Verified Seller
                   </span>
                 </span>
                 <span className="font-bold text-slate-700">★ {item.rating || 4.9}</span>

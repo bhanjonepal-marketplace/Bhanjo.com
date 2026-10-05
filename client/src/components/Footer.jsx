@@ -5,7 +5,7 @@ import { CATEGORIES } from '../data/categories';
 export const Footer = ({ onSelectCategory, onOpenAdminUnlock }) => {
   return (
     <footer className="bg-[#f5f5f5] text-slate-600 text-xs border-t border-slate-200 mt-12 pt-10 pb-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8">
+      <div className="max-w-[1560px] mx-auto px-4 sm:px-6">
         
         {/* 4 Clean Value Propositions (Daraz Style) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-8 border-b border-slate-200">

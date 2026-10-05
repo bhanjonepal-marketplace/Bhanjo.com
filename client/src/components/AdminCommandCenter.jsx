@@ -4,7 +4,8 @@ import {
   Search, Filter, CheckCircle2, AlertCircle, Clock, Truck, 
   Printer, BarChart3, Star, Layers, ArrowUpRight, 
   Trash2, Edit3, Upload, FileSpreadsheet, RefreshCw, ArrowLeft,
-  MessageSquare, Check, LogOut, Eye, Zap, Store, Users, ExternalLink
+  MessageSquare, Check, LogOut, Eye, Zap, Store, Users, ExternalLink,
+  Calculator, TrendingUp, Sparkles, Globe
 } from 'lucide-react';
 import { PRODUCTS } from '../data/products';
 import { CATEGORIES } from '../data/categories';
@@ -44,6 +45,13 @@ export const AdminCommandCenter = ({ onBackToStore, onSelectProduct }) => {
   const [newPriceNPR, setNewPriceNPR] = useState('2500');
   const [newStock, setNewStock] = useState('100');
   const [newImage, setNewImage] = useState('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80');
+
+  // Wholesale Sourcing Profit & Landed Cost Calculator State
+  const [calcPlatform, setCalcPlatform] = useState('1688'); // '1688' | 'alibaba'
+  const [calcCost, setCalcCost] = useState('15'); // 15 RMB or USD
+  const [calcShipping, setCalcShipping] = useState('250'); // NPR
+  const [calcDuty, setCalcDuty] = useState('15'); // %
+  const [calcSelling, setCalcSelling] = useState('1250'); // NPR
 
   // Toast feedback
   const [bannerMessage, setBannerMessage] = useState('');
@@ -380,6 +388,19 @@ export const AdminCommandCenter = ({ onBackToStore, onSelectProduct }) => {
             <MessageSquare className="w-4 h-4" />
             <span>B2B Wholesale Inquiries ({inquiries.length})</span>
           </button>
+
+          <button
+            id="admin-tab-sourcing"
+            onClick={() => setActiveTab('sourcing')}
+            className={`px-4 py-2.5 text-xs font-bold rounded-xl transition flex items-center gap-2 cursor-pointer ${
+              activeTab === 'sourcing' 
+                ? 'bg-red-600 text-white shadow-md' 
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <Zap className="w-4 h-4 text-amber-400" />
+            <span>🇨🇳 1688 & Alibaba Sourcing ({productList.filter(p => p.is1688Import || p.isAlibabaImport || p.id?.startsWith('1688-') || p.id?.startsWith('ali-')).length})</span>
+          </button>
         </div>
 
         {/* TAB 1: ORDERS MANAGEMENT */}
@@ -660,6 +681,329 @@ export const AdminCommandCenter = ({ onBackToStore, onSelectProduct }) => {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* TAB 5: DEDICATED 1688 & ALIBABA FACTORY SOURCING SUITE (STRICTLY PRIVATE TO MASTER ADMIN) */}
+        {activeTab === 'sourcing' && (
+          <div className="space-y-6">
+            
+            {/* Private Protocol Clearance Notice */}
+            <div className="bg-slate-950 p-4 rounded-2xl border border-red-900/60 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-red-950/80 border border-red-700/60 flex items-center justify-center text-red-400 flex-shrink-0">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-extrabold text-sm text-white">Private Factory Wholesale Sourcing Hub</h3>
+                    <span className="bg-red-900/80 text-red-200 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-red-700/60">
+                      Confidential Level 5
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    1688 and Alibaba factory direct sourcing, wholesale RMB cost models, and manufacturer margins are strictly restricted to this Admin Command Center. Public visitors and standard customer/seller logins will never see these tools.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button
+                  onClick={() => handleOpenImporter('1688')}
+                  className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow flex items-center gap-1.5 cursor-pointer"
+                >
+                  <span>🏭 Open 1688 Importer</span>
+                </button>
+                <button
+                  onClick={() => handleOpenImporter('alibaba')}
+                  className="bg-[#FF6A00] hover:bg-[#E05E00] text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Zap className="w-3.5 h-3.5 fill-white" />
+                  <span>Open Alibaba Importer</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Launchers & Live Exchange Rates Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
+              {/* 1688 Factory Sourcing Card */}
+              <div className="bg-slate-950 rounded-2xl border border-red-900/40 p-5 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/10 rounded-full blur-2xl pointer-events-none" />
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="bg-red-950 text-red-400 border border-red-800 text-[10px] font-black uppercase px-2 py-0.5 rounded-md flex items-center gap-1">
+                      <span>🇨🇳 CHINA DOMESTIC WHOLESALE</span>
+                    </span>
+                    <span className="text-xs font-mono text-emerald-400 flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span>1 RMB ≈ Rs. 18.46 NPR</span>
+                    </span>
+                  </div>
+                  <h4 className="text-base font-extrabold text-white">1688.com Factory Direct Sourcing</h4>
+                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                    Source directly from tier-1 Chinese manufacturers in Guangdong, Zhejiang, and Hebei at raw factory pricing in RMB (¥). Bypass domestic Chinese login wall and import SKUs with high-res photography.
+                  </p>
+                </div>
+
+                <div className="mt-5 pt-4 border-t border-slate-900 flex items-center justify-between">
+                  <div className="text-[11px] text-slate-400">
+                    Imported 1688 SKUs: <strong className="text-white font-mono">{productList.filter(p => p.is1688Import || p.id?.startsWith('1688-')).length}</strong>
+                  </div>
+                  <button
+                    onClick={() => handleOpenImporter('1688')}
+                    className="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <span>Launch 1688 Suite</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Alibaba Global Direct Sourcing Card */}
+              <div className="bg-slate-950 rounded-2xl border border-orange-900/40 p-5 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-600/10 rounded-full blur-2xl pointer-events-none" />
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="bg-orange-950 text-orange-400 border border-orange-800 text-[10px] font-black uppercase px-2 py-0.5 rounded-md flex items-center gap-1">
+                      <span>🌐 GLOBAL EXPORT MANUFACTURERS</span>
+                    </span>
+                    <span className="text-xs font-mono text-amber-400 flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                      <span>1 USD ≈ Rs. 133.50 NPR</span>
+                    </span>
+                  </div>
+                  <h4 className="text-base font-extrabold text-white">Alibaba.com Global Direct Sourcing</h4>
+                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                    Source export-grade certified products with CE/RoHS/ISO verification. Direct FOB/DDP sea and air freight pricing in USD ($) ready for import into Nepal.
+                  </p>
+                </div>
+
+                <div className="mt-5 pt-4 border-t border-slate-900 flex items-center justify-between">
+                  <div className="text-[11px] text-slate-400">
+                    Imported Alibaba SKUs: <strong className="text-white font-mono">{productList.filter(p => p.isAlibabaImport || p.id?.startsWith('ali-')).length}</strong>
+                  </div>
+                  <button
+                    onClick={() => handleOpenImporter('alibaba')}
+                    className="bg-[#FF6A00] hover:bg-[#E05E00] text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <span>Launch Alibaba Suite</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Interactive Landed Cost & Profit Margin Calculator */}
+            {(() => {
+              const rate = calcPlatform === '1688' ? 18.46 : 133.50;
+              const baseCostNPR = (parseFloat(calcCost) || 0) * rate;
+              const dutyNPR = baseCostNPR * ((parseFloat(calcDuty) || 0) / 100);
+              const shippingNPR = parseFloat(calcShipping) || 0;
+              const totalLandedNPR = baseCostNPR + dutyNPR + shippingNPR;
+              const sellingNPR = parseFloat(calcSelling) || 0;
+              const netProfitNPR = sellingNPR - totalLandedNPR;
+              const marginPercent = sellingNPR > 0 ? Math.round((netProfitNPR / sellingNPR) * 100) : 0;
+
+              return (
+                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-sm">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-slate-800 mb-4">
+                    <div className="flex items-center gap-2">
+                      <Calculator className="w-5 h-5 text-amber-400" />
+                      <h4 className="font-extrabold text-sm text-white">
+                        Landed Cost & Profit Margin Simulator
+                      </h4>
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
+                      <button
+                        onClick={() => setCalcPlatform('1688')}
+                        className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${calcPlatform === '1688' ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                      >
+                        1688 (RMB ¥)
+                      </button>
+                      <button
+                        onClick={() => setCalcPlatform('alibaba')}
+                        className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${calcPlatform === 'alibaba' ? 'bg-orange-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                      >
+                        Alibaba (USD $)
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mb-4">
+                    <div>
+                      <label className="block text-slate-400 mb-1 font-semibold">
+                        Factory Unit Price ({calcPlatform === '1688' ? '¥ RMB' : '$ USD'})
+                      </label>
+                      <input
+                        type="number"
+                        value={calcCost}
+                        onChange={(e) => setCalcCost(e.target.value)}
+                        className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono outline-none focus:border-orange-500"
+                        placeholder="15"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-slate-400 mb-1 font-semibold">
+                        Air/Sea Cargo (NPR/unit)
+                      </label>
+                      <input
+                        type="number"
+                        value={calcShipping}
+                        onChange={(e) => setCalcShipping(e.target.value)}
+                        className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono outline-none focus:border-orange-500"
+                        placeholder="250"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-slate-400 mb-1 font-semibold">
+                        Customs Duty / VAT (%)
+                      </label>
+                      <input
+                        type="number"
+                        value={calcDuty}
+                        onChange={(e) => setCalcDuty(e.target.value)}
+                        className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono outline-none focus:border-orange-500"
+                        placeholder="15"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-slate-400 mb-1 font-semibold">
+                        Target Selling Price (NPR)
+                      </label>
+                      <input
+                        type="number"
+                        value={calcSelling}
+                        onChange={(e) => setCalcSelling(e.target.value)}
+                        className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono outline-none focus:border-orange-500 font-bold text-amber-400"
+                        placeholder="1250"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Simulator Output Cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-900">
+                    <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                      <span className="text-[10px] text-slate-400 block uppercase font-bold">Base Factory Cost (NPR)</span>
+                      <span className="text-base font-extrabold text-white font-mono mt-0.5 block">
+                        Rs. {Math.round(baseCostNPR).toLocaleString()}
+                      </span>
+                    </div>
+
+                    <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                      <span className="text-[10px] text-slate-400 block uppercase font-bold">Total Landed Cost in Nepal</span>
+                      <span className="text-base font-extrabold text-orange-400 font-mono mt-0.5 block">
+                        Rs. {Math.round(totalLandedNPR).toLocaleString()}
+                      </span>
+                    </div>
+
+                    <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                      <span className="text-[10px] text-slate-400 block uppercase font-bold">Net Profit / Unit</span>
+                      <span className={`text-base font-extrabold font-mono mt-0.5 block ${netProfitNPR >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        Rs. {Math.round(netProfitNPR).toLocaleString()}
+                      </span>
+                    </div>
+
+                    <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                      <span className="text-[10px] text-slate-400 block uppercase font-bold">Target Profit Margin</span>
+                      <span className={`text-base font-extrabold font-mono mt-0.5 block ${marginPercent >= 40 ? 'text-emerald-400' : marginPercent > 0 ? 'text-amber-400' : 'text-red-400'}`}>
+                        {marginPercent}% {marginPercent >= 50 ? '🔥 High Return' : ''}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Imported Sourced Products Matrix */}
+            <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h4 className="font-extrabold text-sm text-white">
+                    Directly Sourced SKUs in Bhanjo Catalog ({productList.filter(p => p.is1688Import || p.isAlibabaImport || p.id?.startsWith('1688-') || p.id?.startsWith('ali-')).length})
+                  </h4>
+                  <p className="text-xs text-slate-400">
+                    Live products currently stocked from Chinese and global manufacturing lines.
+                  </p>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
+                      <th className="py-2.5 px-3">Product</th>
+                      <th className="py-2.5 px-2">Wholesale Source</th>
+                      <th className="py-2.5 px-2">Selling Price (NPR)</th>
+                      <th className="py-2.5 px-2">Supplier Factory</th>
+                      <th className="py-2.5 px-2 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60">
+                    {productList
+                      .filter(p => p.is1688Import || p.isAlibabaImport || p.id?.startsWith('1688-') || p.id?.startsWith('ali-'))
+                      .slice(0, 15)
+                      .map((prod) => (
+                        <tr key={prod.id} className="hover:bg-slate-900/60 transition">
+                          <td className="py-2.5 px-3">
+                            <div className="flex items-center gap-2.5">
+                              <img
+                                src={prod.images?.[0] || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=100'}
+                                alt={prod.title}
+                                className="w-9 h-9 rounded-lg object-cover bg-slate-800 flex-shrink-0"
+                              />
+                              <div className="max-w-xs">
+                                <span className="font-semibold text-slate-200 line-clamp-1 block">{prod.title}</span>
+                                <span className="text-[10px] text-slate-500 font-mono">{prod.id}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-2.5 px-2">
+                            {prod.is1688Import || prod.id?.startsWith('1688-') ? (
+                              <span className="bg-red-950 text-red-300 border border-red-800/80 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                🇨🇳 1688 Factory
+                              </span>
+                            ) : (
+                              <span className="bg-orange-950 text-orange-300 border border-orange-800/80 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                ⚡ Alibaba Direct
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-2.5 px-2 font-mono font-bold text-slate-200">
+                            {formatPrice(prod.samplePrice || 25)}
+                          </td>
+                          <td className="py-2.5 px-2 text-slate-400 max-w-[180px] truncate">
+                            {prod.supplierName || 'Verified Factory'}
+                          </td>
+                          <td className="py-2.5 px-2 text-right">
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button
+                                onClick={() => setEditingProduct(prod)}
+                                className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
+                                title="Edit Pricing"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={(e) => handleDeleteProduct(prod.id, e)}
+                                className="p-1.5 text-red-400 hover:text-red-300 hover:bg-red-950/50 rounded-lg transition"
+                                title="Delete SKU"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
           </div>
         )}
 

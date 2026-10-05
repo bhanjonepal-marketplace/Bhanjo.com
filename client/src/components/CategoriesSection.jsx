@@ -20,6 +20,94 @@ const ICON_MAP = {
   Factory, BriefcaseBusiness, Smartphone, Laptop
 };
 
+// Curated color grading:
+// 1: Dusty Sage (#7E907B)
+// 2: Muted Terracotta (#B2533E)
+// 3: Valley Moss (#709071)
+// 4: Shallow Sea (#84C6CE)
+// 5: Blush Petal (#F7C8D3)
+// 6: Mist (#B3C9D6)
+// 7: Dusty Mauve (#A37C76)
+const OUTLET_PALETTES = [
+  {
+    name: 'Dusty Sage',
+    bg: 'bg-[#7E907B]',
+    border: 'border-[#6D806A]',
+    shadow: 'shadow-[#7E907B]/30 hover:shadow-[#7E907B]/50',
+    ring: 'ring-[#7E907B]',
+    text: 'text-white',
+    subText: 'text-white/85',
+    badgeBg: 'bg-[#5B6D57] text-white',
+    accentColor: '#7E907B'
+  },
+  {
+    name: 'Muted Terracotta',
+    bg: 'bg-[#B2533E]',
+    border: 'border-[#9F4330]',
+    shadow: 'shadow-[#B2533E]/30 hover:shadow-[#B2533E]/50',
+    ring: 'ring-[#B2533E]',
+    text: 'text-white',
+    subText: 'text-white/85',
+    badgeBg: 'bg-[#8F3725] text-white',
+    accentColor: '#B2533E'
+  },
+  {
+    name: 'Valley Moss',
+    bg: 'bg-[#709071]',
+    border: 'border-[#5C7C5D]',
+    shadow: 'shadow-[#709071]/30 hover:shadow-[#709071]/50',
+    ring: 'ring-[#709071]',
+    text: 'text-white',
+    subText: 'text-white/85',
+    badgeBg: 'bg-[#4B6B4C] text-white',
+    accentColor: '#709071'
+  },
+  {
+    name: 'Shallow Sea',
+    bg: 'bg-[#84C6CE]',
+    border: 'border-[#6FB6BF]',
+    shadow: 'shadow-[#84C6CE]/35 hover:shadow-[#84C6CE]/55',
+    ring: 'ring-[#6FB6BF]',
+    text: 'text-[#163B42]',
+    subText: 'text-[#285760]',
+    badgeBg: 'bg-[#1C4E57] text-white',
+    accentColor: '#3A7C86'
+  },
+  {
+    name: 'Blush Petal',
+    bg: 'bg-[#F7C8D3]',
+    border: 'border-[#E8B0BD]',
+    shadow: 'shadow-[#F7C8D3]/40 hover:shadow-[#F7C8D3]/60',
+    ring: 'ring-[#E8B0BD]',
+    text: 'text-[#481A23]',
+    subText: 'text-[#6B313D]',
+    badgeBg: 'bg-[#782838] text-white',
+    accentColor: '#B5576B'
+  },
+  {
+    name: 'Mist',
+    bg: 'bg-[#B3C9D6]',
+    border: 'border-[#9BB6C6]',
+    shadow: 'shadow-[#B3C9D6]/35 hover:shadow-[#B3C9D6]/55',
+    ring: 'ring-[#9BB6C6]',
+    text: 'text-[#1C3645]',
+    subText: 'text-[#2D4E62]',
+    badgeBg: 'bg-[#224458] text-white',
+    accentColor: '#4A7188'
+  },
+  {
+    name: 'Dusty Mauve',
+    bg: 'bg-[#A37C76]',
+    border: 'border-[#8F6862]',
+    shadow: 'shadow-[#A37C76]/30 hover:shadow-[#A37C76]/50',
+    ring: 'ring-[#A37C76]',
+    text: 'text-white',
+    subText: 'text-white/85',
+    badgeBg: 'bg-[#6D4943] text-white',
+    accentColor: '#A37C76'
+  }
+];
+
 export const CategoriesSection = ({ 
   onSelectCategory, 
   selectedCategoryId = 'all',
@@ -45,7 +133,7 @@ export const CategoriesSection = ({
   }, [searchTerm]);
 
   return (
-    <section className="my-7" id="categories-showcase">
+    <section className="mt-7 mb-12 sm:mb-16" id="categories-showcase">
       {/* Section Header */}
       <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs mb-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-100">
@@ -158,97 +246,62 @@ export const CategoriesSection = ({
             const isSelected = selectedCategoryId === cat.id;
             const displayTitle = language === 'ne' ? (cat.nepaliName || cat.name) : cat.name;
             const subTitleAlt = language === 'ne' ? cat.name : cat.nepaliName;
-            const subcatChips = cat.popularKeywords?.slice(0, 2) || cat.subcategories?.slice(0, 2) || [];
+            const palette = OUTLET_PALETTES[index % OUTLET_PALETTES.length];
 
             return (
               <div
                 key={cat.id}
                 onClick={() => onSelectCategory(cat.id)}
-                className={`group relative bg-white rounded-2xl border transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-lg ${
-                  isSelected
-                    ? 'border-[#F85606] ring-2 ring-[#F85606]/30 shadow-md'
-                    : 'border-slate-200/90 hover:border-[#F85606]/60'
+                className={`group relative ${palette.bg} rounded-[24px] sm:rounded-[28px] p-2 sm:p-2.5 pb-2.5 sm:pb-3 flex flex-col justify-between cursor-pointer transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl ${palette.shadow} ${
+                  isSelected ? `ring-4 ${palette.ring} ring-offset-2 scale-[1.02]` : ''
                 }`}
               >
-                {/* Top Image Showcase */}
-                <div className="relative h-28 sm:h-32 w-full overflow-hidden bg-slate-100">
+                {/* Inner White Box Window (Matching Reference Photo 2) */}
+                <div className="bg-white rounded-[18px] sm:rounded-[22px] aspect-square w-full p-1.5 sm:p-2 flex items-center justify-center overflow-hidden relative shadow-inner">
                   <img
                     src={cat.banner}
                     alt={cat.name}
                     loading="lazy"
-                    className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500 ease-out"
+                    className="w-full h-full object-cover rounded-[14px] sm:rounded-[18px] group-hover:scale-108 transition-transform duration-500 ease-out"
                     onError={(e) => {
                       e.target.src = 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=600&q=80';
                     }}
                   />
-                  {/* Bottom Vignette Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/20 to-transparent" />
 
-                  {/* Top-Left: Category Icon Badge */}
+                  {/* Top-Left: Category Floating Icon Badge */}
                   <div className="absolute top-2 left-2 z-10">
-                    <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-white/95 backdrop-blur-md shadow-xs text-[#F85606] group-hover:bg-[#F85606] group-hover:text-white transition-colors duration-200">
-                      <IconComp className="w-4 h-4" />
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-white/95 text-slate-800 shadow-sm group-hover:scale-110 transition-transform">
+                      <IconComp className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: palette.accentColor }} />
                     </div>
                   </div>
 
-                  {/* Subcategory Count Tag */}
+                  {/* Top-Right: Cute Subs count Badge */}
                   <div className="absolute top-2 right-2 z-10">
-                    <span className="bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md tracking-tight">
-                      {cat.subcategories?.length || 8} {language === 'ne' ? 'उप-कोटि' : 'subs'}
+                    <span className={`${palette.badgeBg || 'bg-stone-800 text-white'} text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm tracking-tight`}>
+                      {cat.subcategories?.length || 8} Subs
                     </span>
                   </div>
 
                   {/* Active selection ribbon */}
                   {isSelected && (
-                    <div className="absolute bottom-2 left-2 z-10">
-                      <span className="bg-[#F85606] text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full shadow-xs uppercase tracking-wider">
-                        {language === 'ne' ? 'सक्रिय' : 'Active'}
+                    <div className="absolute inset-0 bg-black/25 backdrop-blur-[1px] rounded-[14px] sm:rounded-[18px] flex items-center justify-center z-20">
+                      <span className="bg-white text-slate-900 text-[10px] font-black px-2.5 py-1 rounded-full shadow-lg">
+                        ✓ Active
                       </span>
                     </div>
                   )}
                 </div>
 
-                {/* Card Content */}
-                <div className="p-2.5 sm:p-3 flex-1 flex flex-col justify-between">
-                  <div>
-                    {/* Primary Title */}
-                    <h3 className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-[#F85606] transition-colors line-clamp-1">
-                      {displayTitle}
-                    </h3>
-
-                    {/* Secondary Dual Language Label */}
-                    {subTitleAlt && (
-                      <p className="text-[10px] text-slate-400 font-medium truncate mt-0.5">
-                        {subTitleAlt}
-                      </p>
-                    )}
-
-                    {/* Quick Keyword Pill Tags */}
-                    {subcatChips.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {subcatChips.map((chip, idx) => (
-                          <button
-                            key={idx}
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onSelectCategory(cat.id, chip);
-                            }}
-                            className="text-[9px] font-medium px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 hover:bg-orange-100 hover:text-[#F85606] transition-colors truncate max-w-full"
-                            title={`Search ${chip}`}
-                          >
-                            #{chip}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Bottom Action Footer */}
-                  <div className="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-slate-500 group-hover:text-[#F85606] transition-colors">
-                    <span>{language === 'ne' ? 'अन्वेषण' : 'Explore'}</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </div>
+                {/* Bottom Chin: Solid Color Category Title with Swatch Matching Contrast */}
+                <div className="pt-2 sm:pt-2.5 px-1 text-center flex flex-col items-center justify-center">
+                  <h3 className={`${palette.text || 'text-white'} font-black text-xs sm:text-[13px] tracking-tight leading-tight line-clamp-1 group-hover:scale-105 transition-transform drop-shadow-xs`}>
+                    {displayTitle}
+                  </h3>
+                  {subTitleAlt && (
+                    <p className={`${palette.subText || 'text-white/85'} text-[10px] font-semibold truncate max-w-full mt-0.5`}>
+                      {subTitleAlt}
+                    </p>
+                  )}
                 </div>
               </div>
             );

@@ -10,8 +10,9 @@ import {
   parseGlobalSourcingUrl, parseAlibabaUrl, parse1688Url, ALIBABA_TRENDING_CATALOG,
   get1688Cookie, set1688Cookie, clear1688Cookie, test1688Cookie 
 } from './alibabaEngine.js';
+import { scan1688DistributorStore } from './distributorEngine.js';
 import { sendSmsNotification } from './smsService.js';
-import { sendEmailNotification } from './emailService.js';
+import { sendEmailNotification, sendPasswordResetEmail } from './emailService.js';
 import { CATEGORIES } from '../client/src/data/categories.js';
 
 const app = express();
@@ -34,7 +35,8 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Helper: Generate signed JWT token
 export const generateToken = (user) => {
@@ -230,10 +232,12 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-// --- Customer Email OTP Registration Store & Endpoints ---
+// --- Customer Email OTP Registration, Login 2FA & Password Reset Store ---
 const customerOtpSessions = new Map();
+const forgotPasswordSessions = new Map();
+const customerLoginSessions = new Map();
 
-// Periodic cleanup of expired customer signup sessions
+// Periodic cleanup of expired sessions
 setInterval(() => {
   const now = Date.now();
   for (const [sid, session] of customerOtpSessions.entries()) {
@@ -241,7 +245,34 @@ setInterval(() => {
       customerOtpSessions.delete(sid);
     }
   }
+  for (const [sid, session] of forgotPasswordSessions.entries()) {
+    if (session.expiresAt < now) {
+      forgotPasswordSessions.delete(sid);
+    }
+  }
+  for (const [sid, session] of customerLoginSessions.entries()) {
+    if (session.expiresAt < now) {
+      customerLoginSessions.delete(sid);
+    }
+  }
 }, 5 * 60 * 1000);
+
+// Helper: Validate Strong Password Requirements (Number, Uppercase, Symbol, 8+ characters)
+function validatePasswordRequirements(pwd) {
+  if (!pwd || pwd.length < 8) {
+    return 'Password must be at least 8 characters long.';
+  }
+  if (!/[A-Z]/.test(pwd)) {
+    return 'Password must contain at least one uppercase letter (A-Z).';
+  }
+  if (!/[0-9]/.test(pwd)) {
+    return 'Password must contain at least one number (0-9).';
+  }
+  if (!/[^A-Za-z0-9]/.test(pwd)) {
+    return 'Password must contain at least one special symbol (!@#$%^&* etc.).';
+  }
+  return null;
+}
 
 // Step 1: Customer Signup Initiation (Validates inputs, generates 6-digit Email code)
 app.post('/api/auth/register-initiate', async (req, res) => {
@@ -251,8 +282,9 @@ app.post('/api/auth/register-initiate', async (req, res) => {
       return res.status(400).json({ error: 'Name, Phone Number, Email, and Password are all required.' });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters long.' });
+    const pwdError = validatePasswordRequirements(password);
+    if (pwdError) {
+      return res.status(400).json({ error: pwdError });
     }
 
     const cleanEmail = email.trim().toLowerCase();
@@ -280,7 +312,7 @@ app.post('/api/auth/register-initiate', async (req, res) => {
     // Generate 6-digit random verification code
     const emailCode = Math.floor(100000 + Math.random() * 900000).toString();
     const signupSessionId = 'cust_reg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
-    const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+    const expiresAt = Date.now() + 3 * 60 * 1000; // 3 minutes
 
     customerOtpSessions.set(signupSessionId, {
       name: name.trim(),
@@ -297,17 +329,17 @@ app.post('/api/auth/register-initiate', async (req, res) => {
     console.log(`👤 Customer:   ${name} (${cleanEmail})`);
     console.log(`📱 Mobile:     +977 ${cleanPhone}`);
     console.log(`🔑 OTP Code:   [ ${emailCode} ]`);
-    console.log(`⏱️ Expiry:     10 minutes`);
+    console.log(`⏱️ Expiry:     3 minutes`);
     console.log(`======================================================\n`);
 
-    // Dispatch real email via emailService
+    // Dispatch real email via emailService in background for instant UI response
     sendEmailNotification({
       to: cleanEmail,
       code: emailCode,
       name: name.trim(),
       type: 'customer'
     }).catch(err => {
-      console.error('Customer email OTP background error:', err.message);
+      console.error('Async customer signup email dispatch error:', err.message);
     });
 
     const [emailPrefix, emailDomain] = cleanEmail.split('@');
@@ -322,6 +354,45 @@ app.post('/api/auth/register-initiate', async (req, res) => {
   } catch (err) {
     console.error('Customer registration initiate error:', err);
     res.status(500).json({ error: 'Failed to initiate registration: ' + err.message });
+  }
+});
+
+// Step 1b: Resend Customer Signup Email OTP
+app.post('/api/auth/register-resend', async (req, res) => {
+  try {
+    const { signupSessionId } = req.body;
+    if (!signupSessionId) {
+      return res.status(400).json({ error: 'Session ID is required.' });
+    }
+
+    const session = customerOtpSessions.get(signupSessionId);
+    if (!session) {
+      return res.status(400).json({ error: 'Registration session expired. Please sign up again.' });
+    }
+
+    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+    session.emailCode = newCode;
+    session.expiresAt = Date.now() + 3 * 60 * 1000;
+    session.attempts = 0;
+
+    console.log(`\n✉️  [CUSTOMER SIGNUP EMAIL OTP RESEND] Target: ${session.email} Code: [ ${newCode} ]`);
+
+    sendEmailNotification({
+      to: session.email,
+      code: newCode,
+      name: session.name,
+      type: 'customer'
+    }).catch(err => {
+      console.error('Async customer signup resend email dispatch error:', err.message);
+    });
+
+    res.json({
+      success: true,
+      message: 'A fresh verification code has been dispatched to your email.'
+    });
+  } catch (err) {
+    console.error('Customer register resend error:', err);
+    res.status(500).json({ error: 'Failed to resend code: ' + err.message });
   }
 });
 
@@ -340,7 +411,7 @@ app.post('/api/auth/register-verify', async (req, res) => {
 
     if (Date.now() > session.expiresAt) {
       customerOtpSessions.delete(signupSessionId);
-      return res.status(400).json({ error: 'Verification code expired (10-minute limit exceeded). Please request a new code.' });
+      return res.status(400).json({ error: 'Verification code expired (3-minute limit exceeded). Please request a new code.' });
     }
 
     session.attempts += 1;
@@ -349,10 +420,11 @@ app.post('/api/auth/register-verify', async (req, res) => {
       return res.status(429).json({ error: 'Too many incorrect attempts. Please try registering again.' });
     }
 
-    const cleanInputCode = emailCode.toString().trim();
-    if (cleanInputCode !== session.emailCode) {
+    const cleanInputCode = emailCode.toString().replace(/\D/g, '').trim();
+    const sessionCode = session.emailCode.toString().trim();
+    if (cleanInputCode !== sessionCode) {
       return res.status(401).json({ 
-        error: 'Incorrect verification code. Please check your email and try again.',
+        error: `Incorrect verification code. Please check the 6-digit code sent to ${session.email}.`,
         remainingAttempts: Math.max(0, 5 - session.attempts)
       });
     }
@@ -420,6 +492,173 @@ app.post('/api/auth/register-verify', async (req, res) => {
   } catch (err) {
     console.error('Customer registration verify error:', err);
     res.status(500).json({ error: 'Failed to verify account: ' + err.message });
+  }
+});
+
+// --- Customer Forgot Password Endpoints ---
+
+// Step 1: Initiate Forgot Password (lookup user, generate 6-digit code, dispatch real email)
+app.post('/api/auth/forgot-password/initiate', async (req, res) => {
+  try {
+    const { phoneOrEmail } = req.body;
+    if (!phoneOrEmail || !phoneOrEmail.trim()) {
+      return res.status(400).json({ error: 'Please enter your registered email address or mobile phone number.' });
+    }
+
+    const term = phoneOrEmail.trim();
+    const cleanPhone = term.replace(/[\s\-\+]/g, '').slice(-10);
+
+    const user = db.prepare(`
+      SELECT id, name, email, phone FROM users 
+      WHERE LOWER(email) = LOWER(?) OR (phone IS NOT NULL AND phone LIKE ?)
+    `).get(term, `%${cleanPhone}%`);
+
+    if (!user) {
+      return res.status(404).json({ error: 'No account found matching this email or phone number. Please check and try again, or sign up.' });
+    }
+
+    if (!user.email || !user.email.includes('@')) {
+      return res.status(400).json({ error: 'No registered email found for this account. Please contact customer support.' });
+    }
+
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const resetSessionId = 'pwd_reset_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+    const expiresAt = Date.now() + 3 * 60 * 1000; // 3 minutes
+
+    forgotPasswordSessions.set(resetSessionId, {
+      userId: user.id,
+      email: user.email.toLowerCase().trim(),
+      name: user.name,
+      resetCode,
+      expiresAt,
+      attempts: 0
+    });
+
+    console.log(`\n======================================================`);
+    console.log(`🔑 [CUSTOMER FORGOT PASSWORD OTP DISPATCH]`);
+    console.log(`👤 Customer:   ${user.name} (${user.email})`);
+    console.log(`🔑 Reset Code: [ ${resetCode} ]`);
+    console.log(`⏱️ Expiry:     3 minutes`);
+    console.log(`======================================================\n`);
+
+    sendPasswordResetEmail({
+      to: user.email,
+      code: resetCode,
+      name: user.name
+    }).catch(err => {
+      console.error('Async forgot password email dispatch error:', err.message);
+    });
+
+    const [emailPrefix, emailDomain] = user.email.split('@');
+    const maskedEmail = `${emailPrefix.slice(0, 3)}***@${emailDomain}`;
+
+    res.json({
+      success: true,
+      message: `A 6-digit password reset code has been sent to ${maskedEmail}`,
+      resetSessionId,
+      maskedEmail
+    });
+  } catch (err) {
+    console.error('Forgot password initiate error:', err);
+    res.status(500).json({ error: 'Failed to initiate password reset: ' + err.message });
+  }
+});
+
+// Step 2: Resend Forgot Password Code
+app.post('/api/auth/forgot-password/resend', async (req, res) => {
+  try {
+    const { resetSessionId } = req.body;
+    if (!resetSessionId) {
+      return res.status(400).json({ error: 'Reset session ID is required.' });
+    }
+
+    const session = forgotPasswordSessions.get(resetSessionId);
+    if (!session) {
+      return res.status(400).json({ error: 'Reset session expired. Please request a new password reset.' });
+    }
+
+    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+    session.resetCode = newCode;
+    session.expiresAt = Date.now() + 3 * 60 * 1000;
+    session.attempts = 0;
+
+    console.log(`\n🔑 [CUSTOMER FORGOT PASSWORD OTP RESEND] Target: ${session.email} Code: [ ${newCode} ]`);
+
+    sendPasswordResetEmail({
+      to: session.email,
+      code: newCode,
+      name: session.name
+    }).catch(err => {
+      console.error('Async forgot password resend email dispatch error:', err.message);
+    });
+
+    res.json({
+      success: true,
+      message: 'A fresh reset code has been dispatched to your email.'
+    });
+  } catch (err) {
+    console.error('Forgot password resend error:', err);
+    res.status(500).json({ error: 'Failed to resend reset code: ' + err.message });
+  }
+});
+
+// Step 3: Verify Code & Set New Password
+app.post('/api/auth/forgot-password/reset', async (req, res) => {
+  try {
+    const { resetSessionId, code, newPassword } = req.body;
+    if (!resetSessionId || !code || !newPassword) {
+      return res.status(400).json({ error: 'Session ID, verification code, and new password are required.' });
+    }
+
+    const pwdError = validatePasswordRequirements(newPassword);
+    if (pwdError) {
+      return res.status(400).json({ error: pwdError });
+    }
+
+    const session = forgotPasswordSessions.get(resetSessionId);
+    if (!session) {
+      return res.status(400).json({ error: 'Password reset session expired. Please request a new reset code.' });
+    }
+
+    if (Date.now() > session.expiresAt) {
+      forgotPasswordSessions.delete(resetSessionId);
+      return res.status(400).json({ error: 'Reset code expired (3-minute limit exceeded). Please request a new code.' });
+    }
+
+    session.attempts += 1;
+    if (session.attempts > 5) {
+      forgotPasswordSessions.delete(resetSessionId);
+      return res.status(429).json({ error: 'Too many incorrect attempts. Please request a new reset code.' });
+    }
+
+    const cleanInputCode = code.toString().replace(/\D/g, '').trim();
+    const sessionCode = session.resetCode.toString().trim();
+    if (cleanInputCode !== sessionCode) {
+      return res.status(401).json({ 
+        error: `Incorrect verification code. Please check the 6-digit code sent to ${session.email}.`,
+        remainingAttempts: Math.max(0, 5 - session.attempts)
+      });
+    }
+
+    // Hash the new password with bcrypt
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update in database
+    db.prepare('UPDATE users SET password = ? WHERE id = ?').run(hashedPassword, session.userId);
+
+    // Clean up session
+    forgotPasswordSessions.delete(resetSessionId);
+
+    console.log(`✅ [PASSWORD RESET SUCCESS] User ID: ${session.userId} (${session.email}) has reset their password.`);
+
+    res.json({
+      success: true,
+      message: 'Password reset successful! You can now log in with your new password.'
+    });
+  } catch (err) {
+    console.error('Password reset error:', err);
+    res.status(500).json({ error: 'Failed to reset password: ' + err.message });
   }
 });
 
@@ -549,18 +788,159 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Incorrect password. Please verify and try again.' });
     }
 
-    const { password: _, ...safeUser } = user;
-    const token = generateToken(safeUser);
+    // If user has no registered email, fallback to direct JWT generation
+    if (!user.email || !user.email.includes('@')) {
+      const { password: _, ...safeUser } = user;
+      const token = generateToken(safeUser);
+      return res.json({
+        success: true,
+        requires2FA: false,
+        message: 'Login successful',
+        token,
+        user: safeUser
+      });
+    }
+
+    // Step 1 of Customer 2FA Login: Generate 6-Digit Email Code & Dispatch
+    const emailCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const loginSessionId = 'login_2fa_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+    const expiresAt = Date.now() + 3 * 60 * 1000; // 3 minutes
+
+    customerLoginSessions.set(loginSessionId, {
+      userId: user.id,
+      email: user.email.toLowerCase().trim(),
+      name: user.name,
+      code: emailCode,
+      expiresAt,
+      attempts: 0
+    });
+
+    console.log(`\n======================================================`);
+    console.log(`🔐 [CUSTOMER LOGIN 2FA EMAIL OTP DISPATCH]`);
+    console.log(`👤 Customer:   ${user.name} (${user.email})`);
+    console.log(`🔑 Login Code: [ ${emailCode} ]`);
+    console.log(`⏱️ Expiry:     3 minutes`);
+    console.log(`======================================================\n`);
+
+    sendEmailNotification({
+      to: user.email,
+      code: emailCode,
+      name: user.name,
+      type: 'login_2fa'
+    }).catch(err => {
+      console.error('Async login 2FA email dispatch error:', err.message);
+    });
+
+    const [emailPrefix, emailDomain] = user.email.split('@');
+    const maskedEmail = `${emailPrefix.slice(0, 3)}***@${emailDomain}`;
 
     res.json({
       success: true,
-      message: 'Login successful',
-      token,
-      user: safeUser
+      requires2FA: true,
+      loginSessionId,
+      maskedEmail,
+      message: `A 6-digit login verification code has been dispatched to ${maskedEmail}`
     });
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: 'Login failed: ' + err.message });
+  }
+});
+
+// Step 2: Customer Login 2FA Verification & Token Issuance
+app.post('/api/auth/login-verify', async (req, res) => {
+  try {
+    const { loginSessionId, code } = req.body;
+    if (!loginSessionId || !code) {
+      return res.status(400).json({ error: 'Login session ID and verification code are required.' });
+    }
+
+    const session = customerLoginSessions.get(loginSessionId);
+    if (!session) {
+      return res.status(400).json({ error: 'Login session expired or invalid. Please enter your credentials again.' });
+    }
+
+    if (Date.now() > session.expiresAt) {
+      customerLoginSessions.delete(loginSessionId);
+      return res.status(400).json({ error: 'Verification code expired (3-minute limit exceeded). Please log in again.' });
+    }
+
+    session.attempts += 1;
+    if (session.attempts > 5) {
+      customerLoginSessions.delete(loginSessionId);
+      return res.status(429).json({ error: 'Too many incorrect attempts. Please log in again.' });
+    }
+
+    const cleanInputCode = code.toString().replace(/\D/g, '').trim();
+    const sessionCode = session.code.toString().trim();
+    if (cleanInputCode !== sessionCode) {
+      return res.status(401).json({
+        error: `Incorrect verification code. Please check the 6-digit code sent to ${session.email}.`,
+        remainingAttempts: Math.max(0, 5 - session.attempts)
+      });
+    }
+
+    // Code is valid! Create the real customer token
+    customerLoginSessions.delete(loginSessionId);
+
+    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(session.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User account not found.' });
+    }
+
+    const { password: _, ...safeUser } = user;
+    const token = generateToken(safeUser);
+
+    console.log(`✅ [CUSTOMER 2FA LOGIN VERIFIED] ${safeUser.name} (${safeUser.email})`);
+
+    res.json({
+      success: true,
+      message: 'Login verified successfully! Welcome back to Bhanjo.',
+      token,
+      user: safeUser
+    });
+  } catch (err) {
+    console.error('Login 2FA verify error:', err);
+    res.status(500).json({ error: 'Failed to verify login: ' + err.message });
+  }
+});
+
+// Step 1b: Resend Customer Login 2FA Code
+app.post('/api/auth/login-resend', async (req, res) => {
+  try {
+    const { loginSessionId } = req.body;
+    if (!loginSessionId) {
+      return res.status(400).json({ error: 'Login session ID is required.' });
+    }
+
+    const session = customerLoginSessions.get(loginSessionId);
+    if (!session) {
+      return res.status(400).json({ error: 'Login session expired. Please enter your credentials again.' });
+    }
+
+    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+    session.code = newCode;
+    session.expiresAt = Date.now() + 3 * 60 * 1000;
+    session.attempts = 0;
+
+    console.log(`\n🔑 [CUSTOMER LOGIN 2FA RESEND] Target: ${session.email} Code: [ ${newCode} ]`);
+
+    sendEmailNotification({
+      to: session.email,
+      code: newCode,
+      name: session.name,
+      type: 'login_2fa'
+    }).catch(err => {
+      console.error('Async login 2FA resend email dispatch error:', err.message);
+    });
+
+    res.json({
+      success: true,
+      message: 'A fresh login verification code has been dispatched to your email.'
+    });
+  } catch (err) {
+    console.error('Login 2FA resend error:', err);
+    res.status(500).json({ error: 'Failed to resend login code: ' + err.message });
   }
 });
 
@@ -1105,7 +1485,7 @@ app.get('/api/products', (req, res) => {
   try {
     const { category, search, page, limit = 40, sort } = req.query;
 
-    let baseWhere = 'WHERE 1=1';
+    let baseWhere = 'WHERE 1=1 AND id NOT IN (SELECT id FROM deleted_products)';
     const params = [];
 
     if (category && category !== 'all') {
@@ -1273,6 +1653,9 @@ app.delete('/api/products/:id', (req, res) => {
   try {
     const { id } = req.params;
     db.prepare('DELETE FROM products WHERE id = ?').run(id);
+    try {
+      db.prepare('INSERT OR IGNORE INTO deleted_products (id) VALUES (?)').run(id);
+    } catch (e) {}
     res.json({ success: true, message: `Product ${id} deleted successfully.` });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -1284,6 +1667,125 @@ app.delete('/api/products', (req, res) => {
   try {
     db.prepare('DELETE FROM products').run();
     res.json({ success: true, message: 'All products removed successfully from catalog.' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==========================================
+// 5a. Dedicated Flash Sale Engine & Admin APIs
+// ==========================================
+app.get('/api/flash-sale', (req, res) => {
+  try {
+    let rows = db.prepare('SELECT * FROM flash_sale_items ORDER BY created_at DESC').all();
+
+    // Auto-seed flash sale if empty using active catalog products
+    if (rows.length === 0) {
+      const activeProducts = db.prepare(`
+        SELECT data_json FROM products 
+        WHERE id NOT IN (SELECT id FROM deleted_products) 
+        ORDER BY created_at DESC 
+        LIMIT 12
+      `).all();
+
+      const discounts = [40, 50, 45, 60, 35, 55, 65, 48, 52, 38, 42, 58];
+      const now = Date.now();
+
+      activeProducts.forEach((pRow, idx) => {
+        try {
+          const prod = JSON.parse(pRow.data_json);
+          const origPrice = prod.samplePrice || 25;
+          const discount = discounts[idx % discounts.length];
+          const flashPrice = parseFloat((origPrice * (1 - discount / 100)).toFixed(2));
+          const hours = 4 + (idx % 6);
+          const minutes = (idx * 15) % 60;
+          const endsAt = new Date(now + (hours * 3600000) + (minutes * 60000)).toISOString();
+          const totalStock = 30 + (idx * 5);
+          const soldStock = Math.floor(totalStock * (0.35 + (idx * 0.05) % 0.45));
+          const flashId = `flash-${prod.id}`;
+
+          db.prepare(`
+            INSERT OR REPLACE INTO flash_sale_items 
+            (id, product_id, flash_price, original_price, discount_percent, duration_hours, duration_minutes, ends_at, total_stock, sold_stock)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `).run(flashId, prod.id, flashPrice, origPrice, discount, hours, minutes, endsAt, totalStock, soldStock);
+        } catch (e) {}
+      });
+
+      rows = db.prepare('SELECT * FROM flash_sale_items ORDER BY created_at DESC').all();
+    }
+
+    // Enrich flash sale rows with full product metadata
+    const enriched = rows.map(f => {
+      const pRow = db.prepare('SELECT data_json FROM products WHERE id = ?').get(f.product_id);
+      let prod = null;
+      if (pRow) {
+        try { prod = JSON.parse(pRow.data_json); } catch (e) {}
+      }
+      return {
+        ...f,
+        product: prod || {
+          id: f.product_id,
+          title: 'Flash Sale Premium Item',
+          images: ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600'],
+          categoryId: 'apparel-accessories',
+          samplePrice: f.original_price
+        }
+      };
+    });
+
+    res.json({ success: true, items: enriched });
+  } catch (err) {
+    console.error('Flash sale GET error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/flash-sale', (req, res) => {
+  try {
+    const { 
+      productId, 
+      flashPrice, 
+      originalPrice, 
+      discountPercent, 
+      durationHours = 4, 
+      durationMinutes = 0,
+      totalStock = 50,
+      soldStock = 0
+    } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({ error: 'Product ID is required for Flash Sale' });
+    }
+
+    const fPrice = parseFloat(flashPrice);
+    const oPrice = parseFloat(originalPrice) || fPrice * 1.5;
+    const discount = parseFloat(discountPercent) || Math.round(((oPrice - fPrice) / oPrice) * 100);
+    const dHours = parseInt(durationHours) || 4;
+    const dMins = parseInt(durationMinutes) || 0;
+    const endsAt = new Date(Date.now() + (dHours * 3600000) + (dMins * 60000)).toISOString();
+    const flashId = `flash-${productId}`;
+
+    db.prepare(`
+      INSERT OR REPLACE INTO flash_sale_items 
+      (id, product_id, flash_price, original_price, discount_percent, duration_hours, duration_minutes, ends_at, total_stock, sold_stock)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(flashId, productId, fPrice, oPrice, discount, dHours, dMins, endsAt, parseInt(totalStock) || 50, parseInt(soldStock) || 0);
+
+    const saved = db.prepare('SELECT * FROM flash_sale_items WHERE id = ?').get(flashId);
+    res.json({ success: true, message: 'Product added to Flash Sale!', item: saved });
+  } catch (err) {
+    console.error('Flash sale POST error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/flash-sale/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    // Allow deleting by flash ID or product ID
+    db.prepare('DELETE FROM flash_sale_items WHERE id = ? OR product_id = ?').run(id, id);
+    res.json({ success: true, message: 'Item removed from Flash Sale.' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -1335,6 +1837,156 @@ app.post('/api/1688/test-session', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Failed to test 1688 session: ' + err.message });
   }
+});
+
+// In-memory Distributor Import Jobs
+const distributorImportJobs = new Map();
+
+// 5d. 1688 Bulk Distributor & Store Catalog APIs
+app.post('/api/1688/distributor/scan', async (req, res) => {
+  try {
+    const { storeUrl, maxCount, keyword, categoryId } = req.body;
+    if (!storeUrl) {
+      return res.status(400).json({ error: 'Please provide a 1688 distributor store link' });
+    }
+    const result = await scan1688DistributorStore(storeUrl, maxCount || 100, keyword || null, categoryId || 'luggage-bags-cases');
+    res.json(result);
+  } catch (err) {
+    console.error('Scan 1688 distributor error:', err);
+    res.status(500).json({ error: 'Failed to scan distributor store: ' + err.message });
+  }
+});
+
+app.post('/api/1688/distributor/start-import', async (req, res) => {
+  try {
+    const { products, categoryId } = req.body;
+    if (!Array.isArray(products) || products.length === 0) {
+      return res.status(400).json({ error: 'No products provided for bulk import' });
+    }
+
+    const jobId = 'dist_job_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+    const job = {
+      id: jobId,
+      status: 'running',
+      total: products.length,
+      completed: 0,
+      failed: 0,
+      startedAt: new Date().toISOString(),
+      currentItem: products[0]?.title || 'Starting...',
+      importedProducts: [],
+      error: null
+    };
+
+    distributorImportJobs.set(jobId, job);
+
+    (async () => {
+      const stmt = db.prepare(`
+        INSERT OR REPLACE INTO products (id, data_json, category_id, title, price) 
+        VALUES (?, ?, ?, ?, ?)
+      `);
+
+      for (let i = 0; i < products.length; i++) {
+        const currentJob = distributorImportJobs.get(jobId);
+        if (!currentJob || currentJob.status === 'stopped') {
+          break;
+        }
+
+        const prod = products[i];
+        try {
+          currentJob.currentItem = prod.title || `Item #${i + 1}`;
+          
+          const safeId = prod.id || `1688-${prod.offerId || Date.now()}-${i}`;
+          const safeTitle = prod.title || '1688 Factory Direct Product';
+          const safeCat = categoryId || prod.categoryId || 'luggage-bags-cases';
+          const safePrice = parseFloat(prod.samplePrice) || parseFloat(prod.price) || 15.0;
+
+          const fullProduct = {
+            ...prod,
+            id: safeId,
+            title: safeTitle,
+            categoryId: safeCat,
+            samplePrice: safePrice,
+            price: safePrice,
+            isAlibabaImport: true,
+            is1688Import: true,
+            platform: '1688',
+            importedAt: new Date().toISOString()
+          };
+
+          stmt.run(safeId, JSON.stringify(fullProduct), safeCat, safeTitle, safePrice);
+
+          currentJob.completed++;
+          currentJob.importedProducts.unshift({
+            id: safeId,
+            title: safeTitle,
+            priceNPR: fullProduct.priceNPR,
+            image: (fullProduct.images && fullProduct.images[0]) || fullProduct.featuredImage,
+            supplier: fullProduct.supplier
+          });
+
+          if (currentJob.importedProducts.length > 40) {
+            currentJob.importedProducts.pop();
+          }
+
+          if (i % 5 === 0) {
+            await new Promise(r => setTimeout(r, 35));
+          }
+        } catch (itemErr) {
+          console.error(`Item ${i} import error:`, itemErr.message);
+          currentJob.failed++;
+        }
+      }
+
+      const finalJob = distributorImportJobs.get(jobId);
+      if (finalJob && finalJob.status === 'running') {
+        finalJob.status = 'completed';
+        finalJob.completedAt = new Date().toISOString();
+      }
+    })();
+
+    res.json({
+      success: true,
+      jobId,
+      total: products.length,
+      message: `Bulk import job started for ${products.length} distributor products.`
+    });
+  } catch (err) {
+    console.error('Start bulk import error:', err);
+    res.status(500).json({ error: 'Failed to start bulk import: ' + err.message });
+  }
+});
+
+app.get('/api/1688/distributor/job/:jobId', (req, res) => {
+  const { jobId } = req.params;
+  const job = distributorImportJobs.get(jobId);
+  if (!job) {
+    return res.status(404).json({ error: 'Import job not found or expired' });
+  }
+  res.json({
+    success: true,
+    job: {
+      id: job.id,
+      status: job.status,
+      total: job.total,
+      completed: job.completed,
+      failed: job.failed,
+      progressPercent: job.total > 0 ? Math.round((job.completed / job.total) * 100) : 0,
+      currentItem: job.currentItem,
+      recentImported: job.importedProducts.slice(0, 10),
+      startedAt: job.startedAt,
+      completedAt: job.completedAt || null
+    }
+  });
+});
+
+app.post('/api/1688/distributor/stop/:jobId', (req, res) => {
+  const { jobId } = req.params;
+  const job = distributorImportJobs.get(jobId);
+  if (job) {
+    job.status = 'stopped';
+    return res.json({ success: true, message: `Job stopped. ${job.completed} products saved to catalog.` });
+  }
+  res.status(404).json({ error: 'Job not found' });
 });
 
 app.post('/api/alibaba/preview', async (req, res) => {

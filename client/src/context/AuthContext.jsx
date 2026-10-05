@@ -120,36 +120,70 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = async (credentials) => {
-    try {
-      if (credentials?.phoneOrEmail) {
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(credentials)
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.error || 'Login failed. Please check your credentials.');
-        }
-        if (data.user && data.token) {
-          setUser(data.user);
-          setToken(data.token);
-          localStorage.setItem('bhanjo_user', JSON.stringify(data.user));
-          localStorage.setItem('bhanjo_token', data.token);
-          return data.user;
-        }
-      }
-    } catch (e) {
-      throw e;
+  // Customer Login (Step 1: Validate credentials & send 2FA email code)
+  const initiateLogin = async (credentials) => {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials)
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Login failed. Please check your credentials.');
     }
+    // Direct token if legacy fallback without email
+    if (data.token && data.user) {
+      setUser(data.user);
+      setToken(data.token);
+      localStorage.setItem('bhanjo_user', JSON.stringify(data.user));
+      localStorage.setItem('bhanjo_token', data.token);
+      return { ...data, directLogin: true };
+    }
+    return data;
+  };
 
+  // Customer Login (Step 2: Verify 2FA email code & establish session)
+  const verifyLogin2FA = async ({ loginSessionId, code }) => {
+    const res = await fetch('/api/auth/login-verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ loginSessionId, code })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Verification failed. Please check the code.');
+    }
+    if (data.user && data.token) {
+      setUser(data.user);
+      setToken(data.token);
+      localStorage.setItem('bhanjo_user', JSON.stringify(data.user));
+      localStorage.setItem('bhanjo_token', data.token);
+      return data.user;
+    }
+  };
+
+  // Customer Login (Resend 2FA code)
+  const resendLoginCode = async ({ loginSessionId }) => {
+    const res = await fetch('/api/auth/login-resend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ loginSessionId })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to resend verification code.');
+    }
+    return data;
+  };
+
+  const login = async (credentials) => {
     // Direct object login (e.g. from demo login)
     if (credentials?.id) {
       setUser(credentials);
       localStorage.setItem('bhanjo_user', JSON.stringify(credentials));
       return credentials;
     }
+    return initiateLogin(credentials);
   };
 
   // Customer Email OTP Registration (Step 1: Initiate)
@@ -184,6 +218,62 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('bhanjo_token', data.token);
       return data.user;
     }
+  };
+
+  // Customer Email OTP Registration (Resend Code)
+  const resendCustomerRegister = async ({ signupSessionId }) => {
+    const res = await fetch('/api/auth/register-resend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ signupSessionId })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to resend verification code.');
+    }
+    return data;
+  };
+
+  // Customer Forgot Password (Step 1: Initiate)
+  const initiateForgotPassword = async (phoneOrEmail) => {
+    const res = await fetch('/api/auth/forgot-password/initiate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phoneOrEmail })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to initiate password reset.');
+    }
+    return data;
+  };
+
+  // Customer Forgot Password (Resend Code)
+  const resendForgotPasswordCode = async ({ resetSessionId }) => {
+    const res = await fetch('/api/auth/forgot-password/resend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resetSessionId })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to resend reset code.');
+    }
+    return data;
+  };
+
+  // Customer Forgot Password (Step 2: Verify & Reset)
+  const verifyAndResetPassword = async ({ resetSessionId, code, newPassword }) => {
+    const res = await fetch('/api/auth/forgot-password/reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resetSessionId, code, newPassword })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to reset password.');
+    }
+    return data;
   };
 
   const register = async (userData) => {
@@ -361,21 +451,25 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Master Admin State (Active if user.role === 'admin' or stored flag)
-  const [adminModeState, setAdminModeState] = useState(() => {
-    try {
-      return localStorage.getItem('bhanjo_admin_mode') === 'true';
-    } catch {
-      return false;
-    }
-  });
+  // Master Admin State: Strictly true ONLY when logged in as verified admin
+  const isAdmin = Boolean(user && user.role === 'admin');
 
-  const isAdmin = (user && user.role === 'admin') || adminModeState;
+  // Purge any legacy browser admin_mode flag so regular users and guests never see admin data
+  useEffect(() => {
+    try {
+      if (!user || user.role !== 'admin') {
+        localStorage.removeItem('bhanjo_admin_mode');
+      }
+    } catch (e) {}
+  }, [user]);
 
   const setAdminMode = (enabled) => {
-    setAdminModeState(!!enabled);
     try {
-      localStorage.setItem('bhanjo_admin_mode', String(!!enabled));
+      if (enabled && user && user.role === 'admin') {
+        localStorage.setItem('bhanjo_admin_mode', 'true');
+      } else {
+        localStorage.removeItem('bhanjo_admin_mode');
+      }
     } catch (e) {}
   };
 
@@ -427,9 +521,16 @@ export const AuthProvider = ({ children }) => {
       initiateAdminLogin,
       verifyAdminMfa,
       login,
+      initiateLogin,
+      verifyLogin2FA,
+      resendLoginCode,
       register,
       initiateCustomerRegister,
       verifyCustomerRegister,
+      resendCustomerRegister,
+      initiateForgotPassword,
+      resendForgotPasswordCode,
+      verifyAndResetPassword,
       updateProfile,
       logout,
       wishlist,

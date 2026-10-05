@@ -72,6 +72,26 @@ db.exec(`
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
+  CREATE TABLE IF NOT EXISTS deleted_products (
+    id TEXT PRIMARY KEY,
+    deleted_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS flash_sale_items (
+    id TEXT PRIMARY KEY,
+    product_id TEXT NOT NULL,
+    flash_price REAL NOT NULL,
+    original_price REAL NOT NULL,
+    discount_percent REAL NOT NULL,
+    duration_hours INTEGER DEFAULT 4,
+    duration_minutes INTEGER DEFAULT 0,
+    ends_at DATETIME NOT NULL,
+    total_stock INTEGER DEFAULT 50,
+    sold_stock INTEGER DEFAULT 18,
+    session_time TEXT DEFAULT '12:00',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
   CREATE TABLE IF NOT EXISTS inquiries (
     id TEXT PRIMARY KEY,
     product_id TEXT,

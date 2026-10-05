@@ -263,9 +263,26 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
               <span className="hidden sm:inline">{isFavorite ? 'Saved' : 'Wishlist'}</span>
             </button>
 
+            {/* Delete Product Button (Admin Only) */}
+            {isAdmin && onDeleteProduct && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                  onDeleteProduct(product.id, e);
+                }}
+                className="px-2.5 py-1.5 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 transition flex items-center gap-1.5 text-xs font-bold cursor-pointer hover:border-red-300 active:scale-95 shadow-2xs"
+                title="Permanently remove this product from Bhanjo.com"
+              >
+                <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                <span className="hidden sm:inline">Delete Product</span>
+              </button>
+            )}
+
             <button
               onClick={onClose}
-              className="p-1 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition"
+              className="p-1 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -291,7 +308,7 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
                   className="w-full h-full object-contain"
                 />
                 <span className="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow-xs z-10 flex items-center gap-1">
-                  <span>{isAdmin ? '▶ 1688 Factory Video Showcase' : '▶ Verified Product Showcase'}</span>
+                  <span>▶ Verified Product Showcase</span>
                 </span>
               </div>
             ) : (
@@ -401,7 +418,14 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
                 <span>•</span>
                 <span className="text-slate-600">{product.reviewsCount + reviews.length} Ratings</span>
                 <span>•</span>
-                <span className="text-[#F85606] font-semibold">{supplier.name.slice(0, 22)}</span>
+                {isAdmin ? (
+                  <span className="text-purple-700 bg-purple-50 px-2 py-0.5 rounded font-bold border border-purple-200 text-[10px] flex items-center gap-1" title={product.distributorName || '1688 Manufacturer'}>
+                    <span>🏭</span>
+                    <span className="truncate max-w-[140px]">{product.distributorShopId || product.distributorName || supplier.name.slice(0, 22)}</span>
+                  </span>
+                ) : (
+                  <span className="text-[#F85606] font-semibold">Bhanjo.com Official Store</span>
+                )}
               </div>
 
               {/* Pricing Box with Inline Price Editing & Multi-Currency */}
@@ -570,19 +594,7 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
                   </div>
                 </div>
 
-                {/* Alibaba / 1688 Benchmark Note (Admin Only) */}
-                {isAdmin && (product.original1688PriceRMB || product.originalAlibabaPrice) && (
-                  <div className="mt-2.5 text-[11px] bg-amber-50 text-amber-900 px-2.5 py-1.5 rounded-lg border border-amber-200 flex items-center justify-between">
-                    <span>
-                      {product.is1688Import ? (
-                        <>🇨🇳 1688 Factory Price: <strong>¥{product.original1688PriceRMB ? Number(product.original1688PriceRMB).toFixed(2) : '10.60'} RMB (~Rs. {Math.round((product.original1688PriceRMB || 10.60) * 18.46).toLocaleString()})</strong></>
-                      ) : (
-                        <>⚡ Alibaba Factory Direct: <strong>Rs. {Math.round(product.originalAlibabaPrice * 133.5).toLocaleString()} (${Number(product.originalAlibabaPrice).toFixed(2)})</strong></>
-                      )}
-                    </span>
-                    <span className="font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded text-[10px]">3x Wholesale Markup</span>
-                  </div>
-                )}
+
               </div>
 
               {/* Variant / Color Selector */}
@@ -718,13 +730,41 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
                   onClose();
                   onOpenChat(product);
                 }}
-                className="w-full mt-3 py-1.5 rounded-lg border border-[#F85606] text-[#F85606] hover:bg-orange-50 font-bold text-xs transition flex items-center justify-center gap-1"
+                className="w-full mt-3 py-1.5 rounded-lg border border-[#F85606] text-[#F85606] hover:bg-orange-50 font-bold text-xs transition flex items-center justify-center gap-1 cursor-pointer"
               >
                 <MessageSquare className="w-3.5 h-3.5" />
                 <span>Chat with Bhanjo Support</span>
               </button>
 
             </div>
+
+            {/* Catalog Management / Delete Card (Admin Only) */}
+            {isAdmin && onDeleteProduct && (
+              <div className="p-3 bg-red-50/70 rounded-xl border border-red-200 text-xs space-y-2">
+                <div className="font-bold text-red-800 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                    <span>Catalog Management</span>
+                  </span>
+                  <span className="text-[10px] text-red-500 font-semibold">Store Control</span>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  Don't want this product in your catalog? You can permanently delete it with one click.
+                </p>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onClose();
+                    onDeleteProduct(product.id, e);
+                  }}
+                  className="w-full py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-lg transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Delete This Product</span>
+                </button>
+              </div>
+            )}
 
           </div>
 
@@ -746,6 +786,95 @@ export const ProductDetailModal = ({ product, onClose, onOpenChat, onOpenCart, o
             ))}
           </div>
         </div>
+
+        {/* ADMIN-ONLY 1688 DISTRIBUTOR & FACTORY INTELLIGENCE (Strictly hidden from public customers) */}
+        {isAdmin && (product.is1688Import || product.distributorName || product.distributorUrl || product.alibabaSourceUrl) && (
+          <div className="mx-5 mb-5 p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 border-2 border-purple-500/50 text-white shadow-xl">
+            <div className="flex items-center justify-between gap-3 flex-wrap border-b border-purple-800/60 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-purple-600 flex items-center justify-center text-sm font-bold shadow-xs">
+                  🏭
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-black text-xs text-white">🔒 Admin Sourcing Intel: 1688 Distributor</span>
+                    <span className="bg-purple-500/30 text-purple-200 border border-purple-400/40 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">
+                      Admin Confidential • Hidden from Public
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-purple-200/80 mt-0.5">
+                    Internal manufacturer sourcing data visible only to Master Admin credentials.
+                  </p>
+                </div>
+              </div>
+
+              {/* Direct 1688 Links */}
+              <div className="flex items-center gap-2">
+                {product.alibabaSourceUrl && (
+                  <a
+                    href={product.alibabaSourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl transition shadow-xs"
+                  >
+                    <span>Open 1688 Product ↗</span>
+                  </a>
+                )}
+                {(product.distributorUrl || product.specs?.['1688 Store Link']) && (
+                  <a
+                    href={product.distributorUrl || product.specs?.['1688 Store Link']}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl transition shadow-xs"
+                  >
+                    <span>Open Distributor Store ↗</span>
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {/* Intel Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 text-xs">
+              <div className="bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                <span className="text-[10px] text-purple-300 font-semibold block uppercase">1688 Manufacturer:</span>
+                <span className="font-extrabold text-white text-xs mt-0.5 block truncate" title={product.distributorName || product.supplier}>
+                  {product.distributorName || product.supplier || product.supplierName || '1688 Direct Factory'}
+                </span>
+                {product.distributorShopId && (
+                  <span className="text-[10px] text-purple-300 font-mono block mt-0.5">Shop ID: {product.distributorShopId}</span>
+                )}
+              </div>
+
+              <div className="bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                <span className="text-[10px] text-purple-300 font-semibold block uppercase">Factory Cost (RMB):</span>
+                <span className="font-extrabold text-amber-400 text-sm mt-0.5 block">
+                  ¥{product.priceRMB || product.original1688PriceRMB || Math.round((currentPriceUSD / 3.0) * 7.2 * 10) / 10} RMB
+                </span>
+                <span className="text-[10px] text-slate-400">
+                  ~Rs. {Math.round(((product.priceRMB || (currentPriceUSD / 3.0) * 7.2) / 7.2) * 133.5).toLocaleString()} Base Cost
+                </span>
+              </div>
+
+              <div className="bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                <span className="text-[10px] text-purple-300 font-semibold block uppercase">Bhanjo Retail Price (3.0x):</span>
+                <span className="font-extrabold text-emerald-400 text-sm mt-0.5 block">
+                  {formatNPR(currentPriceUSD)}
+                </span>
+                <span className="text-[10px] text-emerald-300 font-bold">
+                  200% Profit Margin (~Rs. {Math.round(currentPriceUSD * 133.5 * 0.66).toLocaleString()})
+                </span>
+              </div>
+
+              <div className="bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                <span className="text-[10px] text-purple-300 font-semibold block uppercase">Factory Origin / Hub:</span>
+                <span className="font-semibold text-white text-xs mt-0.5 block truncate" title={product.supplierLocation || product.distributorLocation}>
+                  {product.distributorLocation || product.supplierLocation || product.specs?.['Factory Origin'] || 'China Luggage & Bag Hub'}
+                </span>
+                <span className="text-[10px] text-purple-300">Transit: 7-12 Days to Ktm</span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Customer Reviews & Feedback Section */}
         <div className="px-5 pb-6 border-t border-slate-200 pt-4 bg-slate-50/50">

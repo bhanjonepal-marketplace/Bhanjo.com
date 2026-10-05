@@ -186,7 +186,7 @@ export const CatalogFilterSidebar = ({
               onChange={(e) => setFilterAlibabaOnly(e.target.checked)}
               className="accent-[#FF6A00] rounded w-3.5 h-3.5 cursor-pointer"
             />
-            <span>{isAdmin ? t('alibabaGlobalDirect') : 'Bhanjo Global Express'}</span>
+            <span>Bhanjo Global Express</span>
           </label>
 
           <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900 select-none p-1 rounded hover:bg-slate-50 transition">

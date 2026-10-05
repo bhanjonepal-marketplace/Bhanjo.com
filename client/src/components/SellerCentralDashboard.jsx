@@ -9,7 +9,6 @@ import {
 import { PRODUCTS } from '../data/products';
 import { CATEGORIES } from '../data/categories';
 import { useCurrency } from '../context/CurrencyContext';
-import { AlibabaImporterModal } from './AlibabaImporterModal';
 import confetti from 'canvas-confetti';
 
 export const SellerCentralDashboard = ({ onProductAdded, onBackToMarketplace, onDeleteProduct, onEditProduct }) => {
@@ -18,13 +17,7 @@ export const SellerCentralDashboard = ({ onProductAdded, onBackToMarketplace, on
   const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'inventory', 'inquiries'
   const [productList, setProductList] = useState(PRODUCTS);
   const [inquiries, setInquiries] = useState([]);
-  const [isAlibabaModalOpen, setIsAlibabaModalOpen] = useState(false);
-  const [importerPlatform, setImporterPlatform] = useState('1688'); // '1688' | 'alibaba'
-  
-  const handleOpenImporter = (platform = '1688') => {
-    setImporterPlatform(platform);
-    setIsAlibabaModalOpen(true);
-  };
+
   
   // Add Product Form State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -416,24 +409,6 @@ export const SellerCentralDashboard = ({ onProductAdded, onBackToMarketplace, on
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 type="button"
-                onClick={() => handleOpenImporter('1688')}
-                className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs cursor-pointer"
-                title="Sourcing direct from 1688 Chinese factory"
-              >
-                <span>🏭</span>
-                <span>1688 Sourcing</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleOpenImporter('alibaba')}
-                className="bg-orange-50 hover:bg-orange-100 text-[#FF6A00] border border-orange-200 font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs cursor-pointer"
-                title="Sourcing direct from Alibaba Global Direct"
-              >
-                <span>⚡</span>
-                <span>Alibaba Sourcing</span>
-              </button>
-              <button
-                type="button"
                 onClick={() => setIsAddModalOpen(true)}
                 className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow cursor-pointer"
               >
@@ -750,18 +725,7 @@ export const SellerCentralDashboard = ({ onProductAdded, onBackToMarketplace, on
         </div>
       )}
 
-      {/* Alibaba 1-Click Importer Modal */}
-      <AlibabaImporterModal
-        isOpen={isAlibabaModalOpen}
-        defaultPlatform={importerPlatform}
-        onClose={() => setIsAlibabaModalOpen(false)}
-        onProductImported={(importedProd) => {
-          setProductList(prev => [importedProd, ...prev]);
-          if (onProductAdded) {
-            onProductAdded(importedProd);
-          }
-        }}
-      />
+
 
     </div>
   );
