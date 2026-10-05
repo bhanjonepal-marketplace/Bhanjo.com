@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronRight, ShieldCheck, Globe } from 'lucide-react';
+import { ChevronDown, ShieldCheck, Globe } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 
 export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll }) => {
   const { formatPrice, t, language } = useCurrency();
   const [globalSortBy, setGlobalSortBy] = useState('popular');
+  const [visibleCount, setVisibleCount] = useState(12);
 
   // Filter or prioritize imported global products
   const alibabaProducts = products.filter(p => p.isAlibabaImport || p.is1688Import || p.id.startsWith('ali-') || p.id.startsWith('1688-'));
@@ -93,9 +94,9 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
         </div>
       </div>
 
-      {/* Grid of Cards (Up to 12 Curated SKUs) */}
+      {/* Grid of Cards (Loaded progressively via Load More) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        {sortedAlibabaProducts.slice(0, 12).map((item) => {
+        {sortedAlibabaProducts.slice(0, visibleCount).map((item) => {
           const displayPrice = item.priceTiers?.[item.priceTiers.length - 1]?.price || item.samplePrice || 25;
           const originalPrice = displayPrice * 1.35;
 
@@ -161,6 +162,20 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
           );
         })}
       </div>
+
+      {/* Centered Load More Option in the Down Middle (Matching Flash Deal Style) */}
+      {visibleCount < sortedAlibabaProducts.length && (
+        <div className="mt-5 sm:mt-6 flex justify-center items-center">
+          <button
+            type="button"
+            onClick={() => setVisibleCount(prev => Math.min(prev + 12, sortedAlibabaProducts.length))}
+            className="bg-gradient-to-r from-[#FF6A00] to-[#F85606] hover:from-[#EE5007] hover:to-[#e04e05] active:scale-95 text-white font-extrabold text-xs sm:text-sm px-8 sm:px-12 py-2.5 rounded-full shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer group"
+          >
+            <span>{language === 'ne' ? 'थप देखाउनुहोस्' : 'Load More'}</span>
+            <ChevronDown className="w-4 h-4 stroke-[2.5] group-hover:translate-y-0.5 transition-transform" />
+          </button>
+        </div>
+      )}
 
     </section>
   );
