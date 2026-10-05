@@ -38,6 +38,52 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
+// Root Health & Information Route
+app.get('/', (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>Bhanjo.com API Engine</title>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b1120; color: #f8fafc; margin: 0; padding: 40px 20px; display: flex; justify-content: center; }
+        .card { max-width: 600px; width: 100%; background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .badge { background: #22c55e22; color: #4ade80; border: 1px solid #22c55e55; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; }
+        .badge::before { content: ""; width: 8px; height: 8px; background: #4ade80; border-radius: 50%; display: inline-block; }
+        h1 { margin: 16px 0 8px 0; font-size: 26px; }
+        p { color: #94a3b8; line-height: 1.6; font-size: 14px; }
+        .btn { display: inline-block; background: #F85606; color: white; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; margin-top: 16px; }
+        .btn:hover { background: #ea580c; }
+        .endpoints { margin-top: 24px; background: #020617; border-radius: 10px; padding: 16px; border: 1px solid #1e293b; font-size: 13px; }
+        .endpoints code { color: #38bdf8; font-family: monospace; }
+        .endpoint-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #0f172a; }
+        .endpoint-row:last-child { border-bottom: none; }
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <span class="badge">API Server Operational</span>
+        <h1>Bhanjo.com Backend Engine</h1>
+        <p>This is the <strong>Backend API Server</strong> (Port 5000) powering the Bhanjo.com marketplace database, authentication, real-time OTP emails, and Alibaba/1688 imports.</p>
+        <p>To view and interact with the storefront, visit the frontend application:</p>
+        <a href="http://localhost:5173" class="btn">Open Bhanjo.com Storefront (localhost:5173) &rarr;</a>
+        
+        <div class="endpoints">
+          <div style="font-weight: bold; margin-bottom: 8px; color: #cbd5e1;">Available API Endpoints:</div>
+          <div class="endpoint-row"><span>Products Catalog:</span> <code><a href="/api/products" style="color: #38bdf8;">/api/products</a></code></div>
+          <div class="endpoint-row"><span>Categories List:</span> <code><a href="/api/categories" style="color: #38bdf8;">/api/categories</a></code></div>
+          <div class="endpoint-row"><span>Flash Sale Deals:</span> <code><a href="/api/flash-sale" style="color: #38bdf8;">/api/flash-sale</a></code></div>
+          <div class="endpoint-row"><span>Auth & Verification:</span> <code>/api/auth/*</code></div>
+          <div class="endpoint-row"><span>Cart & Wishlist:</span> <code>/api/cart, /api/wishlist</code></div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
+});
+
+
 // Helper: Generate signed JWT token
 export const generateToken = (user) => {
   return jwt.sign(
