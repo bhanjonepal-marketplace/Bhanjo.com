@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bhanjo.com | Master Admin Command Center</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #090d16; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0b1120; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    .glass-card { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(51, 65, 85, 0.4); }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen antialiased flex flex-col selection:bg-orange-500 selection:text-white">
+
+  <!-- ========================================== -->
+  <!-- 1. LOGIN & DUAL-2FA GATEWAY (When Logged Out) -->
+  <!-- ========================================== -->
+  <div id="login-container" class="min-h-screen flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full rounded-2xl shadow-2xl p-6 sm:p-8 border border-slate-700/60 relative overflow-hidden">
+      <!-- Glow Accent -->
+      <div class="absolute -top-24 -right-24 w-48 h-48 bg-orange-500/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Header -->
+      <div class="text-center mb-6 relative">
+        <div class="w-14 h-14 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-orange-500/30 mb-3 border border-orange-400/40">
+          <i data-lucide="shield-check" class="w-7 h-7 text-white"></i>
+        </div>
+        <h1 class="text-2xl font-black tracking-tight text-white">BHANJO<span class="text-orange-500">.COM</span></h1>
+        <p class="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Master Admin Command Center</p>
+        <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>4-Layer Hardware Shield Active</span>
+        </div>
+      </div>
+
+      <!-- Alert Message Box -->
+      <div id="login-alert" class="hidden mb-4 p-3 rounded-xl text-xs font-semibold"></div>
+
+      <!-- STEP 1: Master Credentials Form -->
+      <form id="step1-form" onsubmit="handleInitiateLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Admin Email</label>
+          <div class="relative">
+            <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input type="email" id="login-email" required placeholder="admin@bhanjo.com"
+              class="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Master Password</label>
+          <div class="relative">
+            <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input type="password" id="login-password" required placeholder="••••••••••••"
+              class="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Registered Admin Phone</label>
+          <div class="relative">
+            <i data-lucide="smartphone" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input type="tel" id="login-phone" required placeholder="98XXXXXXXX"
+              class="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition">
+          </div>
+        </div>
+
+        <button type="submit" id="step1-btn"
+          class="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-orange-500/25 transition duration-200 flex items-center justify-center gap-2 cursor-pointer mt-2">
+          <span>Authenticate & Dispatch 2FA</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+      <!-- STEP 2: Dual 2FA Verification Form -->
+      <form id="step2-form" onsubmit="handleVerify2FA(event)" class="space-y-4 hidden">
+        <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 text-xs text-amber-300 leading-relaxed flex items-start gap-2">
+          <i data-lucide="alert-triangle" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+          <div>
+            Dual-Factor Verification Required: 6-digit codes were dispatched to your registered SMS and Email. Both codes are required.
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1">
+              📱 SMS Code (<span id="masked-phone">...</span>)
+            </label>
+            <input type="text" id="sms-code" maxlength="6" required placeholder="6-digit code"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-center font-mono font-bold text-lg text-amber-400 tracking-widest focus:outline-none focus:border-orange-500">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1">
+              ✉️ Email Code (<span id="masked-email">...</span>)
+            </label>
+            <input type="text" id="email-code" maxlength="6" required placeholder="6-digit code"
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-center font-mono font-bold text-lg text-orange-400 tracking-widest focus:outline-none focus:border-orange-500">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-400 px-1">
+          <span>Code valid for: <strong id="countdown-timer" class="text-amber-400 font-mono">05:00</strong></span>
+          <button type="button" onclick="resetToStep1()" class="text-slate-400 hover:text-white underline">Change info</button>
+        </div>
+
+        <button type="submit" id="step2-btn"
+          class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-emerald-500/25 transition duration-200 flex items-center justify-center gap-2 cursor-pointer">
+          <i data-lucide="lock" class="w-4 h-4"></i>
+          <span>Authorize Master Session</span>
+        </button>
+      </form>
+
+      <div class="mt-6 pt-4 border-t border-slate-800 text-center text-[11px] text-slate-500">
+        Bhanjo.com Enterprise Security • Dedicated Backend Shield
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- 2. MASTER COMMAND CENTER (When Logged In) -->
+  <!-- ========================================== -->
+  <div id="dashboard-container" class="min-h-screen flex flex-col hidden">
+    
+    <!-- Top Bar -->
+    <header class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md px-4 sm:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center shadow-md shadow-orange-500/20">
+          <i data-lucide="shield-check" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-black text-lg text-white tracking-tight">BHANJO<span class="text-orange-500">.COM</span></span>
+            <span class="bg-orange-500/20 text-orange-400 border border-orange-500/30 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Command Center</span>
+          </div>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Hardware-Shielded Backend Administration Portal</p>
+        </div>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-3">
+        <a href="http://localhost:5173" target="_blank"
+          class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-1.5 rounded-xl border border-slate-700 transition flex items-center gap-1.5">
+          <i data-lucide="external-link" class="w-3.5 h-3.5 text-orange-400"></i>
+          <span class="hidden sm:inline">Open Live Storefront</span>
+          <span class="sm:hidden">Store</span>
+        </a>
+
+        <button onclick="refreshCurrentTab()" title="Reload Data"
+          class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-xl border border-slate-700 transition">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Admin Profile & Logout -->
+        <div class="flex items-center gap-2 pl-2 border-l border-slate-800">
+          <div class="text-right hidden md:block">
+            <div id="admin-name" class="text-xs font-bold text-white">Master Admin</div>
+            <div id="admin-email" class="text-[10px] text-slate-400">admin@bhanjo.com</div>
+          </div>
+          <button onclick="handleLogout()" title="Secure Logout"
+            class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Logout</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-slate-900/60 border-b border-slate-800 px-4 sm:px-8 py-2 overflow-x-auto flex items-center gap-2">
+      <button onclick="switchTab('orders')" id="tab-btn-orders"
+        class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-orange-500 text-white shadow-sm">
+        <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+        <span>Orders & Fulfillment</span>
+        <span id="badge-orders" class="bg-black/30 text-white text-[10px] px-1.5 py-0.2 rounded-full">0</span>
+      </button>
+
+      <button onclick="switchTab('inventory')" id="tab-btn-inventory"
+        class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+        <i data-lucide="package" class="w-4 h-4"></i>
+        <span>Catalog & Inventory</span>
+        <span id="badge-products" class="bg-slate-800 text-slate-300 text-[10px] px-1.5 py-0.2 rounded-full">0</span>
+      </button>
+
+      <button onclick="switchTab('flash-sale')" id="tab-btn-flash-sale"
+        class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+        <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
+        <span>Flash Sale Deals</span>
+      </button>
+
+      <button onclick="switchTab('importer')" id="tab-btn-importer"
+        class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+        <i data-lucide="globe" class="w-4 h-4 text-orange-400"></i>
+        <span>Alibaba / 1688 Importer</span>
+      </button>
+
+      <button onclick="switchTab('calculator')" id="tab-btn-calculator"
+        class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+        <i data-lucide="calculator" class="w-4 h-4 text-emerald-400"></i>
+        <span>Landed Cost & Margin Calculator</span>
+      </button>
+
+      <button onclick="switchTab('sellers')" id="tab-btn-sellers"
+        class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+        <i data-lucide="store" class="w-4 h-4 text-blue-400"></i>
+        <span>Sellers</span>
+      </button>
+
+      <button onclick="switchTab('inquiries')" id="tab-btn-inquiries"
+        class="tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+        <i data-lucide="message-square" class="w-4 h-4 text-purple-400"></i>
+        <span>Customer Inquiries</span>
+      </button>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
+
+      <!-- KPI Summary Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div class="glass-card rounded-2xl p-4 border border-slate-800">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-1">
+            <span>Total Gross Sales</span>
+            <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <div id="kpi-revenue" class="text-xl sm:text-2xl font-black text-white font-mono">Rs. 0</div>
+          <div class="text-[11px] text-emerald-400 font-semibold mt-1">▲ Live Platform GMV</div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 border border-slate-800">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-1">
+            <span>Customer Orders</span>
+            <i data-lucide="shopping-cart" class="w-4 h-4 text-orange-400"></i>
+          </div>
+          <div id="kpi-orders-count" class="text-xl sm:text-2xl font-black text-white font-mono">0</div>
+          <div id="kpi-pending-orders" class="text-[11px] text-amber-400 font-semibold mt-1">0 Pending Fulfillment</div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 border border-slate-800">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-1">
+            <span>Active SKUs</span>
+            <i data-lucide="package" class="w-4 h-4 text-blue-400"></i>
+          </div>
+          <div id="kpi-products-count" class="text-xl sm:text-2xl font-black text-white font-mono">0</div>
+          <div class="text-[11px] text-blue-400 font-semibold mt-1">Nepal + Global Items</div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-4 border border-slate-800">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-1">
+            <span>Security Status</span>
+            <i data-lucide="shield" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <div class="text-sm sm:text-base font-bold text-emerald-400 flex items-center gap-1.5 mt-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>4-Layer Protected</span>
+          </div>
+          <div class="text-[11px] text-slate-400 mt-1">Backend Isolated & Cloaked</div>
+        </div>
+      </div>
+
+      <!-- ===================================== -->
+      <!-- TAB 1: ORDERS & FULFILLMENT -->
+      <!-- ===================================== -->
+      <div id="tab-orders" class="tab-content space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+          <div>
+            <h2 class="text-lg font-bold text-white">Marketplace Orders</h2>
+            <p class="text-xs text-slate-400">Manage real-time customer shipments and status updates</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <select id="order-filter-status" onchange="renderOrders()"
+              class="bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold rounded-xl px-3 py-2 focus:outline-none">
+              <option value="all">All Orders</option>
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl border border-slate-800 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-black border-b border-slate-800">
+                <tr>
+                  <th class="p-3.5">Order ID</th>
+                  <th class="p-3.5">Customer & Contact</th>
+                  <th class="p-3.5">Items & Details</th>
+                  <th class="p-3.5">Amount (NPR)</th>
+                  <th class="p-3.5">Payment</th>
+                  <th class="p-3.5">Status</th>
+                  <th class="p-3.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="orders-table-body" class="divide-y divide-slate-800">
+                <tr>
+                  <td colspan="7" class="p-8 text-center text-slate-500">Loading orders from database...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================== -->
+      <!-- TAB 2: CATALOG & INVENTORY -->
+      <!-- ===================================== -->
+      <div id="tab-inventory" class="tab-content space-y-4 hidden">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+          <div>
+            <h2 class="text-lg font-bold text-white">Catalog & Inventory Management</h2>
+            <p class="text-xs text-slate-400">Search, edit pricing, manage stock, and delete items with persistent SQLite sync</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="inventory-search" oninput="renderInventory()" placeholder="Search title or SKU..."
+              class="bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-xl px-3 py-2 focus:outline-none">
+            <button onclick="openAddProductModal()"
+              class="bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-md shadow-orange-500/20">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>Add New Product</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl border border-slate-800 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-black border-b border-slate-800">
+                <tr>
+                  <th class="p-3.5">Product</th>
+                  <th class="p-3.5">Category</th>
+                  <th class="p-3.5">Price (NPR)</th>
+                  <th class="p-3.5">Stock</th>
+                  <th class="p-3.5">Type</th>
+                  <th class="p-3.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-table-body" class="divide-y divide-slate-800">
+                <tr>
+                  <td colspan="6" class="p-8 text-center text-slate-500">Loading catalog items...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================== -->
+      <!-- TAB 3: FLASH SALE DEALS -->
+      <!-- ===================================== -->
+      <div id="tab-flash-sale" class="tab-content space-y-4 hidden">
+        <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="zap" class="w-5 h-5 text-amber-400"></i>
+              <span>Flash Sale Deal Management</span>
+            </h2>
+            <p class="text-xs text-slate-400">Configure rush hours, discount percentages, and countdown sessions</p>
+          </div>
+          <button onclick="openFlashSaleAddModal()"
+            class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-md shadow-amber-500/20">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Add Item to Flash Sale</span>
+          </button>
+        </div>
+
+        <div id="flash-sale-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Dynamic flash items -->
+        </div>
+      </div>
+
+      <!-- ===================================== -->
+      <!-- TAB 4: ALIBABA & 1688 IMPORTER -->
+      <!-- ===================================== -->
+      <div id="tab-importer" class="tab-content space-y-4 hidden">
+        <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-800 space-y-4">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="globe" class="w-5 h-5 text-orange-400"></i>
+              <span>1688 & Alibaba Factory Importer Engine</span>
+            </h2>
+            <p class="text-xs text-slate-400">Direct factory crawler: auto-translates Chinese specs, converts RMB to NPR with 3.0x markup, and verifies stock</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-300 mb-1">1688 Factory Store ID or Product Offer URL</label>
+              <input type="text" id="importer-url-input" placeholder="e.g. shop22z822h65h113 or https://detail.1688.com/offer/904801954342.html"
+                class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-orange-500">
+            </div>
+            <div class="flex items-end">
+              <button onclick="handleExecuteImport()" id="importer-submit-btn"
+                class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-orange-500/25">
+                <i data-lucide="download-cloud" class="w-4 h-4"></i>
+                <span>Crawl & Import SKUs</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="importer-status-box" class="hidden p-3 rounded-xl text-xs"></div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 border border-slate-800">
+          <h3 class="text-sm font-bold text-white mb-2">Verified Factory Stores (Ready to Import)</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 flex items-center justify-between">
+              <div>
+                <div class="font-bold text-white">白沟新城侨诺箱包厂 (Qiaonuo Handbag Factory)</div>
+                <div class="text-[11px] text-slate-400">ID: shop22z822h65h113 • 11,000+ Verified Exported Handbags</div>
+              </div>
+              <button onclick="prefillStore('shop22z822h65h113')" class="text-xs text-orange-400 font-bold hover:underline">Select</button>
+            </div>
+
+            <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 flex items-center justify-between">
+              <div>
+                <div class="font-bold text-white">高碑店市震宇箱包厂 (Zhenyu Luggage Factory)</div>
+                <div class="text-[11px] text-slate-400">ID: shop6009271911772 • 28,000+ Exported Totes & Backpacks</div>
+              </div>
+              <button onclick="prefillStore('shop6009271911772')" class="text-xs text-orange-400 font-bold hover:underline">Select</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================== -->
+      <!-- TAB 5: LANDED COST & MARGIN CALCULATOR -->
+      <!-- ===================================== -->
+      <div id="tab-calculator" class="tab-content space-y-4 hidden">
+        <div class="glass-card rounded-2xl p-6 border border-slate-800 max-w-2xl mx-auto space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="calculator" class="w-5 h-5 text-emerald-400"></i>
+              <span>Landed Cost & Profit Margin Calculator</span>
+            </h2>
+            <p class="text-xs text-slate-400">Calculate customs, Nepal freight, and gross profit on China direct wholesale</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 text-xs">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Wholesale Cost (RMB ¥)</label>
+              <input type="number" id="calc-rmb" value="15" oninput="calculateMargin()"
+                class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white font-mono text-sm focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">RMB to NPR Exchange Rate</label>
+              <input type="number" id="calc-fx" value="19.20" oninput="calculateMargin()"
+                class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white font-mono text-sm focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Freight to Nepal (NPR per unit)</label>
+              <input type="number" id="calc-freight" value="250" oninput="calculateMargin()"
+                class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white font-mono text-sm focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Customs Duty & VAT (%)</label>
+              <input type="number" id="calc-tax" value="15" oninput="calculateMargin()"
+                class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white font-mono text-sm focus:outline-none">
+            </div>
+
+            <div class="col-span-2">
+              <label class="block font-bold text-slate-300 mb-1">Retail Selling Price on Bhanjo (NPR)</label>
+              <input type="number" id="calc-retail" value="1250" oninput="calculateMargin()"
+                class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-amber-400 font-mono text-base font-bold focus:outline-none">
+            </div>
+          </div>
+
+          <!-- Calculated Results -->
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 grid grid-cols-3 gap-3 text-center">
+            <div>
+              <div class="text-[11px] text-slate-400">Total Landed Cost</div>
+              <div id="res-landed" class="text-base font-bold text-white font-mono mt-1">Rs. 0</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400">Net Profit / Unit</div>
+              <div id="res-profit" class="text-base font-bold text-emerald-400 font-mono mt-1">Rs. 0</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400">Profit Margin</div>
+              <div id="res-margin" class="text-base font-bold text-emerald-400 font-mono mt-1">0%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================== -->
+      <!-- TAB 6: SELLERS MANAGEMENT -->
+      <!-- ===================================== -->
+      <div id="tab-sellers" class="tab-content space-y-4 hidden">
+        <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+          <h2 class="text-lg font-bold text-white">Registered Marketplace Sellers</h2>
+          <p class="text-xs text-slate-400">Review seller applications and store verification</p>
+        </div>
+
+        <div class="glass-card rounded-2xl border border-slate-800 overflow-hidden">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-black border-b border-slate-800">
+              <tr>
+                <th class="p-3.5">Store / Business Name</th>
+                <th class="p-3.5">Owner & Contact</th>
+                <th class="p-3.5">City / Province</th>
+                <th class="p-3.5">Status</th>
+                <th class="p-3.5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="sellers-table-body" class="divide-y divide-slate-800">
+              <tr>
+                <td colspan="5" class="p-8 text-center text-slate-500">Loading sellers...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===================================== -->
+      <!-- TAB 7: INQUIRIES -->
+      <!-- ===================================== -->
+      <div id="tab-inquiries" class="tab-content space-y-4 hidden">
+        <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+          <h2 class="text-lg font-bold text-white">Customer Support Inquiries</h2>
+          <p class="text-xs text-slate-400">Questions submitted through product pages and contact forms</p>
+        </div>
+
+        <div class="glass-card rounded-2xl border border-slate-800 overflow-hidden">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-black border-b border-slate-800">
+              <tr>
+                <th class="p-3.5">Sender</th>
+                <th class="p-3.5">Contact</th>
+                <th class="p-3.5">Subject / Message</th>
+                <th class="p-3.5">Date</th>
+              </tr>
+            </thead>
+            <tbody id="inquiries-table-body" class="divide-y divide-slate-800">
+              <tr>
+                <td colspan="4" class="p-8 text-center text-slate-500">Loading inquiries...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: ADD PRODUCT -->
+  <!-- ========================================== -->
+  <div id="add-product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-card max-w-lg w-full rounded-2xl border border-slate-700 p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-white">Add New Catalog Product</h3>
+        <button onclick="closeAddProductModal()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+      <form onsubmit="handleCreateProduct(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Product Title (English)</label>
+          <input type="text" id="add-title" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Product Title (Nepali)</label>
+          <input type="text" id="add-nepali-title" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Price (NPR)</label>
+            <input type="number" id="add-price" required value="2500" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">Initial Stock</label>
+            <input type="number" id="add-stock" required value="50" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Category</label>
+          <select id="add-category" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
+            <option value="consumer-electronics">Consumer Electronics</option>
+            <option value="daraz-mall">Daraz Mall Premium</option>
+            <option value="himalayan-specialties">Himalayan Specialties</option>
+            <option value="fashion-apparel">Fashion & Apparel</option>
+            <option value="home-kitchen">Home & Living</option>
+            <option value="health-beauty">Health & Beauty</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">Image URL</label>
+          <input type="url" id="add-image" required value="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80"
+            class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
+        </div>
+        <div class="pt-3 flex justify-end gap-2">
+          <button type="button" onclick="closeAddProductModal()" class="px-4 py-2 rounded-xl text-slate-400 hover:text-white">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT LOGIC -->
+  <!-- ========================================== -->
+  <script>
+    // State
+    let authToken = localStorage.getItem('bhanjo_admin_token') || '';
+    let currentAdminUser = null;
+    let mfaSessionId = '';
+    let countdownInterval = null;
+    let productsData = [];
+    let ordersData = [];
+    let sellersData = [];
+    let inquiriesData = [];
+
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Check existing session on load
+    window.addEventListener('DOMContentLoaded', async () => {
+      calculateMargin();
+      if (authToken) {
+        const isValid = await verifyTokenSession();
+        if (isValid) {
+          showDashboard();
+          return;
+        }
+      }
+      showLogin();
+    });
+
+    async function verifyTokenSession() {
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success && data.user && data.user.role === 'admin') {
+          currentAdminUser = data.user;
+          return true;
+        }
+      } catch (e) {
+        console.error('Session verify failed:', e);
+      }
+      localStorage.removeItem('bhanjo_admin_token');
+      authToken = '';
+      return false;
+    }
+
+    function showLogin() {
+      document.getElementById('login-container').classList.remove('hidden');
+      document.getElementById('dashboard-container').classList.add('hidden');
+    }
+
+    function showDashboard() {
+      document.getElementById('login-container').classList.add('hidden');
+      document.getElementById('dashboard-container').classList.remove('hidden');
+      if (currentAdminUser) {
+        document.getElementById('admin-name').innerText = currentAdminUser.name || 'Master Admin';
+        document.getElementById('admin-email').innerText = currentAdminUser.email || '';
+      }
+      lucide.createIcons();
+      loadAllDashboardData();
+    }
+
+    // Step 1: Initiate Dual 2FA
+    async function handleInitiateLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const phone = document.getElementById('login-phone').value.trim();
+      const alertBox = document.getElementById('login-alert');
+      const submitBtn = document.getElementById('step1-btn');
+
+      alertBox.className = 'hidden mb-4 p-3 rounded-xl text-xs font-semibold';
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Checking Credentials...</span>';
+
+      try {
+        const res = await fetch('/api/admin/auth/initiate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, phone })
+        });
+        const data = await res.json();
+
+        if (!data.success) {
+          throw new Error(data.error || 'Authentication failed');
+        }
+
+        mfaSessionId = data.mfaSessionId;
+        document.getElementById('masked-phone').innerText = data.maskedPhone || 'Registered Mobile';
+        document.getElementById('masked-email').innerText = data.maskedEmail || 'Registered Email';
+
+        // Switch to Step 2
+        document.getElementById('step1-form').classList.add('hidden');
+        document.getElementById('step2-form').classList.remove('hidden');
+        startCountdown(300);
+
+        // Pre-fill dev codes if available in development mode
+        if (data.devCodes) {
+          console.log('🛡️ Dual 2FA Codes:', data.devCodes);
+        }
+
+      } catch (err) {
+        alertBox.innerText = '⚠️ ' + err.message;
+        alertBox.className = 'mb-4 p-3 rounded-xl text-xs font-semibold bg-red-500/10 border border-red-500/30 text-red-400 block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Authenticate & Dispatch 2FA</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>';
+        lucide.createIcons();
+      }
+    }
+
+    // Step 2: Verify Dual 2FA
+    async function handleVerify2FA(e) {
+      e.preventDefault();
+      const smsCode = document.getElementById('sms-code').value.trim();
+      const emailCode = document.getElementById('email-code').value.trim();
+      const alertBox = document.getElementById('login-alert');
+      const submitBtn = document.getElementById('step2-btn');
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Verifying Codes...</span>';
+
+      try {
+        const res = await fetch('/api/admin/auth/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mfaSessionId, smsCode, emailCode })
+        });
+        const data = await res.json();
+
+        if (!data.success) {
+          throw new Error(data.error || 'Dual 2FA verification failed');
+        }
+
+        authToken = data.token;
+        currentAdminUser = data.user;
+        localStorage.setItem('bhanjo_admin_token', authToken);
+        document.cookie = `bhanjo_admin_token=${authToken}; path=/; max-age=604800; SameSite=Lax`;
+
+        clearInterval(countdownInterval);
+        showDashboard();
+
+      } catch (err) {
+        alertBox.innerText = '⚠️ ' + err.message;
+        alertBox.className = 'mb-4 p-3 rounded-xl text-xs font-semibold bg-red-500/10 border border-red-500/30 text-red-400 block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i data-lucide="lock" class="w-4 h-4"></i> <span>Authorize Master Session</span>';
+        lucide.createIcons();
+      }
+    }
+
+    function resetToStep1() {
+      clearInterval(countdownInterval);
+      document.getElementById('step2-form').classList.add('hidden');
+      document.getElementById('step1-form').classList.remove('hidden');
+    }
+
+    function startCountdown(seconds) {
+      clearInterval(countdownInterval);
+      let remaining = seconds;
+      const el = document.getElementById('countdown-timer');
+      countdownInterval = setInterval(() => {
+        remaining -= 1;
+        if (remaining <= 0) {
+          clearInterval(countdownInterval);
+          el.innerText = '00:00 Expired';
+          return;
+        }
+        const m = Math.floor(remaining / 60);
+        const s = remaining % 60;
+        el.innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+      }, 1000);
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('bhanjo_admin_token');
+      document.cookie = 'bhanjo_admin_token=; path=/; max-age=0;';
+      authToken = '';
+      currentAdminUser = null;
+      showLogin();
+    }
+
+    // Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-orange-500', 'text-white', 'shadow-sm');
+        btn.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-800');
+      });
+
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-400', 'hover:bg-slate-800');
+        activeBtn.classList.add('bg-orange-500', 'text-white', 'shadow-sm');
+      }
+      lucide.createIcons();
+    }
+
+    function refreshCurrentTab() {
+      loadAllDashboardData();
+    }
+
+    // Load Data APIs
+    async function loadAllDashboardData() {
+      fetchOrders();
+      fetchProducts();
+      fetchSellers();
+      fetchInquiries();
+      fetchFlashSale();
+    }
+
+    async function fetchOrders() {
+      try {
+        const res = await fetch('/api/orders', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          ordersData = data.orders || [];
+          document.getElementById('badge-orders').innerText = ordersData.length;
+          document.getElementById('kpi-orders-count').innerText = ordersData.length;
+          
+          const pending = ordersData.filter(o => o.status === 'pending').length;
+          document.getElementById('kpi-pending-orders').innerText = `${pending} Pending Fulfillment`;
+
+          const totalRevenue = ordersData.reduce((sum, o) => sum + (o.total || 0), 0);
+          document.getElementById('kpi-revenue').innerText = `Rs. ${totalRevenue.toLocaleString()}`;
+
+          renderOrders();
+        }
+      } catch (e) {
+        console.error('Fetch orders error:', e);
+      }
+    }
+
+    function renderOrders() {
+      const filter = document.getElementById('order-filter-status').value;
+      const filtered = filter === 'all' ? ordersData : ordersData.filter(o => o.status === filter);
+      const tbody = document.getElementById('orders-table-body');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-500">No orders found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(order => {
+        const statusColors = {
+          pending: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+          processing: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+          shipped: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+          delivered: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+          cancelled: 'bg-red-500/20 text-red-400 border-red-500/30'
+        };
+
+        return `
+          <tr class="hover:bg-slate-800/40 transition">
+            <td class="p-3.5 font-mono text-white font-bold">#${order.id}</td>
+            <td class="p-3.5">
+              <div class="font-bold text-white">${order.customerName || order.customer_name || 'Guest Shopper'}</div>
+              <div class="text-[11px] text-slate-400">${order.phone || ''}</div>
+              <div class="text-[10px] text-slate-500 truncate max-w-xs">${order.address || ''}</div>
+            </td>
+            <td class="p-3.5">
+              <div class="text-xs text-slate-200">${(order.items || []).length} items</div>
+              <div class="text-[10px] text-slate-400">${new Date(order.createdAt || Date.now()).toLocaleDateString()}</div>
+            </td>
+            <td class="p-3.5 font-mono font-bold text-white">Rs. ${(order.total || 0).toLocaleString()}</td>
+            <td class="p-3.5">
+              <span class="bg-slate-800 border border-slate-700 text-slate-300 text-[10px] px-2 py-0.5 rounded font-bold uppercase">${order.paymentMethod || 'COD'}</span>
+            </td>
+            <td class="p-3.5">
+              <select onchange="updateOrderStatus('${order.id}', this.value)"
+                class="text-[11px] font-bold px-2 py-1 rounded-lg border focus:outline-none ${statusColors[order.status] || statusColors.pending}">
+                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
+                <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
+                <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+              </select>
+            </td>
+            <td class="p-3.5 text-right">
+              <button onclick="printOrderSlip('${order.id}')" title="Print Invoice"
+                class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-2.5 py-1 rounded-lg border border-slate-700 transition">
+                Print Slip
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function updateOrderStatus(orderId, newStatus) {
+      try {
+        const res = await fetch(`/api/orders/${orderId}/status`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+          fetchOrders();
+        }
+      } catch (e) {
+        alert('Failed to update status: ' + e.message);
+      }
+    }
+
+    function printOrderSlip(orderId) {
+      const order = ordersData.find(o => o.id === orderId);
+      if (!order) return;
+      const win = window.open('', '_blank');
+      win.document.write(`
+        <html>
+        <head><title>Bhanjo Invoice #${order.id}</title></head>
+        <body style="font-family:sans-serif;padding:30px;color:#1e293b;">
+          <h2>BHANJO.COM • PACKING SLIP</h2>
+          <p>Order ID: <strong>#${order.id}</strong></p>
+          <p>Customer: <strong>${order.customerName || order.customer_name}</strong> | Phone: ${order.phone || ''}</p>
+          <p>Delivery Address: ${order.address || ''}</p>
+          <hr/>
+          <h3>Items:</h3>
+          <ul>
+            ${(order.items || []).map(i => `<li>${i.title} × ${i.quantity || 1} — Rs. ${i.price}</li>`).join('')}
+          </ul>
+          <h3>Total: Rs. ${order.total} (${order.paymentMethod || 'COD'})</h3>
+        </body>
+        </html>
+      `);
+      win.print();
+    }
+
+    // Products
+    async function fetchProducts() {
+      try {
+        const res = await fetch('/api/products?page=1&limit=300');
+        const data = await res.json();
+        if (data.success) {
+          productsData = data.products || [];
+          document.getElementById('badge-products').innerText = productsData.length;
+          document.getElementById('kpi-products-count').innerText = productsData.length;
+          renderInventory();
+        }
+      } catch (e) {
+        console.error('Fetch products error:', e);
+      }
+    }
+
+    function renderInventory() {
+      const q = (document.getElementById('inventory-search')?.value || '').toLowerCase();
+      const filtered = productsData.filter(p => (p.title || '').toLowerCase().includes(q) || (p.id || '').toLowerCase().includes(q));
+      const tbody = document.getElementById('inventory-table-body');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">No products match.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.slice(0, 100).map(p => `
+        <tr class="hover:bg-slate-800/40 transition">
+          <td class="p-3.5 flex items-center gap-2.5">
+            <img src="${p.image || p.thumbnail || 'https://via.placeholder.com/50'}" class="w-10 h-10 object-cover rounded-lg bg-slate-800 flex-shrink-0">
+            <div>
+              <div class="font-bold text-white line-clamp-1 max-w-sm">${p.title}</div>
+              <div class="text-[10px] text-slate-500 font-mono">ID: ${p.id}</div>
+            </div>
+          </td>
+          <td class="p-3.5 text-slate-300 text-[11px]">${p.category || 'General'}</td>
+          <td class="p-3.5 font-mono font-bold text-white">Rs. ${(p.price || 0).toLocaleString()}</td>
+          <td class="p-3.5 font-mono text-slate-300">${p.stock || 50}</td>
+          <td class="p-3.5">
+            <span class="text-[10px] px-2 py-0.5 rounded font-bold ${p.is1688Import || p.isAlibabaImport ? 'bg-orange-500/20 text-orange-400' : 'bg-blue-500/20 text-blue-400'}">
+              ${p.is1688Import || p.isAlibabaImport ? 'Global Direct' : 'Nepal Local'}
+            </span>
+          </td>
+          <td class="p-3.5 text-right">
+            <button onclick="handleDeleteProduct('${p.id}')" title="Delete Product"
+              class="text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 p-1.5 rounded-lg transition">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    async function handleDeleteProduct(id) {
+      if (!confirm(`Are you sure you want to delete product "${id}" from the database?`)) return;
+      try {
+        const res = await fetch(`/api/products/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          productsData = productsData.filter(p => p.id !== id);
+          renderInventory();
+        } else {
+          alert('Delete failed: ' + (data.error || 'Server error'));
+        }
+      } catch (e) {
+        alert('Delete request failed: ' + e.message);
+      }
+    }
+
+    function openAddProductModal() {
+      document.getElementById('add-product-modal').classList.remove('hidden');
+    }
+
+    function closeAddProductModal() {
+      document.getElementById('add-product-modal').classList.add('hidden');
+    }
+
+    async function handleCreateProduct(e) {
+      e.preventDefault();
+      const product = {
+        title: document.getElementById('add-title').value.trim(),
+        nepaliTitle: document.getElementById('add-nepali-title').value.trim(),
+        price: parseFloat(document.getElementById('add-price').value),
+        stock: parseInt(document.getElementById('add-stock').value),
+        category: document.getElementById('add-category').value,
+        image: document.getElementById('add-image').value
+      };
+
+      try {
+        const res = await fetch('/api/products', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify(product)
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeAddProductModal();
+          fetchProducts();
+        } else {
+          alert('Failed to save product: ' + (data.error || 'Server error'));
+        }
+      } catch (e) {
+        alert('Failed to save product: ' + e.message);
+      }
+    }
+
+    // Flash Sale
+    async function fetchFlashSale() {
+      try {
+        const res = await fetch('/api/flash-sale');
+        const data = await res.json();
+        if (data.success) {
+          renderFlashSaleGrid(data.items || []);
+        }
+      } catch (e) {
+        console.error('Fetch flash sale error:', e);
+      }
+    }
+
+    function renderFlashSaleGrid(items) {
+      const grid = document.getElementById('flash-sale-grid');
+      if (items.length === 0) {
+        grid.innerHTML = `<div class="col-span-3 p-8 text-center text-slate-500 bg-slate-900/60 rounded-2xl border border-slate-800">No active flash sale items right now. Click "Add Item to Flash Sale" above.</div>`;
+        return;
+      }
+      grid.innerHTML = items.map(item => `
+        <div class="glass-card rounded-2xl p-4 border border-slate-800 flex items-center gap-3">
+          <img src="${item.image || 'https://via.placeholder.com/80'}" class="w-16 h-16 object-cover rounded-xl bg-slate-800">
+          <div class="flex-1 min-w-0">
+            <div class="font-bold text-white text-xs truncate">${item.title}</div>
+            <div class="text-[11px] text-amber-400 font-bold mt-0.5">Flash: Rs. ${item.flashPrice || item.price} <span class="line-through text-slate-500 text-[10px]">Rs. ${item.originalPrice || item.price * 1.3}</span></div>
+            <div class="text-[10px] text-slate-400 mt-1">Discount: ${item.discountPercent || 30}% • Ends in: ${item.durationHours || 4}h</div>
+          </div>
+          <button onclick="deleteFlashSaleItem('${item.id}')" class="text-red-400 hover:text-red-300 p-2 rounded-lg bg-red-500/10">
+            <i data-lucide="trash" class="w-4 h-4"></i>
+          </button>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    async function deleteFlashSaleItem(id) {
+      if (!confirm('Remove this product from active Flash Sale?')) return;
+      try {
+        const res = await fetch(`/api/flash-sale/item/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          fetchFlashSale();
+        }
+      } catch (e) {
+        alert('Failed to delete flash sale item: ' + e.message);
+      }
+    }
+
+    function openFlashSaleAddModal() {
+      const productId = prompt('Enter Product ID to add to Flash Sale (e.g. ali-1601344836540 or product ID):');
+      if (!productId) return;
+      const discount = prompt('Enter discount percentage (e.g. 35):', '30');
+      if (!discount) return;
+
+      const p = productsData.find(item => item.id === productId);
+      const originalPrice = p ? p.price : 2000;
+      const flashPrice = Math.round(originalPrice * (1 - parseFloat(discount) / 100));
+
+      fetch('/api/flash-sale/item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({
+          productId,
+          flashPrice,
+          originalPrice,
+          discountPercent: parseFloat(discount),
+          durationHours: 4
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('Product added to live Flash Sale!');
+          fetchFlashSale();
+        } else {
+          alert('Error: ' + (data.error || 'Could not add to flash sale'));
+        }
+      })
+      .catch(e => alert('Error: ' + e.message));
+    }
+
+    // 1688 Importer
+    function prefillStore(storeId) {
+      document.getElementById('importer-url-input').value = storeId;
+    }
+
+    async function handleExecuteImport() {
+      const val = document.getElementById('importer-url-input').value.trim();
+      const statusBox = document.getElementById('importer-status-box');
+      const btn = document.getElementById('importer-submit-btn');
+
+      if (!val) {
+        alert('Please enter a 1688 store ID or offer URL');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span>Crawling 1688 Factory...</span>';
+      statusBox.className = 'p-3 rounded-xl text-xs bg-blue-500/10 border border-blue-500/30 text-blue-400 block';
+      statusBox.innerText = 'Connecting to 1688 supplier gateway. Extracting wholesale RMB prices, HD photos, specs, and converting currency...';
+
+      try {
+        const res = await fetch('/api/1688/bulk-store-import', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ storeUrl: val, maxProducts: 20 })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          statusBox.className = 'p-3 rounded-xl text-xs bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 block';
+          statusBox.innerText = `🎉 Successfully imported ${data.count || 20} distinct factory items to Bhanjo.com catalog!`;
+          fetchProducts();
+        } else {
+          throw new Error(data.error || 'Import failed');
+        }
+      } catch (e) {
+        statusBox.className = 'p-3 rounded-xl text-xs bg-red-500/10 border border-red-500/30 text-red-400 block';
+        statusBox.innerText = '⚠️ Import failed: ' + e.message;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="download-cloud" class="w-4 h-4"></i> <span>Crawl & Import SKUs</span>';
+        lucide.createIcons();
+      }
+    }
+
+    // Landed Cost Calculator
+    function calculateMargin() {
+      const rmb = parseFloat(document.getElementById('calc-rmb')?.value || 15);
+      const fx = parseFloat(document.getElementById('calc-fx')?.value || 19.20);
+      const freight = parseFloat(document.getElementById('calc-freight')?.value || 250);
+      const taxPercent = parseFloat(document.getElementById('calc-tax')?.value || 15);
+      const retail = parseFloat(document.getElementById('calc-retail')?.value || 1250);
+
+      const baseNpr = rmb * fx;
+      const customs = (baseNpr + freight) * (taxPercent / 100);
+      const landed = baseNpr + freight + customs;
+      const profit = retail - landed;
+      const margin = (profit / retail) * 100;
+
+      document.getElementById('res-landed').innerText = `Rs. ${Math.round(landed).toLocaleString()}`;
+      document.getElementById('res-profit').innerText = `Rs. ${Math.round(profit).toLocaleString()}`;
+      document.getElementById('res-margin').innerText = `${margin.toFixed(1)}%`;
+    }
+
+    // Sellers
+    async function fetchSellers() {
+      try {
+        const res = await fetch('/api/sellers', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          sellersData = data.sellers || [];
+          renderSellers();
+        }
+      } catch (e) {
+        console.error('Fetch sellers error:', e);
+      }
+    }
+
+    function renderSellers() {
+      const tbody = document.getElementById('sellers-table-body');
+      if (sellersData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No sellers registered yet.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = sellersData.map(s => `
+        <tr class="hover:bg-slate-800/40 transition">
+          <td class="p-3.5 font-bold text-white">${s.storeName || s.business_name}</td>
+          <td class="p-3.5 text-slate-300">${s.ownerName || ''} (${s.phone || ''})</td>
+          <td class="p-3.5 text-slate-400">${s.city || 'Kathmandu'}</td>
+          <td class="p-3.5">
+            <span class="text-[10px] px-2 py-0.5 rounded font-bold ${s.status === 'approved' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">
+              ${s.status || 'pending'}
+            </span>
+          </td>
+          <td class="p-3.5 text-right">
+            <button onclick="toggleSellerStatus('${s.id}', '${s.status === 'approved' ? 'suspended' : 'approved'}')"
+              class="text-xs font-bold px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300">
+              ${s.status === 'approved' ? 'Suspend' : 'Approve'}
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function toggleSellerStatus(sellerId, status) {
+      try {
+        const res = await fetch(`/api/sellers/${sellerId}/status`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ status })
+        });
+        const data = await res.json();
+        if (data.success) fetchSellers();
+      } catch (e) {
+        alert('Seller update error: ' + e.message);
+      }
+    }
+
+    // Inquiries
+    async function fetchInquiries() {
+      try {
+        const res = await fetch('/api/inquiries', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          inquiriesData = data.inquiries || [];
+          renderInquiries();
+        }
+      } catch (e) {
+        console.error('Fetch inquiries error:', e);
+      }
+    }
+
+    function renderInquiries() {
+      const tbody = document.getElementById('inquiries-table-body');
+      if (inquiriesData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-500">No customer inquiries.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = inquiriesData.map(i => `
+        <tr class="hover:bg-slate-800/40 transition">
+          <td class="p-3.5 font-bold text-white">${i.name || 'Shopper'}</td>
+          <td class="p-3.5 text-slate-400">${i.email || ''} ${i.phone ? '• ' + i.phone : ''}</td>
+          <td class="p-3.5 text-slate-300">${i.message || i.subject || ''}</td>
+          <td class="p-3.5 text-slate-500 text-[10px]">${new Date(i.createdAt || Date.now()).toLocaleDateString()}</td>
+        </tr>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

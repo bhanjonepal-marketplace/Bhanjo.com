@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import path from 'path';
+import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
@@ -14,6 +16,13 @@ import { scan1688DistributorStore } from './distributorEngine.js';
 import { sendSmsNotification } from './smsService.js';
 import { sendEmailNotification, sendPasswordResetEmail } from './emailService.js';
 import { CATEGORIES } from '../client/src/data/categories.js';
+import { 
+  verifyAdminIp, checkBruteForce, recordFailedAttempt, clearFailedAttempts, 
+  verifyAdminSession, getClientIp 
+} from './admin/adminAuthMiddleware.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -67,10 +76,14 @@ app.get('/', (req, res) => {
         <h1>Bhanjo.com Backend Engine</h1>
         <p>This is the <strong>Backend API Server</strong> (Port 5000) powering the Bhanjo.com marketplace database, authentication, real-time OTP emails, and Alibaba/1688 imports.</p>
         <p>To view and interact with the storefront, visit the frontend application:</p>
-        <a href="http://localhost:5173" class="btn">Open Bhanjo.com Storefront (localhost:5173) &rarr;</a>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <a href="http://localhost:5173" class="btn">Open Bhanjo.com Storefront (localhost:5173) &rarr;</a>
+          <a href="/admin" class="btn" style="background: #0f172a; border: 1px solid #334155; color: #f97316;">🛡️ Open Master Admin Portal &rarr;</a>
+        </div>
         
         <div class="endpoints">
           <div style="font-weight: bold; margin-bottom: 8px; color: #cbd5e1;">Available API Endpoints:</div>
+          <div class="endpoint-row"><span>Master Admin Portal:</span> <code><a href="/admin" style="color: #f97316;">/admin</a></code></div>
           <div class="endpoint-row"><span>Products Catalog:</span> <code><a href="/api/products" style="color: #38bdf8;">/api/products</a></code></div>
           <div class="endpoint-row"><span>Categories List:</span> <code><a href="/api/categories" style="color: #38bdf8;">/api/categories</a></code></div>
           <div class="endpoint-row"><span>Flash Sale Deals:</span> <code><a href="/api/flash-sale" style="color: #38bdf8;">/api/flash-sale</a></code></div>
@@ -81,6 +94,11 @@ app.get('/', (req, res) => {
     </body>
     </html>
   `);
+});
+
+// Layer 4, 3, 2, 1: Dedicated Hardware-Shielded Master Admin Command Center
+app.get(['/admin', '/admin/*'], verifyAdminIp, (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin', 'index.html'));
 });
 
 
@@ -1004,7 +1022,7 @@ setInterval(() => {
 }, 5 * 60 * 1000);
 
 // Step 1: Initiate Master Admin 2FA (Validates Email, Password & Phone, dispatches Dual-Codes)
-app.post('/api/admin/auth/initiate', async (req, res) => {
+app.post('/api/admin/auth/initiate', checkBruteForce, async (req, res) => {
   try {
     const { email, password, phone } = req.body;
     if (!email || !password || !phone) {
@@ -1021,12 +1039,14 @@ app.post('/api/admin/auth/initiate', async (req, res) => {
     `).get(cleanEmail, `%${cleanPhone}%`);
 
     if (!user || user.role !== 'admin') {
+      recordFailedAttempt(req);
       return res.status(401).json({ error: 'Unauthorized: Master Admin credentials not recognized.' });
     }
 
     // Verify admin phone number matches record
     const userCleanPhone = (user.phone || '').toString().replace(/[\s\-\+]/g, '').slice(-10);
     if (userCleanPhone !== cleanPhone) {
+      recordFailedAttempt(req);
       return res.status(401).json({ error: 'Security alert: Phone number does not match registered Master Admin records.' });
     }
 
@@ -1039,8 +1059,12 @@ app.post('/api/admin/auth/initiate', async (req, res) => {
     }
 
     if (!isPasswordValid) {
+      recordFailedAttempt(req);
       return res.status(401).json({ error: 'Invalid master admin password. Access rejected.' });
     }
+
+    // Credentials verified! Reset failed attempts for this IP
+    clearFailedAttempts(req);
 
     // Generate two distinct 6-digit cryptographic security codes
     const smsCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -1158,6 +1182,8 @@ app.post('/api/admin/auth/verify', async (req, res) => {
     const token = generateToken(safeAdmin);
 
     console.log(`✅ [BHANJO ADMIN SUCCESS] Master Admin ${safeAdmin.name} (${safeAdmin.email}) authenticated with Dual-2FA.`);
+
+    res.setHeader('Set-Cookie', `bhanjo_admin_token=${token}; Path=/; SameSite=Lax; Max-Age=604800`);
 
     res.json({
       success: true,

@@ -17,16 +17,11 @@ import { ChatSupplierModal } from './components/ChatSupplierModal';
 import { CartDrawer } from './components/CartDrawer';
 import { Toast } from './components/Toast';
 import { Footer } from './components/Footer';
-import { AlibabaImporterModal } from './components/AlibabaImporterModal';
 import { AlibabaGlobalSection } from './components/AlibabaGlobalSection';
 import { ProductEditModal } from './components/ProductEditModal';
 import { CategoriesSection } from './components/CategoriesSection';
 import { AmazonQuadCatalog } from './components/AmazonQuadCatalog';
-import { AdminLoginPortal } from './components/AdminLoginPortal';
-import { AdminCommandCenter } from './components/AdminCommandCenter';
 import { FlashSalePage } from './components/FlashSalePage';
-import { FlashSaleAdminModal } from './components/FlashSaleAdminModal';
-import { AdminTopBar } from './components/AdminTopBar';
 
 import { CATEGORIES } from './data/categories';
 import { PRODUCTS } from './data/products';
@@ -41,51 +36,8 @@ export function App() {
   const { currentCurrency, language, t } = useCurrency();
   const { user, isAdmin, setAdminMode } = useAuth();
 
-  // Navigation: 'marketplace', 'my-orders', 'seller-center', 'admin'
-  const [activeView, setActiveView] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const path = window.location.pathname.toLowerCase();
-      const params = new URLSearchParams(window.location.search);
-      if (path === '/admin' || params.has('admin')) {
-        return 'admin';
-      }
-    }
-    return 'marketplace';
-  });
-
-  // Secret Master Admin shortcut: Ctrl + Shift + A (or Cmd + Shift + A)
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
-        e.preventDefault();
-        setActiveView(prev => {
-          const next = prev === 'admin' ? 'marketplace' : 'admin';
-          if (next === 'admin') {
-            window.history.pushState(null, '', '/admin');
-          } else {
-            window.history.pushState(null, '', '/');
-          }
-          return next;
-        });
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // Sync browser back/forward buttons
-  useEffect(() => {
-    const handlePopState = () => {
-      const path = window.location.pathname.toLowerCase();
-      if (path === '/admin') {
-        setActiveView('admin');
-      } else if (activeView === 'admin') {
-        setActiveView('marketplace');
-      }
-    };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [activeView]);
+  // Navigation: 'marketplace', 'my-orders', 'seller-center', 'flash-sale'
+  const [activeView, setActiveView] = useState('marketplace');
 
   // When no account is logged in, ensure customer portal views are strictly redirected to 'marketplace' homepage
   useEffect(() => {
@@ -236,20 +188,8 @@ export function App() {
   const [authCallback, setAuthCallback] = useState(null);
   const [authMessage, setAuthMessage] = useState('');
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup'
-  const [isAlibabaImporterOpen, setIsAlibabaImporterOpen] = useState(false);
-  const [importerPlatform, setImporterPlatform] = useState('1688'); // '1688' | 'alibaba'
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const [chatContext, setChatContext] = useState({ product: null, supplier: null });
-  const [isFlashSaleAdminOpen, setIsFlashSaleAdminOpen] = useState(false);
-
-  const handleOpenImporter = (platform = '1688') => {
-    if (!isAdmin) {
-      setIsAdminUnlockModalOpen(true);
-      return;
-    }
-    setImporterPlatform(platform);
-    setIsAlibabaImporterOpen(true);
-  };
 
   const handleProductUpdated = (updatedProd) => {
     setAllProducts(prev => {
@@ -390,60 +330,8 @@ export function App() {
 
   const activeCategoryObj = CATEGORIES.find(c => c.id === selectedCategoryId);
 
-  // Dedicated Full-Screen Master Admin Portal & Command Center
-  if (activeView === 'admin') {
-    if (isAdmin && user?.role === 'admin') {
-      return (
-        <AdminCommandCenter
-          onBackToStore={() => {
-            setActiveView('marketplace');
-            window.history.pushState(null, '', '/');
-          }}
-          onSelectProduct={handleSelectProduct}
-        />
-      );
-    }
-    return (
-      <AdminLoginPortal
-        onLoginSuccess={() => {
-          setActiveView('admin');
-          showToast('Welcome, Master Admin Prashanna! Dual 2FA verified.');
-        }}
-        onBackToStore={() => {
-          setActiveView('marketplace');
-          window.history.pushState(null, '', '/');
-        }}
-      />
-    );
-  }
-
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F5F5] font-sans antialiased text-[#212121]">
-      
-      {/* Discreet floating return to Command Center only if already logged in as Admin */}
-      {user?.role === 'admin' && (
-        <div className="fixed bottom-4 right-4 z-50">
-          <button
-            onClick={() => {
-              setActiveView('admin');
-              window.history.pushState(null, '', '/admin');
-            }}
-            className="bg-slate-900 hover:bg-black text-orange-400 border border-orange-500/40 px-3.5 py-2 rounded-full text-xs font-bold shadow-xl transition flex items-center gap-2 cursor-pointer"
-          >
-            <ShieldCheck className="w-4 h-4 text-orange-400" />
-            <span>Master Admin Command Center</span>
-          </button>
-        </div>
-      )}
-
-      {/* Master Admin Top Bar when admin mode is active */}
-      {isAdmin && (
-        <AdminTopBar
-          onOpenImporter={handleOpenImporter}
-          onOpenSellerCenter={() => setActiveView('seller-center')}
-          onOpenFlashSaleManager={() => setIsFlashSaleAdminOpen(true)}
-        />
-      )}
 
       {/* 1. Global Navigation Bar */}
       <Navbar
@@ -908,30 +796,6 @@ export function App() {
         onOpenTrackOrder={handleOpenTrackOrder}
       />
 
-      {/* Alibaba & 1688 1-Click Sourcing & SKU Importer Modal */}
-      <AlibabaImporterModal
-        isOpen={isAlibabaImporterOpen}
-        defaultPlatform={importerPlatform}
-        onClose={() => setIsAlibabaImporterOpen(false)}
-        onSelectCategory={handleSelectCategory}
-        onProductImported={(importedProd) => {
-          setAllProducts(prev => {
-            const exists = prev.some(p => p.id === importedProd.id);
-            if (exists) return prev;
-            return [importedProd, ...prev];
-          });
-          showToast(`⚡ Imported "${importedProd.title.slice(0, 24)}..." to ${importedProd.categoryName || 'Bhanjo'}!`);
-        }}
-      />
-
-      {/* Flash Sale Admin Management Modal */}
-      <FlashSaleAdminModal
-        isOpen={isFlashSaleAdminOpen}
-        onClose={() => setIsFlashSaleAdminOpen(false)}
-        onFlashSaleUpdated={() => {
-          showToast('⚡ Flash Sale catalog updated successfully!');
-        }}
-      />
 
       {/* Mobile Filter Slide-out Drawer */}
       {isMobileFilterOpen && (
