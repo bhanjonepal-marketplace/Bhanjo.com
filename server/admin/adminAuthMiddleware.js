@@ -79,6 +79,11 @@ export const checkBruteForce = (req, res, next) => {
   const now = Date.now();
   const record = loginAttempts.get(ip);
 
+  // Exempt local loopback addresses during development
+  if (ip === '127.0.0.1' || ip === '::1' || ip === 'localhost') {
+    return next();
+  }
+
   if (record && record.lockedUntil && record.lockedUntil > now) {
     const remainingMins = Math.ceil((record.lockedUntil - now) / 60000);
     return res.status(429).json({
@@ -91,6 +96,9 @@ export const checkBruteForce = (req, res, next) => {
 
 export const recordFailedAttempt = (req) => {
   const ip = getClientIp(req);
+  if (ip === '127.0.0.1' || ip === '::1' || ip === 'localhost') {
+    return; // Do not lock out local development
+  }
   const now = Date.now();
   const record = loginAttempts.get(ip) || { attempts: 0, lockedUntil: null };
 
