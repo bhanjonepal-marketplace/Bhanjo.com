@@ -50,14 +50,9 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 px-1 gap-2">
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center gap-2">
-            <span className="bg-gradient-to-r from-[#FF6A00] via-[#EE5007] to-[#E60012] text-white text-xs font-black px-2 py-0.5 rounded shadow-xs flex items-center gap-1">
-              <span>✈️ BHANJO GLOBAL DIRECT</span>
-            </span>
-            <h2 className="text-base font-extrabold text-slate-900 tracking-tight">
-              International Trending Collection (ग्लोबल कलेक्सन)
-            </h2>
-          </div>
+          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+            International Trending Collection
+          </h2>
         </div>
 
         <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap sm:flex-nowrap">
