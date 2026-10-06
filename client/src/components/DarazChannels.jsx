@@ -56,7 +56,7 @@ export const DarazChannels = ({
     {
       id: "nepal",
       title: t('nepalPavilion'),
-      subtitle: "Himalayan GI Goods",
+      subtitle: t('nepalSub') || "Himalayan Authentic Goods",
       badge: "EXPORT",
       icon: Mountain,
       cardStyle: "bg-gradient-to-br from-amber-50/80 via-white to-emerald-50/50 border border-amber-200/80 hover:border-amber-400 hover:shadow-md",

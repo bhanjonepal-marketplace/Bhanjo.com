@@ -428,7 +428,6 @@ export function App() {
     filterOnlyNepal,
     filterAlibabaOnly,
     filterMallOnly,
-    filterFreeDelivery,
     minRating > 0,
     priceRange.min > 0 || priceRange.max < Infinity
   ].filter(Boolean).length;

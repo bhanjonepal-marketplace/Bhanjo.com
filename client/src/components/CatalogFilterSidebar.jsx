@@ -121,7 +121,6 @@ export const CatalogFilterSidebar = ({
     filterOnlyNepal,
     filterAlibabaOnly,
     filterMallOnly,
-    filterFreeDelivery,
     minRating > 0,
     hasPriceActive
   ].filter(Boolean).length;
@@ -177,16 +176,6 @@ export const CatalogFilterSidebar = ({
               className="accent-[#F85606] rounded w-3.5 h-3.5 cursor-pointer"
             />
             <span>{t('nepalAuthenticGI')}</span>
-          </label>
-
-          <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900 select-none p-1 rounded hover:bg-slate-50 transition">
-            <input
-              type="checkbox"
-              checked={filterFreeDelivery}
-              onChange={(e) => setFilterFreeDelivery(e.target.checked)}
-              className="accent-[#F85606] rounded w-3.5 h-3.5 cursor-pointer"
-            />
-            <span>{t('freeDeliveryAvailable')}</span>
           </label>
         </div>
       </div>

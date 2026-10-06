@@ -78,7 +78,7 @@ export const NepaliPavilion = ({ onSelectProduct, onSelectCategory }) => {
             <span className="bg-red-600 text-white text-xs font-black px-2 py-0.5 rounded">🇳🇵 NEPAL</span>
             <span>Nepal Himalayan Export Pavilion</span>
           </h2>
-          <span className="text-xs text-slate-500 hidden sm:inline">• 100% Authentic GI Products Direct from Producers</span>
+          <span className="text-xs text-slate-500 hidden sm:inline">• 100% Authentic Products Direct from Producers</span>
         </div>
 
         <button 

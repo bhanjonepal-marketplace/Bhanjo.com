@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Filter, Star, Check, RotateCcw, ChevronDown, Sparkles, Truck, Store, Globe, MapPin, X } from 'lucide-react';
+import { Filter, Star, Check, RotateCcw, ChevronDown, Sparkles, Store, Globe, MapPin, X } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 
 export const CatalogTopFilterBar = ({
@@ -152,7 +152,7 @@ export const CatalogTopFilterBar = ({
             )}
           </div>
 
-          {/* Quick Pill: Nepal Authentic GI */}
+          {/* Quick Pill: Nepal Authentic */}
           <button
             type="button"
             onClick={() => setFilterOnlyNepal(!filterOnlyNepal)}
@@ -164,20 +164,6 @@ export const CatalogTopFilterBar = ({
           >
             <span>🇳🇵</span>
             <span>{t('nepalAuthenticGI')}</span>
-          </button>
-
-          {/* Quick Pill: Free Delivery */}
-          <button
-            type="button"
-            onClick={() => setFilterFreeDelivery(!filterFreeDelivery)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer border ${
-              filterFreeDelivery
-                ? 'bg-[#F85606] text-white border-transparent shadow-xs'
-                : 'bg-slate-50 hover:bg-orange-50 text-slate-700 hover:text-[#F85606] border-slate-200'
-            }`}
-          >
-            <Truck className="w-3.5 h-3.5" />
-            <span>{t('freeDeliveryAvailable')}</span>
           </button>
 
           {/* Price Range Dropdown Pill */}
