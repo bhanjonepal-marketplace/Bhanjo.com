@@ -28,7 +28,7 @@ import { CATEGORIES } from './data/categories';
 import { PRODUCTS } from './data/products';
 import { SUPPLIERS } from './data/suppliers';
 
-import { Search, Filter, ShieldCheck, X, Camera, Sparkles } from 'lucide-react';
+import { Search, Filter, ShieldCheck, X, Camera, Sparkles, ChevronDown } from 'lucide-react';
 import { useCurrency } from './context/CurrencyContext';
 import { useAuth } from './context/AuthContext';
 import { matchesProductSearch } from './utils/searchMatcher';
@@ -65,8 +65,9 @@ export function App() {
 
   // Catalog Products (Dynamic from SQLite backend)
   const [allProducts, setAllProducts] = useState(PRODUCTS);
+  const [forYouVisibleCount, setForYouVisibleCount] = useState(18); // 3 lines initially (6 items/row on desktop)
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState('all'); // 'all' displays every single saved product on screen
+  const [pageSize, setPageSize] = useState('all');
   const [totalPages, setTotalPages] = useState(1);
   const [totalCatalogCount, setTotalCatalogCount] = useState(PRODUCTS.length);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
@@ -132,27 +133,36 @@ export function App() {
     showToast(`Showing all ${globalCount} Global Direct products (including Hoodies & Winterwear)!`);
   };
 
-  const handleViewAllEveryProduct = () => {
-    setSelectedCategoryId('all');
-    setSearchQuery('');
-    setFilterAlibabaOnly(false);
-    setFilterOnlyNepal(false);
-    setFilterMallOnly(false);
-    setFilterFreeDelivery(false);
-    setMinRating(0);
-    setPriceRange({ min: 0, max: Infinity });
-    setVisualSearch(null);
-    setPageSize('all');
-    setCurrentPage(1);
-    setActiveView('marketplace');
-    setTimeout(() => {
+  const handleToggleViewAllEveryProduct = () => {
+    if (forYouVisibleCount >= filteredProducts.length && selectedCategoryId === 'all' && !searchQuery) {
+      setForYouVisibleCount(18);
       const catalogElem = document.getElementById('catalog-section');
       if (catalogElem) {
         catalogElem.scrollIntoView({ behavior: 'smooth' });
       }
-    }, 60);
-    showToast(`Showing all ${allProducts.length} products saved in Bhanjo catalog!`);
+    } else {
+      setSelectedCategoryId('all');
+      setSearchQuery('');
+      setFilterAlibabaOnly(false);
+      setFilterOnlyNepal(false);
+      setFilterMallOnly(false);
+      setFilterFreeDelivery(false);
+      setMinRating(0);
+      setPriceRange({ min: 0, max: Infinity });
+      setVisualSearch(null);
+      setForYouVisibleCount(allProducts.length);
+      setActiveView('marketplace');
+      setTimeout(() => {
+        const catalogElem = document.getElementById('catalog-section');
+        if (catalogElem) {
+          catalogElem.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 60);
+      showToast(`Showing all ${allProducts.length} products saved in Bhanjo catalog!`);
+    }
   };
+
+  const handleViewAllEveryProduct = handleToggleViewAllEveryProduct;
 
   const handleSelectCategory = (catId, subCategoryKeyword = '') => {
     setSelectedCategoryId(catId);
@@ -163,8 +173,7 @@ export function App() {
       setFilterAlibabaOnly(false);
       setFilterOnlyNepal(false);
     }
-    setPageSize('all');
-    setCurrentPage(1);
+    setForYouVisibleCount(18);
     setActiveView('marketplace');
     setTimeout(() => {
       const catalogElem = document.getElementById('catalog-section');
@@ -363,13 +372,8 @@ export function App() {
   }, [allProducts, selectedCategoryId, searchQuery, filterOnlyNepal, filterAlibabaOnly, filterMallOnly, filterFreeDelivery, minRating, priceRange, sortBy, visualSearch]);
 
   const displayedProducts = useMemo(() => {
-    if (pageSize === 'all') {
-      return filteredProducts;
-    }
-    const limit = typeof pageSize === 'number' ? pageSize : 36;
-    const start = (currentPage - 1) * limit;
-    return filteredProducts.slice(start, start + limit);
-  }, [filteredProducts, pageSize, currentPage]);
+    return filteredProducts.slice(0, forYouVisibleCount);
+  }, [filteredProducts, forYouVisibleCount]);
 
   const calculatedTotalPages = useMemo(() => {
     if (pageSize === 'all') return 1;
@@ -399,8 +403,7 @@ export function App() {
     setMinRating(0);
     setPriceRange({ min: 0, max: Infinity });
     setVisualSearch(null);
-    setPageSize('all');
-    setCurrentPage(1);
+    setForYouVisibleCount(18);
   };
 
   const handleVisualSearch = (searchResult) => {
@@ -674,13 +677,13 @@ export function App() {
                 <div className="flex items-center gap-2 text-xs flex-wrap">
                   {/* View All Products Button */}
                   <button
-                    onClick={handleViewAllEveryProduct}
+                    onClick={handleToggleViewAllEveryProduct}
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer border ${
-                      pageSize === 'all' && selectedCategoryId === 'all' && !searchQuery && !filterAlibabaOnly
+                      forYouVisibleCount >= filteredProducts.length && selectedCategoryId === 'all' && !searchQuery && !filterAlibabaOnly
                         ? 'bg-gradient-to-r from-[#F85606] to-amber-500 text-white border-transparent shadow-xs'
                         : 'bg-white hover:bg-orange-50 text-slate-700 hover:text-[#F85606] border-slate-300'
                     }`}
-                    title="View every single product saved till now"
+                    title="Toggle viewing all products or 3 lines"
                   >
                     <span>👁️ {language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'}</span>
                   </button>
@@ -783,100 +786,38 @@ export function App() {
                       ))}
                     </div>
 
-                    {/* View All / Pagination Bar */}
-                    {pageSize === 'all' ? (
-                      <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 bg-gradient-to-r from-orange-50 via-white to-amber-50 p-3.5 sm:p-4 rounded-xl border border-orange-200/80 shadow-2xs">
-                        <div className="text-xs text-slate-700 font-medium flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                          <span>
-                            Showing <strong>all {filteredProducts.length}</strong> products saved in Bhanjo catalog (Every single product is visible)
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs">
-                          <button
-                            onClick={() => {
-                              const elem = document.getElementById('catalog-section');
-                              if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-                            }}
-                            className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold bg-white text-slate-700 hover:border-orange-400 hover:text-[#F85606] transition cursor-pointer"
-                          >
-                            ↑ Back to Top
-                          </button>
-                        </div>
+                    {/* Centered Show More Option in the Down Middle (Progressively loads 3 lines / 18 products) */}
+                    {forYouVisibleCount < filteredProducts.length && (
+                      <div className="mt-8 flex justify-center items-center">
+                        <button
+                          type="button"
+                          onClick={() => setForYouVisibleCount(prev => Math.min(prev + 18, filteredProducts.length))}
+                          className="bg-gradient-to-r from-[#FF6A00] to-[#F85606] hover:from-[#EE5007] hover:to-[#e04e05] active:scale-95 text-white font-extrabold text-xs sm:text-sm px-10 sm:px-14 py-3 rounded-full shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer group"
+                        >
+                          <span>{language === 'ne' ? 'थप देखाउनुहोस्' : 'Show More'}</span>
+                          <ChevronDown className="w-4 h-4 stroke-[2.5] group-hover:translate-y-0.5 transition-transform" />
+                        </button>
                       </div>
-                    ) : (
-                      calculatedTotalPages > 1 && (
-                        <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-2xs">
-                          <div className="text-xs text-slate-600 font-medium">
-                            Showing page <span className="font-bold text-[#F85606]">{currentPage}</span> of <span className="font-bold text-slate-800">{calculatedTotalPages}</span> ({filteredProducts.length} products)
-                          </div>
+                    )}
 
-                          <div className="flex items-center gap-1.5 text-xs">
-                            <button
-                              onClick={() => { setPageSize('all'); setCurrentPage(1); }}
-                              className="px-2.5 py-1.5 rounded-lg bg-orange-100 text-[#F85606] font-bold hover:bg-[#F85606] hover:text-white transition mr-2 cursor-pointer"
-                            >
-                              👁️ {language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'}
-                            </button>
-                            <button
-                              disabled={currentPage <= 1}
-                              onClick={() => {
-                                setCurrentPage(p => Math.max(1, p - 1));
-                                const elem = document.getElementById('catalog-section');
-                                if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-                              }}
-                              className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold hover:bg-slate-50 transition disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer"
-                            >
-                              ← Previous
-                            </button>
-
-                            <div className="flex items-center gap-1">
-                              {Array.from({ length: Math.min(5, calculatedTotalPages) }, (_, i) => {
-                                let pageNum;
-                                if (calculatedTotalPages <= 5) {
-                                  pageNum = i + 1;
-                                } else if (currentPage <= 3) {
-                                  pageNum = i + 1;
-                                } else if (currentPage >= calculatedTotalPages - 2) {
-                                  pageNum = calculatedTotalPages - 4 + i;
-                                } else {
-                                  pageNum = currentPage - 2 + i;
-                                }
-
-                                return (
-                                  <button
-                                    key={pageNum}
-                                    onClick={() => {
-                                      setCurrentPage(pageNum);
-                                      const elem = document.getElementById('catalog-section');
-                                      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-                                    }}
-                                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg font-bold text-xs transition cursor-pointer ${
-                                      currentPage === pageNum 
-                                        ? 'bg-[#F85606] text-white shadow-xs' 
-                                        : 'bg-slate-50 hover:bg-slate-100 text-slate-700'
-                                    }`}
-                                  >
-                                    {pageNum}
-                                  </button>
-                                );
-                              })}
-                            </div>
-
-                            <button
-                              disabled={currentPage >= calculatedTotalPages}
-                              onClick={() => {
-                                setCurrentPage(p => Math.min(calculatedTotalPages, p + 1));
-                                const elem = document.getElementById('catalog-section');
-                                if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-                              }}
-                              className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold hover:bg-slate-50 transition disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer"
-                            >
-                              Next →
-                            </button>
-                          </div>
-                        </div>
-                      )
+                    {/* All Products Reached Indicator */}
+                    {filteredProducts.length > 18 && forYouVisibleCount >= filteredProducts.length && (
+                      <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 py-4 text-xs text-slate-500">
+                        <span className="flex items-center gap-1.5 font-medium">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                          Showing all {filteredProducts.length} products
+                        </span>
+                        <button
+                          onClick={() => {
+                            setForYouVisibleCount(18);
+                            const elem = document.getElementById('catalog-section');
+                            if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+                          }}
+                          className="px-3.5 py-1.5 rounded-full border border-slate-300 font-bold bg-white text-slate-700 hover:border-orange-400 hover:text-[#F85606] transition cursor-pointer"
+                        >
+                          ↑ Show Less (3 Lines)
+                        </button>
+                      </div>
                     )}
                   </div>
                 )}
