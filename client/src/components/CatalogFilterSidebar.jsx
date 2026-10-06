@@ -182,26 +182,6 @@ export const CatalogFilterSidebar = ({
           <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900 select-none p-1 rounded hover:bg-slate-50 transition">
             <input
               type="checkbox"
-              checked={filterAlibabaOnly}
-              onChange={(e) => setFilterAlibabaOnly(e.target.checked)}
-              className="accent-[#FF6A00] rounded w-3.5 h-3.5 cursor-pointer"
-            />
-            <span>Bhanjo Global Express</span>
-          </label>
-
-          <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900 select-none p-1 rounded hover:bg-slate-50 transition">
-            <input
-              type="checkbox"
-              checked={filterMallOnly}
-              onChange={(e) => setFilterMallOnly(e.target.checked)}
-              className="accent-[#F85606] rounded w-3.5 h-3.5 cursor-pointer"
-            />
-            <span>{t('bhanjoMallOfficial')}</span>
-          </label>
-
-          <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900 select-none p-1 rounded hover:bg-slate-50 transition">
-            <input
-              type="checkbox"
               checked={filterFreeDelivery}
               onChange={(e) => setFilterFreeDelivery(e.target.checked)}
               className="accent-[#F85606] rounded w-3.5 h-3.5 cursor-pointer"
