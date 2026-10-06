@@ -90,17 +90,19 @@
         <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 text-xs text-amber-300 leading-relaxed flex items-start gap-2">
           <i data-lucide="alert-triangle" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
           <div>
-            Dual-Factor Verification Required: 6-digit codes were dispatched to your registered SMS and Email. Both codes are required.
+            <strong>Dual-Factor Verification Required:</strong> Enter the 6-digit code dispatched to your Email. For SMS, demo code <strong class="text-emerald-400 font-mono">123456</strong> is active until Sparrow SMS gateway is connected.
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1">
-              📱 SMS Code (<span id="masked-phone">...</span>)
+            <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1 flex items-center justify-between">
+              <span>📱 SMS Code (<span id="masked-phone">...</span>)</span>
+              <span class="text-emerald-400 font-mono text-[9px] lowercase bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/30">demo: 123456</span>
             </label>
-            <input type="text" id="sms-code" maxlength="6" required placeholder="6-digit code"
+            <input type="text" id="sms-code" maxlength="6" required placeholder="123456" value="123456"
               class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-center font-mono font-bold text-lg text-amber-400 tracking-widest focus:outline-none focus:border-orange-500">
+            <p class="text-[10px] text-slate-400 mt-1">Demo SMS code: <strong class="text-emerald-400 font-mono">123456</strong></p>
           </div>
 
           <div>
@@ -109,6 +111,7 @@
             </label>
             <input type="text" id="email-code" maxlength="6" required placeholder="6-digit code"
               class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-center font-mono font-bold text-lg text-orange-400 tracking-widest focus:outline-none focus:border-orange-500">
+            <p class="text-[10px] text-slate-400 mt-1">Check registered email inbox</p>
           </div>
         </div>
 
@@ -819,11 +822,9 @@
         document.getElementById('step2-form').classList.remove('hidden');
         startCountdown(300);
 
-        // Pre-fill simulated dev SMS code if no live carrier gateway is connected yet
-        if (data.devCodes && data.devCodes.smsCode) {
-          console.log('🛡️ Dual 2FA Dispatched:', data.devCodes);
-          document.getElementById('sms-code').value = data.devCodes.smsCode;
-        }
+        // Pre-fill demo SMS code if no live carrier gateway is connected yet
+        const demoCode = data.demoSmsCode || (data.devCodes && data.devCodes.smsCode) || '123456';
+        document.getElementById('sms-code').value = demoCode;
 
       } catch (err) {
         alertBox.innerText = '⚠️ ' + err.message;
