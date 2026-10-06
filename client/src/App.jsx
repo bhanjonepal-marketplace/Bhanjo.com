@@ -685,22 +685,6 @@ export function App() {
                     <span>👁️ {language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'}</span>
                   </button>
 
-                  {/* Mode Toggle: View All vs Paginated */}
-                  <div className="hidden sm:inline-flex items-center bg-slate-100 p-0.5 rounded-lg text-xs font-semibold">
-                    <button
-                      onClick={() => { setPageSize('all'); setCurrentPage(1); }}
-                      className={`px-2.5 py-1 rounded-md transition cursor-pointer ${pageSize === 'all' ? 'bg-white text-[#F85606] font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900'}`}
-                    >
-                      All ({filteredProducts.length})
-                    </button>
-                    <button
-                      onClick={() => { setPageSize(36); setCurrentPage(1); }}
-                      className={`px-2.5 py-1 rounded-md transition cursor-pointer ${pageSize === 36 ? 'bg-white text-[#F85606] font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900'}`}
-                    >
-                      36 / page
-                    </button>
-                  </div>
-
                   {/* Mobile Filters Toggle Button */}
                   <button
                     onClick={() => setIsMobileFilterOpen(true)}
@@ -817,12 +801,6 @@ export function App() {
                             className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold bg-white text-slate-700 hover:border-orange-400 hover:text-[#F85606] transition cursor-pointer"
                           >
                             ↑ Back to Top
-                          </button>
-                          <button
-                            onClick={() => { setPageSize(36); setCurrentPage(1); }}
-                            className="px-3 py-1.5 rounded-lg border border-slate-300 font-bold bg-white text-slate-700 hover:bg-slate-50 transition cursor-pointer"
-                          >
-                            Switch to 36/page
                           </button>
                         </div>
                       </div>
