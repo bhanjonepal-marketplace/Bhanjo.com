@@ -29,6 +29,48 @@ export const FlashSalePage = ({
   const [claimedVouchers, setClaimedVouchers] = useState(new Set());
   const [justAddedId, setJustAddedId] = useState(null);
 
+  // Dynamic Backend Campaign Settings & Vouchers
+  const [campaignSettings, setCampaignSettings] = useState({
+    title: 'FLASH SALE',
+    subtitle: 'Massive limited-time price drops • Direct China Factory Pricing • Refreshes Hourly',
+    badge_text: 'International Direct Deals',
+    sales_count_text: '🔥 570K+ Sold Across Nepal',
+    countdown_label: 'Current Rush Session Ends In:',
+    duration_hours: 4,
+    duration_minutes: 28,
+    duration_seconds: 15,
+    ends_at: null,
+    session_name: '⚡ ONGOING RUSH',
+    upcoming_sessions: [
+      { id: '16:00', time: '16:00', title: '16:00 Coming Up', tag: 'Soon' },
+      { id: '20:00', time: '20:00', title: '20:00 Night Drop', tag: 'Popular' },
+      { id: 'tomorrow', time: 'Tomorrow 10:00', title: 'Tomorrow 10:00 Mega Drop', tag: 'Huge Deals' }
+    ]
+  });
+
+  const [vouchers, setVouchers] = useState([
+    {
+      id: 'vouch-250',
+      title: 'Rs. 250 Off',
+      tag: 'Flash Voucher',
+      expiry_text: 'Min Spend Rs. 1,000',
+      code: 'FLASH250',
+      discount_amount: 250,
+      icon: '⚡',
+      color: 'amber'
+    },
+    {
+      id: 'vouch-500',
+      title: 'Rs. 500 Gift Voucher',
+      tag: 'Hourly Drop',
+      expiry_text: 'Expiring in 2 hours',
+      code: 'GIFT500',
+      discount_amount: 500,
+      icon: '🎁',
+      color: 'purple'
+    }
+  ]);
+
   // Live Master Countdown with Milliseconds (Tenths of second)
   const [masterTime, setMasterTime] = useState({
     hours: 4,
@@ -83,17 +125,112 @@ export const FlashSalePage = ({
     }
   };
 
+  // Fetch campaign settings & vouchers from backend API
+  const fetchCampaignSettings = async () => {
+    try {
+      const res = await fetch('/api/flash-sale/settings');
+      const data = await res.json();
+      if (data.success) {
+        if (data.settings) {
+          setCampaignSettings(data.settings);
+          // Sync live countdown to ends_at or duration
+          if (data.settings.ends_at) {
+            const diff = Math.max(0, new Date(data.settings.ends_at).getTime() - Date.now());
+            const totalSecs = Math.floor(diff / 1000);
+            const hours = Math.floor(totalSecs / 3600);
+            const minutes = Math.floor((totalSecs % 3600) / 60);
+            const seconds = totalSecs % 60;
+            setMasterTime({ hours, minutes, seconds, millis: 9 });
+          } else if (data.settings.duration_hours !== undefined) {
+            setMasterTime({
+              hours: data.settings.duration_hours || 4,
+              minutes: data.settings.duration_minutes || 0,
+              seconds: data.settings.duration_seconds || 0,
+              millis: 9
+            });
+          }
+        }
+        if (Array.isArray(data.vouchers) && data.vouchers.length > 0) {
+          setVouchers(data.vouchers);
+        }
+      }
+    } catch (err) {
+      console.warn('Error fetching campaign settings:', err);
+    }
+  };
+
+  // Fetch claimed vouchers for authenticated user
+  const fetchClaimedVouchers = async () => {
+    if (!user) {
+      setClaimedVouchers(new Set());
+      return;
+    }
+    try {
+      const token = localStorage.getItem('bhanjo_token');
+      if (!token) return;
+      const res = await fetch('/api/vouchers/my-claimed', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.claimedVoucherIds)) {
+        setClaimedVouchers(new Set(data.claimedVoucherIds));
+      }
+    } catch (e) {
+      console.warn('Error fetching claimed vouchers:', e);
+    }
+  };
+
   useEffect(() => {
+    fetchCampaignSettings();
     fetchFlashSale();
   }, []);
 
+  useEffect(() => {
+    fetchClaimedVouchers();
+  }, [user]);
+
   const pad = (n) => String(n).padStart(2, '0');
 
-  // Handle claiming flash sale vouchers
-  const handleClaimVoucher = (voucherId, title) => {
+  // Handle claiming flash sale vouchers - STRICT ACCOUNT VERIFICATION
+  const handleClaimVoucher = async (voucherId, title) => {
     if (claimedVouchers.has(voucherId)) return;
-    setClaimedVouchers(prev => new Set([...prev, voucherId]));
-    confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+
+    // Check if user is logged in
+    if (!user) {
+      if (onRequireAuth) {
+        onRequireAuth(
+          () => handleClaimVoucher(voucherId, title),
+          'Please sign in or create an account to claim your gift voucher!'
+        );
+      }
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('bhanjo_token');
+      const res = await fetch('/api/vouchers/claim', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify({ voucherId })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setClaimedVouchers(prev => new Set([...prev, voucherId]));
+        confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+      } else if (res.status === 401) {
+        if (onRequireAuth) {
+          onRequireAuth(() => {}, data.error || 'Please sign in to claim vouchers!');
+        }
+      } else {
+        alert(data.error || 'Unable to claim voucher');
+      }
+    } catch (err) {
+      setClaimedVouchers(prev => new Set([...prev, voucherId]));
+      confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+    }
   };
 
   // Quick Add To Cart from Flash Deal card
@@ -165,23 +302,26 @@ export const FlashSalePage = ({
             </button>
 
             {/* Admin Management Trigger Button */}
-            {isAdmin && onOpenAdminManager && (
+            {isAdmin && (
               <button
-                onClick={onOpenAdminManager}
+                onClick={() => {
+                  if (onOpenAdminManager) onOpenAdminManager();
+                  else window.open('/admin#tab-flash-sale', '_blank');
+                }}
                 className="bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-xs px-3.5 py-1.5 rounded-full transition shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95"
-                title="Open Flash Sale Admin Manager to add products, set prices & timers"
+                title="Open Flash Sale Admin Manager to edit timer, texts, upcoming events & vouchers"
               >
                 <Zap className="w-3.5 h-3.5 fill-current text-slate-950" />
-                <span>⚡ Manage Flash Sale Deals (Admin)</span>
+                <span>⚡ Edit Flash Sale, Timers & Vouchers (Admin)</span>
               </button>
             )}
           </div>
 
-          {/* Flash Sale Main Title & Alarm Section (Matches Reference Screenshot 3 & 4) */}
+          {/* Flash Sale Main Title & Alarm Section */}
           <div className="mt-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             
             <div className="flex items-center gap-3 sm:gap-4">
-              {/* Animated Cute Red Alarm Clock (Matching reference clock with lightning bolt, zero Chinese text) */}
+              {/* Animated Red Alarm Clock */}
               <div className="relative flex-shrink-0 group transition-transform hover:scale-108 active:scale-95">
                 <RedAlarmClock className="w-14 h-14 sm:w-16 sm:h-16" />
               </div>
@@ -190,21 +330,21 @@ export const FlashSalePage = ({
                 <div className="flex items-center gap-2">
                   <span className="bg-yellow-400 text-red-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
                     <Flame className="w-3 h-3 fill-current text-red-600" />
-                    <span>International Direct Deals</span>
+                    <span>{campaignSettings.badge_text || 'International Direct Deals'}</span>
                   </span>
                   <span className="text-[11px] text-white/80 hidden sm:inline">
-                    🔥 570K+ Sold Across Nepal
+                    {campaignSettings.sales_count_text || '🔥 570K+ Sold Across Nepal'}
                   </span>
                 </div>
 
                 <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight flex items-center gap-2 mt-1 drop-shadow-sm">
-                  <span>FLASH SA</span>
+                  <span>{campaignSettings.title || 'FLASH SALE'}</span>
                   <span className="text-yellow-300 font-extrabold flex items-center">
-                    ⚡E
+                    ⚡
                   </span>
                 </h1>
                 <p className="text-xs text-white/80 mt-0.5">
-                  Massive limited-time price drops • Direct China Factory Pricing • Refreshes Hourly
+                  {campaignSettings.subtitle || 'Massive limited-time price drops • Direct China Factory Pricing • Refreshes Hourly'}
                 </p>
               </div>
             </div>
@@ -213,7 +353,7 @@ export const FlashSalePage = ({
             <div className="bg-black/35 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-white/20 shadow-2xl flex flex-col items-center sm:items-end">
               <span className="text-[11px] font-bold text-yellow-300 uppercase tracking-wider flex items-center gap-1 mb-1.5">
                 <Clock className="w-3.5 h-3.5 animate-pulse" />
-                <span>Current Rush Session Ends In:</span>
+                <span>{campaignSettings.countdown_label || 'Current Rush Session Ends In:'}</span>
               </span>
 
               <div className="flex items-center gap-1 text-white font-mono font-black">
@@ -237,7 +377,7 @@ export const FlashSalePage = ({
 
           </div>
 
-          {/* Flash Sale Daily Voucher Cards (Reference Screenshot 4) */}
+          {/* Flash Sale Daily Voucher Cards - Dynamically loaded from Backend */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
             
             <div className="bg-white/95 text-slate-900 rounded-xl p-3 shadow-md border border-white/30 flex items-center justify-between">
@@ -256,55 +396,46 @@ export const FlashSalePage = ({
               </span>
             </div>
 
-            <div className="bg-white/95 text-slate-900 rounded-xl p-3 shadow-md border border-white/30 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-black text-xs">
-                  Rs. 250
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-amber-600 block uppercase">Flash Voucher</span>
-                  <span className="text-xs font-black text-slate-900">Extra Rs. 250 Off</span>
-                  <span className="text-[10px] text-slate-500 block">Min. Order Rs. 2,000</span>
-                </div>
-              </div>
-              <button
-                onClick={() => handleClaimVoucher('vouch-250', 'Rs. 250 Off')}
-                className={`text-[10px] font-black px-3 py-1 rounded-lg transition cursor-pointer ${
-                  claimedVouchers.has('vouch-250')
-                    ? 'bg-emerald-600 text-white cursor-default'
-                    : 'bg-red-600 hover:bg-red-700 text-white shadow-xs'
-                }`}
-              >
-                {claimedVouchers.has('vouch-250') ? 'Claimed ✓' : 'Claim'}
-              </button>
-            </div>
+            {vouchers.map((vouch) => {
+              const isClaimed = claimedVouchers.has(vouch.id);
+              const colorBg = vouch.color === 'purple' ? 'bg-purple-50 text-purple-600' :
+                              vouch.color === 'emerald' ? 'bg-emerald-50 text-emerald-600' :
+                              vouch.color === 'red' ? 'bg-red-50 text-red-600' :
+                              'bg-amber-50 text-amber-600';
+              const colorText = vouch.color === 'purple' ? 'text-purple-600' :
+                                vouch.color === 'emerald' ? 'text-emerald-600' :
+                                vouch.color === 'red' ? 'text-red-600' :
+                                'text-amber-600';
 
-            <div className="bg-white/95 text-slate-900 rounded-xl p-3 shadow-md border border-white/30 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-black text-sm">
-                  🎁
+              return (
+                <div key={vouch.id} className="bg-white/95 text-slate-900 rounded-xl p-3 shadow-md border border-white/30 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`w-10 h-10 rounded-lg ${colorBg} flex items-center justify-center font-black text-sm`}>
+                      {vouch.icon || '🎁'}
+                    </div>
+                    <div>
+                      <span className={`text-[10px] font-bold ${colorText} block uppercase`}>{vouch.tag || 'HOURLY DROP'}</span>
+                      <span className="text-xs font-black text-slate-900">{vouch.title}</span>
+                      <span className="text-[10px] text-slate-500 block">{vouch.expiry_text || 'Expiring in 2 hours'}</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleClaimVoucher(vouch.id, vouch.title)}
+                    className={`text-[10px] font-black px-3 py-1 rounded-lg transition cursor-pointer ${
+                      isClaimed
+                        ? 'bg-emerald-600 text-white cursor-default'
+                        : 'bg-red-600 hover:bg-red-700 text-white shadow-xs'
+                    }`}
+                  >
+                    {isClaimed ? 'Claimed ✓' : 'Claim'}
+                  </button>
                 </div>
-                <div>
-                  <span className="text-[10px] font-bold text-purple-600 block uppercase">Hourly Drop</span>
-                  <span className="text-xs font-black text-slate-900">Rs. 500 Gift Voucher</span>
-                  <span className="text-[10px] text-slate-500 block">Expiring in 2 hours</span>
-                </div>
-              </div>
-              <button
-                onClick={() => handleClaimVoucher('vouch-500', 'Rs. 500 Off')}
-                className={`text-[10px] font-black px-3 py-1 rounded-lg transition cursor-pointer ${
-                  claimedVouchers.has('vouch-500')
-                    ? 'bg-emerald-600 text-white cursor-default'
-                    : 'bg-red-600 hover:bg-red-700 text-white shadow-xs'
-                }`}
-              >
-                {claimedVouchers.has('vouch-500') ? 'Claimed ✓' : 'Claim'}
-              </button>
-            </div>
+              );
+            })}
 
           </div>
 
-          {/* Time Slot Session Tabs (Matches Reference Screenshot 4: 疯抢中 00:15:01 / 15:00 开抢) */}
+          {/* Time Slot Session Tabs - Dynamically loaded from Backend */}
           <div className="flex items-center gap-2 mt-5 overflow-x-auto pb-1 scrollbar-none">
             
             <button
@@ -316,46 +447,27 @@ export const FlashSalePage = ({
               }`}
             >
               <Flame className="w-3.5 h-3.5 fill-current text-red-500" />
-              <span>⚡ ONGOING RUSH</span>
+              <span>{campaignSettings.session_name || '⚡ ONGOING RUSH'}</span>
               <span className="bg-red-600 text-white text-[9px] px-1.5 py-0.2 rounded font-mono">
                 {pad(masterTime.minutes)}:{pad(masterTime.seconds)}.{masterTime.millis}
               </span>
             </button>
 
-            <button
-              onClick={() => setActiveSession('16:00')}
-              className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
-                activeSession === '16:00'
-                  ? 'bg-white text-red-600 shadow-lg scale-105 font-black'
-                  : 'bg-white/15 text-white hover:bg-white/25'
-              }`}
-            >
-              <Clock className="w-3.5 h-3.5" />
-              <span>16:00 Coming Up</span>
-              <span className="text-[10px] text-white/70">Soon</span>
-            </button>
-
-            <button
-              onClick={() => setActiveSession('20:00')}
-              className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
-                activeSession === '20:00'
-                  ? 'bg-white text-red-600 shadow-lg scale-105 font-black'
-                  : 'bg-white/15 text-white hover:bg-white/25'
-              }`}
-            >
-              <span>🌙 20:00 Night Rush</span>
-            </button>
-
-            <button
-              onClick={() => setActiveSession('tomorrow')}
-              className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
-                activeSession === 'tomorrow'
-                  ? 'bg-white text-red-600 shadow-lg scale-105 font-black'
-                  : 'bg-white/15 text-white hover:bg-white/25'
-              }`}
-            >
-              <span>⭐ Tomorrow 10:00</span>
-            </button>
+            {(campaignSettings.upcoming_sessions || []).map((slot, sIdx) => (
+              <button
+                key={slot.id || sIdx}
+                onClick={() => setActiveSession(slot.id || String(sIdx))}
+                className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
+                  activeSession === (slot.id || String(sIdx))
+                    ? 'bg-white text-red-600 shadow-lg scale-105 font-black'
+                    : 'bg-white/15 text-white hover:bg-white/25'
+                }`}
+              >
+                <Clock className="w-3.5 h-3.5" />
+                <span>{slot.title || slot.time}</span>
+                {slot.tag && <span className="text-[10px] text-white/70">{slot.tag}</span>}
+              </button>
+            ))}
 
           </div>
 

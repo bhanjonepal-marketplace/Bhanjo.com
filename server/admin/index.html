@@ -366,25 +366,243 @@
       <!-- ===================================== -->
       <!-- TAB 3: FLASH SALE DEALS -->
       <!-- ===================================== -->
-      <div id="tab-flash-sale" class="tab-content space-y-4 hidden">
-        <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+      <div id="tab-flash-sale" class="tab-content space-y-6 hidden">
+        
+        <!-- Header Banner -->
+        <div class="bg-gradient-to-r from-amber-500/10 via-red-500/10 to-purple-500/10 p-5 rounded-2xl border border-amber-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">Master Campaign Control</span>
+              <span class="text-xs text-slate-400">Admin Only</span>
+            </div>
+            <h2 class="text-xl font-black text-white flex items-center gap-2 mt-1">
               <i data-lucide="zap" class="w-5 h-5 text-amber-400"></i>
-              <span>Flash Sale Deal Management</span>
+              <span>Flash Sale, Timers, Upcoming Events & Vouchers</span>
             </h2>
-            <p class="text-xs text-slate-400">Configure rush hours, discount percentages, and countdown sessions</p>
+            <p class="text-xs text-slate-300 mt-0.5">Control live countdown timers, marketing text, upcoming rounds, and gift vouchers shown on Bhanjo.com</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="saveCampaignSettings()" id="btn-save-campaign-top"
+              class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 cursor-pointer active:scale-95">
+              <i data-lucide="save" class="w-4 h-4"></i>
+              <span>Save Campaign Settings</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Notification Banner -->
+        <div id="fs-settings-status" class="hidden p-3.5 rounded-xl text-xs font-semibold"></div>
+
+        <!-- 2-Column Grid: Section 1 & Section 2 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          
+          <!-- 1. LIVE COUNTDOWN & TIMER CONTROLS -->
+          <div class="bg-slate-900/70 p-5 rounded-2xl border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+              <h3 class="font-bold text-sm text-white flex items-center gap-2">
+                <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
+                <span>Flash Deal Live Timer & Session</span>
+              </h3>
+              <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-md font-mono">Live Sync</span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-300 mb-1">Hours</label>
+                <input type="number" id="fs-hours" min="0" max="72" value="4"
+                  class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-amber-400">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-300 mb-1">Minutes</label>
+                <input type="number" id="fs-minutes" min="0" max="59" value="28"
+                  class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-amber-400">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-300 mb-1">Seconds</label>
+                <input type="number" id="fs-seconds" min="0" max="59" value="15"
+                  class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-amber-400">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">Quick Reset / Extend Session Presets</label>
+              <div class="flex items-center gap-2 flex-wrap">
+                <button type="button" onclick="setTimerPreset(1, 0)" class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+1 Hour</button>
+                <button type="button" onclick="setTimerPreset(2, 0)" class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+2 Hours</button>
+                <button type="button" onclick="setTimerPreset(4, 0)" class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+4 Hours (Standard)</button>
+                <button type="button" onclick="setTimerPreset(12, 0)" class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+12 Hours</button>
+                <button type="button" onclick="setTimerPreset(24, 0)" class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+24 Hours (Mega Drop)</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">Countdown Label (Shown above timer)</label>
+              <input type="text" id="fs-countdown-label" value="Current Rush Session Ends In:"
+                class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">Active Session Tab Text</label>
+              <input type="text" id="fs-session-name" value="⚡ ONGOING RUSH"
+                class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+            </div>
+          </div>
+
+          <!-- 2. PROMOTIONAL MARKETING TEXTS -->
+          <div class="bg-slate-900/70 p-5 rounded-2xl border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+              <h3 class="font-bold text-sm text-white flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+                <span>Flash Sale Promotional Texts & Badges</span>
+              </h3>
+              <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-md">Storefront Header</span>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">Main Campaign Title</label>
+              <input type="text" id="fs-title" value="FLASH SALE"
+                class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-amber-400">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">Subtitle / Marketing Description</label>
+              <textarea id="fs-subtitle" rows="2"
+                class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">Massive limited-time price drops • Direct China Factory Pricing • Refreshes Hourly</textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-300 mb-1">Top Badge Tag</label>
+                <input type="text" id="fs-badge" value="International Direct Deals"
+                  class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-300 mb-1">Sales Stats Tag</label>
+                <input type="text" id="fs-sales-count" value="🔥 570K+ Sold Across Nepal"
+                  class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 3. UPCOMING EVENT ROUNDS & TIME SLOTS -->
+        <div class="bg-slate-900/70 p-5 rounded-2xl border border-slate-800 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div>
+              <h3 class="font-bold text-sm text-white flex items-center gap-2">
+                <i data-lucide="calendar" class="w-4 h-4 text-sky-400"></i>
+                <span>Upcoming Event Time Slots (Customer Session Tabs)</span>
+              </h3>
+              <p class="text-[11px] text-slate-400">These rounds appear as clickable upcoming tabs on the customer flash sale page</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="upcoming-slots-container">
+            <!-- Slot 1 -->
+            <div class="p-3.5 bg-slate-800/80 rounded-xl border border-slate-700/80 space-y-2">
+              <span class="text-[10px] font-black text-amber-400 uppercase tracking-wider block">Upcoming Round 1</span>
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Time Label</label>
+                <input type="text" id="fs-slot-1-time" value="16:00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Title</label>
+                <input type="text" id="fs-slot-1-title" value="16:00 Coming Up" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Badge/Tag</label>
+                <input type="text" id="fs-slot-1-tag" value="Soon" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+              </div>
+            </div>
+
+            <!-- Slot 2 -->
+            <div class="p-3.5 bg-slate-800/80 rounded-xl border border-slate-700/80 space-y-2">
+              <span class="text-[10px] font-black text-sky-400 uppercase tracking-wider block">Upcoming Round 2</span>
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Time Label</label>
+                <input type="text" id="fs-slot-2-time" value="20:00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Title</label>
+                <input type="text" id="fs-slot-2-title" value="20:00 Night Drop" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Badge/Tag</label>
+                <input type="text" id="fs-slot-2-tag" value="Popular" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+              </div>
+            </div>
+
+            <!-- Slot 3 -->
+            <div class="p-3.5 bg-slate-800/80 rounded-xl border border-slate-700/80 space-y-2">
+              <span class="text-[10px] font-black text-purple-400 uppercase tracking-wider block">Upcoming Round 3</span>
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Time Label</label>
+                <input type="text" id="fs-slot-3-time" value="Tomorrow 10:00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Title</label>
+                <input type="text" id="fs-slot-3-title" value="Tomorrow 10:00 Mega Drop" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Badge/Tag</label>
+                <input type="text" id="fs-slot-3-tag" value="Huge Deals" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. GIFT VOUCHERS & HOURLY DROPS MANAGER -->
+        <div class="bg-slate-900/70 p-5 rounded-2xl border border-slate-800 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+            <div>
+              <h3 class="font-bold text-sm text-white flex items-center gap-2">
+                <i data-lucide="gift" class="w-4 h-4 text-emerald-400"></i>
+                <span>Claimable Gift Vouchers & Hourly Drops (Account Required)</span>
+              </h3>
+              <p class="text-[11px] text-slate-400">Guests must create/login to an account to claim these vouchers. Edit amounts, tags, and codes below.</p>
+            </div>
+            <button onclick="addNewAdminVoucherRow()"
+              class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>Add New Voucher</span>
+            </button>
+          </div>
+
+          <div id="admin-vouchers-container" class="space-y-3">
+            <!-- Dynamic editable voucher cards -->
+          </div>
+        </div>
+
+        <!-- SAVE BUTTON BAR -->
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button onclick="saveCampaignSettings()" id="btn-save-campaign-bottom"
+            class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-sm px-6 py-3 rounded-xl transition flex items-center gap-2 shadow-lg shadow-emerald-500/20 cursor-pointer active:scale-95">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>Save All Campaign & Voucher Settings</span>
+          </button>
+        </div>
+
+        <!-- 5. PRODUCT DEALS SECTION -->
+        <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 flex items-center justify-between mt-6">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="shopping-bag" class="w-4 h-4 text-amber-400"></i>
+              <span>Active Flash Sale Product Items</span>
+            </h2>
+            <p class="text-xs text-slate-400">Products assigned with promotional flash pricing in catalog</p>
           </div>
           <button onclick="openFlashSaleAddModal()"
-            class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-md shadow-amber-500/20">
+            class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-md shadow-amber-500/20 cursor-pointer">
             <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Add Item to Flash Sale</span>
+            <span>Add Product to Flash Sale</span>
           </button>
         </div>
 
         <div id="flash-sale-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <!-- Dynamic flash items -->
         </div>
+
       </div>
 
       <!-- ===================================== -->
@@ -1187,9 +1405,22 @@
       }
     }
 
-    // Flash Sale
+    // Flash Sale & Vouchers Campaign Manager
+    let adminCampaignSettings = null;
+    let adminVouchersList = [];
+
     async function fetchFlashSale() {
       try {
+        // 1. Fetch live campaign settings and vouchers
+        const settingsRes = await fetch('/api/flash-sale/settings');
+        const settingsData = await settingsRes.json();
+        if (settingsData.success) {
+          adminCampaignSettings = settingsData.settings;
+          adminVouchersList = settingsData.vouchers || [];
+          populateCampaignSettingsForm(adminCampaignSettings, adminVouchersList);
+        }
+
+        // 2. Fetch products
         const res = await fetch('/api/flash-sale');
         const data = await res.json();
         if (data.success) {
@@ -1197,6 +1428,228 @@
         }
       } catch (e) {
         console.error('Fetch flash sale error:', e);
+      }
+    }
+
+    function populateCampaignSettingsForm(settings, vouchers) {
+      if (settings) {
+        if (document.getElementById('fs-hours')) document.getElementById('fs-hours').value = settings.duration_hours !== undefined ? settings.duration_hours : 4;
+        if (document.getElementById('fs-minutes')) document.getElementById('fs-minutes').value = settings.duration_minutes !== undefined ? settings.duration_minutes : 28;
+        if (document.getElementById('fs-seconds')) document.getElementById('fs-seconds').value = settings.duration_seconds !== undefined ? settings.duration_seconds : 15;
+        if (document.getElementById('fs-countdown-label')) document.getElementById('fs-countdown-label').value = settings.countdown_label || 'Current Rush Session Ends In:';
+        if (document.getElementById('fs-session-name')) document.getElementById('fs-session-name').value = settings.session_name || '⚡ ONGOING RUSH';
+        if (document.getElementById('fs-title')) document.getElementById('fs-title').value = settings.title || 'FLASH SALE';
+        if (document.getElementById('fs-subtitle')) document.getElementById('fs-subtitle').value = settings.subtitle || '';
+        if (document.getElementById('fs-badge')) document.getElementById('fs-badge').value = settings.badge_text || 'International Direct Deals';
+        if (document.getElementById('fs-sales-count')) document.getElementById('fs-sales-count').value = settings.sales_count_text || '🔥 570K+ Sold Across Nepal';
+
+        const slots = settings.upcoming_sessions || [];
+        if (slots[0]) {
+          if (document.getElementById('fs-slot-1-time')) document.getElementById('fs-slot-1-time').value = slots[0].time || '16:00';
+          if (document.getElementById('fs-slot-1-title')) document.getElementById('fs-slot-1-title').value = slots[0].title || '16:00 Coming Up';
+          if (document.getElementById('fs-slot-1-tag')) document.getElementById('fs-slot-1-tag').value = slots[0].tag || 'Soon';
+        }
+        if (slots[1]) {
+          if (document.getElementById('fs-slot-2-time')) document.getElementById('fs-slot-2-time').value = slots[1].time || '20:00';
+          if (document.getElementById('fs-slot-2-title')) document.getElementById('fs-slot-2-title').value = slots[1].title || '20:00 Night Drop';
+          if (document.getElementById('fs-slot-2-tag')) document.getElementById('fs-slot-2-tag').value = slots[1].tag || 'Popular';
+        }
+        if (slots[2]) {
+          if (document.getElementById('fs-slot-3-time')) document.getElementById('fs-slot-3-time').value = slots[2].time || 'Tomorrow 10:00';
+          if (document.getElementById('fs-slot-3-title')) document.getElementById('fs-slot-3-title').value = slots[2].title || 'Tomorrow 10:00 Mega Drop';
+          if (document.getElementById('fs-slot-3-tag')) document.getElementById('fs-slot-3-tag').value = slots[2].tag || 'Huge Deals';
+        }
+      }
+
+      renderAdminVouchers(vouchers || []);
+    }
+
+    function renderAdminVouchers(vouchers) {
+      const container = document.getElementById('admin-vouchers-container');
+      if (!container) return;
+
+      if (!vouchers || vouchers.length === 0) {
+        container.innerHTML = '<div class="p-4 text-center text-slate-500 bg-slate-800/40 rounded-xl">No vouchers configured yet. Click "Add New Voucher" above.</div>';
+        return;
+      }
+
+      container.innerHTML = vouchers.map((v, idx) => `
+        <div class="p-4 bg-slate-800/90 rounded-xl border border-slate-700/80 space-y-3" id="voucher-row-${idx}">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <input type="text" value="${v.icon || '🎁'}" id="v-icon-${idx}" class="w-9 h-9 text-center bg-slate-900 border border-slate-700 rounded-lg text-sm" title="Voucher Icon/Emoji">
+              <span class="text-xs font-bold text-white">Voucher #${idx + 1} (${v.id || 'new'})</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="flex items-center gap-1.5 text-xs text-slate-300 font-medium cursor-pointer">
+                <input type="checkbox" id="v-active-${idx}" ${v.is_active !== 0 ? 'checked' : ''} class="rounded border-slate-700 text-emerald-500 focus:ring-0">
+                <span>Active</span>
+              </label>
+              <button type="button" onclick="deleteAdminVoucherRow('${v.id || idx}', ${idx})" class="text-red-400 hover:text-red-300 p-1.5 rounded-lg bg-red-500/10 cursor-pointer">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+          <input type="hidden" id="v-id-${idx}" value="${v.id || `vouch-${Date.now()}`}">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+            <div>
+              <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Voucher Title</label>
+              <input type="text" id="v-title-${idx}" value="${v.title || ''}" placeholder="e.g. Rs. 500 Gift Voucher"
+                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Drop Tag / Badge</label>
+              <input type="text" id="v-tag-${idx}" value="${v.tag || 'HOURLY DROP'}" placeholder="e.g. HOURLY DROP"
+                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Expiry / Restriction Notice</label>
+              <input type="text" id="v-expiry-${idx}" value="${v.expiry_text || 'Expiring in 2 hours'}" placeholder="e.g. Expiring in 2 hours"
+                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Promo Coupon Code</label>
+              <input type="text" id="v-code-${idx}" value="${v.code || 'BHANJO500'}" placeholder="e.g. BHANJO500"
+                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-mono text-amber-400">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div>
+              <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Discount Amount (NPR)</label>
+              <input type="number" id="v-discount-${idx}" value="${v.discount_amount || 500}"
+                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Min Spend (NPR)</label>
+              <input type="number" id="v-minspend-${idx}" value="${v.min_spend || 1500}"
+                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Accent Color Style</label>
+              <select id="v-color-${idx}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <option value="purple" ${v.color === 'purple' ? 'selected' : ''}>Purple (Hourly Drop)</option>
+                <option value="amber" ${v.color === 'amber' ? 'selected' : ''}>Amber (Flash Voucher)</option>
+                <option value="emerald" ${v.color === 'emerald' ? 'selected' : ''}>Emerald (Festive Special)</option>
+                <option value="red" ${v.color === 'red' ? 'selected' : ''}>Red (Mega Sale)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function addNewAdminVoucherRow() {
+      const newV = {
+        id: `vouch-${Date.now()}`,
+        title: 'Rs. 300 Special Voucher',
+        tag: 'FESTIVE DROP',
+        expiry_text: 'Limited to first 100 users',
+        code: `SAVE${Math.floor(Math.random() * 900) + 100}`,
+        discount_amount: 300,
+        min_spend: 1200,
+        icon: '🎁',
+        color: 'emerald',
+        is_active: 1
+      };
+      adminVouchersList.push(newV);
+      renderAdminVouchers(adminVouchersList);
+    }
+
+    function deleteAdminVoucherRow(id, idx) {
+      adminVouchersList = adminVouchersList.filter((_, i) => i !== idx);
+      renderAdminVouchers(adminVouchersList);
+    }
+
+    function setTimerPreset(hours, minutes) {
+      document.getElementById('fs-hours').value = hours;
+      document.getElementById('fs-minutes').value = minutes;
+      document.getElementById('fs-seconds').value = 0;
+    }
+
+    async function saveCampaignSettings() {
+      const statusBox = document.getElementById('fs-settings-status');
+      statusBox.className = 'p-3.5 rounded-xl text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 block';
+      statusBox.innerText = '⏳ Saving Flash Sale campaign settings & vouchers...';
+
+      // Read vouchers from form
+      const vouchers = adminVouchersList.map((_, idx) => {
+        return {
+          id: document.getElementById(`v-id-${idx}`) ? document.getElementById(`v-id-${idx}`).value : `vouch-${idx}`,
+          title: document.getElementById(`v-title-${idx}`) ? document.getElementById(`v-title-${idx}`).value : '',
+          tag: document.getElementById(`v-tag-${idx}`) ? document.getElementById(`v-tag-${idx}`).value : 'HOURLY DROP',
+          expiry_text: document.getElementById(`v-expiry-${idx}`) ? document.getElementById(`v-expiry-${idx}`).value : '',
+          code: document.getElementById(`v-code-${idx}`) ? document.getElementById(`v-code-${idx}`).value : 'BHANJO',
+          discount_amount: parseFloat(document.getElementById(`v-discount-${idx}`)?.value) || 0,
+          min_spend: parseFloat(document.getElementById(`v-minspend-${idx}`)?.value) || 0,
+          icon: document.getElementById(`v-icon-${idx}`) ? document.getElementById(`v-icon-${idx}`).value : '🎁',
+          color: document.getElementById(`v-color-${idx}`) ? document.getElementById(`v-color-${idx}`).value : 'purple',
+          is_active: document.getElementById(`v-active-${idx}`)?.checked ? 1 : 0
+        };
+      });
+
+      const durationHours = parseInt(document.getElementById('fs-hours').value) || 4;
+      const durationMinutes = parseInt(document.getElementById('fs-minutes').value) || 0;
+      const durationSeconds = parseInt(document.getElementById('fs-seconds').value) || 0;
+      const endsAt = new Date(Date.now() + (durationHours * 3600000) + (durationMinutes * 60000) + (durationSeconds * 1000)).toISOString();
+
+      const payload = {
+        title: document.getElementById('fs-title').value,
+        subtitle: document.getElementById('fs-subtitle').value,
+        badgeText: document.getElementById('fs-badge').value,
+        salesCountText: document.getElementById('fs-sales-count').value,
+        countdownLabel: document.getElementById('fs-countdown-label').value,
+        durationHours,
+        durationMinutes,
+        durationSeconds,
+        endsAt,
+        sessionName: document.getElementById('fs-session-name').value,
+        upcomingSessions: [
+          {
+            id: document.getElementById('fs-slot-1-time').value,
+            time: document.getElementById('fs-slot-1-time').value,
+            title: document.getElementById('fs-slot-1-title').value,
+            tag: document.getElementById('fs-slot-1-tag').value
+          },
+          {
+            id: document.getElementById('fs-slot-2-time').value,
+            time: document.getElementById('fs-slot-2-time').value,
+            title: document.getElementById('fs-slot-2-title').value,
+            tag: document.getElementById('fs-slot-2-tag').value
+          },
+          {
+            id: document.getElementById('fs-slot-3-time').value,
+            time: document.getElementById('fs-slot-3-time').value,
+            title: document.getElementById('fs-slot-3-title').value,
+            tag: document.getElementById('fs-slot-3-tag').value
+          }
+        ],
+        vouchers
+      };
+
+      try {
+        const res = await fetch('/api/admin/flash-sale/settings', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          statusBox.className = 'p-3.5 rounded-xl text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 block';
+          statusBox.innerText = '✅ Flash Sale settings, live timer, upcoming events, and vouchers updated successfully!';
+          setTimeout(() => { statusBox.classList.add('hidden'); }, 5000);
+          fetchFlashSale();
+        } else {
+          statusBox.className = 'p-3.5 rounded-xl text-xs font-semibold bg-red-500/15 text-red-300 border border-red-500/30 block';
+          statusBox.innerText = '❌ Failed to save: ' + (data.error || 'Server error');
+        }
+      } catch (err) {
+        statusBox.className = 'p-3.5 rounded-xl text-xs font-semibold bg-red-500/15 text-red-300 border border-red-500/30 block';
+        statusBox.innerText = '❌ Failed to save: ' + err.message;
       }
     }
 

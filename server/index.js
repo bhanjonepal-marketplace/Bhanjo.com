@@ -1862,7 +1862,7 @@ app.post('/api/flash-sale', (req, res) => {
   }
 });
 
-app.delete('/api/flash-sale/:id', (req, res) => {
+app.delete(['/api/flash-sale/:id', '/api/flash-sale/item/:id'], (req, res) => {
   try {
     const { id } = req.params;
     // Allow deleting by flash ID or product ID
@@ -1870,6 +1870,258 @@ app.delete('/api/flash-sale/:id', (req, res) => {
     res.json({ success: true, message: 'Item removed from Flash Sale.' });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Alias for add item
+app.post('/api/flash-sale/item', (req, res, next) => {
+  req.url = '/api/flash-sale';
+  app._router.handle(req, res, next);
+});
+
+// ==========================================
+// 5a-1. Flash Sale Settings & Vouchers Engine APIs
+// ==========================================
+
+// Public: Get Flash Sale campaign settings & active vouchers
+app.get('/api/flash-sale/settings', (req, res) => {
+  try {
+    let settings = db.prepare('SELECT * FROM flash_sale_settings WHERE id = ?').get('active');
+    if (!settings) {
+      const defaultUpcoming = [
+        { id: '16:00', time: '16:00', title: '16:00 Coming Up', tag: 'Soon' },
+        { id: '20:00', time: '20:00', title: '20:00 Night Drop', tag: 'Popular' },
+        { id: 'tomorrow', time: 'Tomorrow 10:00', title: 'Tomorrow 10:00 Mega Drop', tag: 'Huge Deals' }
+      ];
+      const defaultEndsAt = new Date(Date.now() + (4 * 3600000) + (28 * 60000) + (15 * 1000)).toISOString();
+      db.prepare(`
+        INSERT OR IGNORE INTO flash_sale_settings 
+        (id, title, subtitle, badge_text, sales_count_text, countdown_label, duration_hours, duration_minutes, duration_seconds, ends_at, session_name, upcoming_sessions_json)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run('active', 'FLASH SALE', 'Massive limited-time price drops • Direct China Factory Pricing • Refreshes Hourly', 'International Direct Deals', '🔥 570K+ Sold Across Nepal', 'Current Rush Session Ends In:', 4, 28, 15, defaultEndsAt, '⚡ ONGOING RUSH', JSON.stringify(defaultUpcoming));
+      settings = db.prepare('SELECT * FROM flash_sale_settings WHERE id = ?').get('active');
+    }
+
+    const vouchers = db.prepare('SELECT * FROM vouchers WHERE is_active = 1 ORDER BY created_at ASC').all();
+
+    res.json({
+      success: true,
+      settings: {
+        ...settings,
+        upcoming_sessions: JSON.parse(settings.upcoming_sessions_json || '[]')
+      },
+      vouchers
+    });
+  } catch (err) {
+    console.error('Error fetching flash sale settings:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin Only: Update Flash Sale Campaign Settings, Timers & Vouchers
+app.put(['/api/flash-sale/settings', '/api/admin/flash-sale/settings'], requireAdmin, (req, res) => {
+  try {
+    const {
+      title,
+      subtitle,
+      badgeText,
+      salesCountText,
+      countdownLabel,
+      durationHours,
+      durationMinutes,
+      durationSeconds,
+      endsAt,
+      sessionName,
+      upcomingSessions,
+      vouchers
+    } = req.body;
+
+    const current = db.prepare('SELECT * FROM flash_sale_settings WHERE id = ?').get('active') || {};
+
+    const newTitle = title !== undefined ? title : (current.title || 'FLASH SALE');
+    const newSubtitle = subtitle !== undefined ? subtitle : (current.subtitle || 'Massive limited-time price drops • Direct China Factory Pricing • Refreshes Hourly');
+    const newBadge = badgeText !== undefined ? badgeText : (current.badge_text || 'International Direct Deals');
+    const newSalesCount = salesCountText !== undefined ? salesCountText : (current.sales_count_text || '🔥 570K+ Sold Across Nepal');
+    const newCountdownLabel = countdownLabel !== undefined ? countdownLabel : (current.countdown_label || 'Current Rush Session Ends In:');
+    const newHours = durationHours !== undefined ? parseInt(durationHours) : (current.duration_hours || 4);
+    const newMins = durationMinutes !== undefined ? parseInt(durationMinutes) : (current.duration_minutes || 28);
+    const newSecs = durationSeconds !== undefined ? parseInt(durationSeconds) : (current.duration_seconds || 15);
+    const newSessionName = sessionName !== undefined ? sessionName : (current.session_name || '⚡ ONGOING RUSH');
+
+    let finalEndsAt = endsAt;
+    if (!finalEndsAt) {
+      finalEndsAt = new Date(Date.now() + (newHours * 3600000) + (newMins * 60000) + (newSecs * 1000)).toISOString();
+    }
+
+    const upcomingJson = upcomingSessions ? JSON.stringify(upcomingSessions) : (current.upcoming_sessions_json || '[]');
+
+    db.prepare(`
+      INSERT OR REPLACE INTO flash_sale_settings
+      (id, title, subtitle, badge_text, sales_count_text, countdown_label, duration_hours, duration_minutes, duration_seconds, ends_at, session_name, upcoming_sessions_json, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    `).run('active', newTitle, newSubtitle, newBadge, newSalesCount, newCountdownLabel, newHours, newMins, newSecs, finalEndsAt, newSessionName, upcomingJson);
+
+    // Update vouchers if array provided
+    if (Array.isArray(vouchers)) {
+      vouchers.forEach(v => {
+        if (!v.id) return;
+        db.prepare(`
+          INSERT OR REPLACE INTO vouchers 
+          (id, title, tag, expiry_text, code, discount_amount, min_spend, icon, color, is_active)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(
+          v.id,
+          v.title || 'Gift Voucher',
+          v.tag || 'HOURLY DROP',
+          v.expiry_text || 'Expiring in 2 hours',
+          v.code || 'BHANJO500',
+          parseFloat(v.discount_amount) || 500,
+          parseFloat(v.min_spend) || 1500,
+          v.icon || '🎁',
+          v.color || 'purple',
+          v.is_active !== undefined ? (v.is_active ? 1 : 0) : 1
+        );
+      });
+    }
+
+    const updated = db.prepare('SELECT * FROM flash_sale_settings WHERE id = ?').get('active');
+    const updatedVouchers = db.prepare('SELECT * FROM vouchers ORDER BY created_at ASC').all();
+
+    res.json({
+      success: true,
+      message: 'Flash Sale campaign & voucher settings updated successfully!',
+      settings: {
+        ...updated,
+        upcoming_sessions: JSON.parse(updated.upcoming_sessions_json || '[]')
+      },
+      vouchers: updatedVouchers
+    });
+  } catch (err) {
+    console.error('Error updating flash sale settings:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post(['/api/flash-sale/settings', '/api/admin/flash-sale/settings'], requireAdmin, (req, res, next) => {
+  req.method = 'PUT';
+  app._router.handle(req, res, next);
+});
+
+// Admin: Manage Vouchers (CRUD)
+app.get('/api/admin/vouchers', requireAdmin, (req, res) => {
+  try {
+    const vouchers = db.prepare('SELECT * FROM vouchers ORDER BY created_at ASC').all();
+    res.json({ success: true, vouchers });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/admin/vouchers', requireAdmin, (req, res) => {
+  try {
+    const { title, tag, expiry_text, code, discount_amount, min_spend, icon, color, is_active } = req.body;
+    const id = req.body.id || `vouch-${Date.now()}`;
+    db.prepare(`
+      INSERT OR REPLACE INTO vouchers
+      (id, title, tag, expiry_text, code, discount_amount, min_spend, icon, color, is_active)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      id,
+      title || 'New Gift Voucher',
+      tag || 'HOURLY DROP',
+      expiry_text || 'Expiring soon',
+      code || 'BHANJO100',
+      parseFloat(discount_amount) || 100,
+      parseFloat(min_spend) || 500,
+      icon || '🎁',
+      color || 'purple',
+      is_active !== undefined ? (is_active ? 1 : 0) : 1
+    );
+
+    const saved = db.prepare('SELECT * FROM vouchers WHERE id = ?').get(id);
+    res.json({ success: true, message: 'Voucher saved successfully!', voucher: saved });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/admin/vouchers/:id', requireAdmin, (req, res) => {
+  try {
+    db.prepare('DELETE FROM vouchers WHERE id = ?').run(req.params.id);
+    res.json({ success: true, message: 'Voucher deleted successfully.' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Customer Authentication Protected: Claim a Voucher
+app.post('/api/vouchers/claim', (req, res) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+
+    if (!token) {
+      return res.status(401).json({ error: 'You must have an account and be logged in to claim this voucher.' });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (e) {
+      return res.status(401).json({ error: 'Session expired. Please log in to claim vouchers.' });
+    }
+
+    const { voucherId } = req.body;
+    if (!voucherId) {
+      return res.status(400).json({ error: 'Voucher ID is required.' });
+    }
+
+    const v = db.prepare('SELECT * FROM vouchers WHERE id = ? AND is_active = 1').get(voucherId);
+    if (!v) {
+      return res.status(404).json({ error: 'This voucher is currently unavailable or expired.' });
+    }
+
+    // Record claim
+    db.prepare(`
+      INSERT OR IGNORE INTO user_claimed_vouchers (id, user_id, voucher_id)
+      VALUES (?, ?, ?)
+    `).run(`claim-${decoded.id}-${voucherId}`, decoded.id, voucherId);
+
+    res.json({
+      success: true,
+      message: `🎉 Successfully claimed ${v.title}!`,
+      voucher: v
+    });
+  } catch (err) {
+    console.error('Error claiming voucher:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Customer Authentication Protected: Get user's claimed vouchers
+app.get('/api/vouchers/my-claimed', (req, res) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+
+    if (!token) {
+      return res.json({ success: true, claimedVoucherIds: [] });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (e) {
+      return res.json({ success: true, claimedVoucherIds: [] });
+    }
+
+    const rows = db.prepare('SELECT voucher_id FROM user_claimed_vouchers WHERE user_id = ?').all(decoded.id);
+    res.json({
+      success: true,
+      claimedVoucherIds: rows.map(r => r.voucher_id)
+    });
+  } catch (err) {
+    res.json({ success: true, claimedVoucherIds: [] });
   }
 });
 
