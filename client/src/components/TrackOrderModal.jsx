@@ -121,20 +121,20 @@ export const TrackOrderModal = ({ isOpen, onClose, initialTrackingNo = '' }) => 
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150">
-      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden relative">
+      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-sky-200 overflow-hidden relative">
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-sky-500 via-sky-500 to-sky-600 text-white px-6 py-4 flex items-center justify-between border-b border-sky-400/40 shadow-xs">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-white/20 text-white flex items-center justify-center border border-white/30 shadow-xs backdrop-blur-xs">
+        <div className="bg-white text-slate-800 px-6 py-4 flex items-center justify-between border-b border-sky-200">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-white text-sky-500 flex items-center justify-center border border-sky-400 shadow-xs">
               <Truck className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-bold text-base tracking-tight text-white">Live Parcel Tracker</h2>
-              <p className="text-[11px] text-sky-100 font-medium">Nationwide courier milestone tracking across Nepal</p>
+              <h2 className="font-bold text-base tracking-tight text-slate-900">Live Parcel Tracker</h2>
+              <p className="text-[11px] text-slate-500 font-medium">Nationwide courier milestone tracking across Nepal</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer">
+          <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
