@@ -565,20 +565,21 @@ export const Navbar = ({
               setActiveView('marketplace');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className="flex items-center gap-2 cursor-pointer flex-shrink-0"
+            className="flex items-center gap-1 cursor-pointer flex-shrink-0 group select-none py-0.5"
+            title="Bhanjo.com | Nepal's Premier Online Shopping Platform"
           >
-            <div className={`rounded-lg bg-[#F85606] flex items-center justify-center text-white font-black shadow-xs transition-all duration-300 ${
-              isScrolled ? 'w-7 h-7 text-sm' : 'w-8 h-8 text-lg'
+            <img
+              src="/bhanjo-logo-horizontal.png"
+              alt="भान्जो Bhanjo"
+              className={`w-auto object-contain transition-all duration-300 group-hover:scale-[1.04] ${
+                isScrolled ? 'h-8 sm:h-9' : 'h-10 sm:h-11 md:h-[46px]'
+              }`}
+            />
+            <span className={`font-black tracking-tighter text-[#F85606] transition-all duration-300 self-end mb-1 sm:mb-1.5 leading-none ${
+              isScrolled ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'
             }`}>
-              B
-            </div>
-            <div>
-              <span className={`font-black tracking-tight text-[#F85606] transition-all duration-300 ${
-                isScrolled ? 'text-xl' : 'text-2xl'
-              }`}>
-                bhanjo<span className="text-slate-900 text-base font-bold">.com</span>
-              </span>
-            </div>
+              .com
+            </span>
           </div>
 
           {/* Interactive Search Bar with In-Bar Camera & 1688-Style Floating Visual Popover */}

@@ -75,7 +75,10 @@ export const Footer = ({ onSelectCategory, onOpenAdminUnlock }) => {
           </div>
 
           <div>
-            <h4 className="font-bold text-slate-900 mb-2.5">About Bhanjo.com</h4>
+            <div className="flex items-center gap-1.5 mb-3">
+              <img src="/bhanjo-logo-horizontal.png" alt="भान्जो Bhanjo" className="h-7 w-auto object-contain" />
+              <span className="font-black text-xs text-[#F85606] self-end mb-0.5">.com</span>
+            </div>
             <p className="text-slate-500 text-[11px] leading-relaxed mb-3">
               Nepal's premier online shopping platform connecting Nepali consumers with authentic Himalayan products, trending electronics, fashion, and daily essentials.
             </p>

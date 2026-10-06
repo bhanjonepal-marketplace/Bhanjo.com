@@ -437,9 +437,9 @@ export const AuthModal = ({ isOpen, onClose, onSuccess, initialMode = 'login', m
         
         {/* Header (Pinned) */}
         <div className="bg-gradient-to-r from-[#F85606] to-amber-600 text-white px-5 py-3 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center font-black text-sm">
-              B
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-white/20 p-1 flex items-center justify-center shrink-0 backdrop-blur-xs">
+              <img src="/bhanjo-logo-icon.png" alt="Bhanjo" className="h-full w-auto object-contain filter brightness-0 invert" />
             </div>
             <div>
               <h2 className="font-bold text-sm sm:text-base leading-tight">
