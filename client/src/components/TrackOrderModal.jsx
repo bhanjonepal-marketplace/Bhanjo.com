@@ -124,17 +124,17 @@ export const TrackOrderModal = ({ isOpen, onClose, initialTrackingNo = '' }) => 
       <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden relative">
         
         {/* Header */}
-        <div className="bg-[#0f172a] text-white px-6 py-4 flex items-center justify-between border-b border-sky-950/60">
+        <div className="bg-gradient-to-r from-sky-500 via-sky-500 to-sky-600 text-white px-6 py-4 flex items-center justify-between border-b border-sky-400/40 shadow-xs">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center border border-sky-500/30 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-white/20 text-white flex items-center justify-center border border-white/30 shadow-xs backdrop-blur-xs">
               <Truck className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-bold text-base">Live Parcel Tracker</h2>
-              <p className="text-[11px] text-sky-200/80">Nationwide courier milestone tracking across Nepal</p>
+              <h2 className="font-bold text-base tracking-tight text-white">Live Parcel Tracker</h2>
+              <p className="text-[11px] text-sky-100 font-medium">Nationwide courier milestone tracking across Nepal</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-white transition cursor-pointer">
+          <button onClick={onClose} className="p-1 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
