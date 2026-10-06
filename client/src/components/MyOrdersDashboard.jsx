@@ -306,9 +306,9 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <button
             onClick={() => onOpenTrackOrder('')}
-            className="flex-1 sm:flex-none px-3.5 py-2 rounded-xl bg-orange-50 text-[#F85606] font-bold text-xs hover:bg-orange-100 transition flex items-center justify-center gap-1.5 border border-orange-200 shadow-xs"
+            className="flex-1 sm:flex-none px-3.5 py-2 rounded-xl bg-sky-50 text-sky-600 font-bold text-xs hover:bg-sky-100 transition flex items-center justify-center gap-1.5 border border-sky-200 shadow-xs cursor-pointer"
           >
-            <Truck className="w-4 h-4" />
+            <Truck className="w-4 h-4 text-sky-500" />
             <span>Track Any Parcel</span>
           </button>
 
@@ -460,7 +460,7 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
                             
                             <button
                               onClick={() => onOpenTrackOrder(order.trackingNumber)}
-                              className="bg-[#F85606] hover:bg-[#e04e05] text-white font-bold text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-xs"
+                              className="bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-xs cursor-pointer"
                             >
                               <Truck className="w-3.5 h-3.5" />
                               <span>Track Parcel</span>

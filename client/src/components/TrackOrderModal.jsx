@@ -124,17 +124,17 @@ export const TrackOrderModal = ({ isOpen, onClose, initialTrackingNo = '' }) => 
       <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden relative">
         
         {/* Header */}
-        <div className="bg-[#0f172a] text-white px-6 py-4 flex items-center justify-between">
+        <div className="bg-[#0f172a] text-white px-6 py-4 flex items-center justify-between border-b border-sky-950/60">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-orange-500/20 text-[#F85606] flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center border border-sky-500/30 shadow-xs">
               <Truck className="w-5 h-5" />
             </div>
             <div>
               <h2 className="font-bold text-base">Live Parcel Tracker</h2>
-              <p className="text-[11px] text-slate-300">Nationwide courier milestone tracking across Nepal</p>
+              <p className="text-[11px] text-sky-200/80">Nationwide courier milestone tracking across Nepal</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-white transition">
+          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-white transition cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -150,13 +150,13 @@ export const TrackOrderModal = ({ isOpen, onClose, initialTrackingNo = '' }) => 
                 placeholder="Enter Tracking No (e.g. BJ-EXP-332278 or Order ID)"
                 value={trackingInput}
                 onChange={(e) => setTrackingInput(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-[#F85606] text-xs font-semibold uppercase"
+                className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500/20 text-xs font-semibold uppercase"
               />
             </div>
             <button
               type="submit"
               disabled={isSearching}
-              className="bg-[#F85606] hover:bg-[#E04E05] text-white font-bold px-4 py-2 rounded-lg transition flex items-center gap-1 flex-shrink-0 disabled:opacity-50"
+              className="bg-sky-500 hover:bg-sky-600 text-white font-bold px-5 py-2 rounded-lg transition shadow-md shadow-sky-500/25 flex items-center gap-1 flex-shrink-0 disabled:opacity-50 cursor-pointer"
             >
               {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Track</span>}
             </button>
@@ -173,7 +173,7 @@ export const TrackOrderModal = ({ isOpen, onClose, initialTrackingNo = '' }) => 
                     setTrackingInput(o.trackingNumber);
                     performTrackingLookup(o.trackingNumber);
                   }}
-                  className="text-[10px] font-mono bg-slate-100 hover:bg-orange-50 hover:text-[#F85606] px-2 py-0.5 rounded border border-slate-200 transition"
+                  className="text-[10px] font-mono bg-slate-100 hover:bg-sky-50 hover:text-sky-600 hover:border-sky-300 px-2 py-0.5 rounded border border-slate-200 transition cursor-pointer"
                 >
                   {o.trackingNumber}
                 </button>
@@ -195,7 +195,7 @@ export const TrackOrderModal = ({ isOpen, onClose, initialTrackingNo = '' }) => 
               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
                 <div>
                   <div className="text-[10px] text-slate-400 uppercase font-bold">Tracking Number</div>
-                  <div className="text-sm font-black text-slate-900 font-mono text-[#F85606]">
+                  <div className="text-sm font-black font-mono text-sky-600">
                     {searchedOrder.trackingNumber}
                   </div>
                   <div className="text-[11px] text-slate-500 mt-0.5">
@@ -208,7 +208,7 @@ export const TrackOrderModal = ({ isOpen, onClose, initialTrackingNo = '' }) => 
                     searchedOrder.status === 'Delivered' 
                       ? 'bg-emerald-100 text-emerald-800' 
                       : searchedOrder.status === 'Shipped' || searchedOrder.status === 'Out for Delivery'
-                      ? 'bg-blue-100 text-blue-800'
+                      ? 'bg-sky-100 text-sky-800'
                       : 'bg-amber-100 text-amber-800'
                   }`}>
                     {searchedOrder.status}
@@ -239,7 +239,7 @@ export const TrackOrderModal = ({ isOpen, onClose, initialTrackingNo = '' }) => 
               {/* Live Step Timeline */}
               <div>
                 <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-1.5">
-                  <Package className="w-3.5 h-3.5 text-[#F85606]" />
+                  <Package className="w-3.5 h-3.5 text-sky-500" />
                   <span>Shipment Progress Timeline</span>
                 </h4>
 
@@ -268,9 +268,9 @@ export const TrackOrderModal = ({ isOpen, onClose, initialTrackingNo = '' }) => 
               </div>
 
               {/* Courier Support Box */}
-              <div className="p-3 bg-orange-50 rounded-xl border border-orange-200 flex items-center justify-between text-[11px]">
+              <div className="p-3 bg-sky-50/70 rounded-xl border border-sky-200 flex items-center justify-between text-[11px]">
                 <div className="flex items-center gap-2 text-slate-700">
-                  <Phone className="w-4 h-4 text-[#F85606]" />
+                  <Phone className="w-4 h-4 text-sky-600" />
                   <div>
                     <span className="font-bold block">Need rider or hub assistance?</span>
                     <span className="text-slate-500">Kathmandu Hub: +977-1-4258848</span>
@@ -279,7 +279,7 @@ export const TrackOrderModal = ({ isOpen, onClose, initialTrackingNo = '' }) => 
 
                 <a
                   href="tel:+97714258848"
-                  className="bg-[#F85606] text-white px-3 py-1 rounded-md font-bold hover:bg-[#e04e05] transition"
+                  className="bg-sky-500 text-white px-3 py-1 rounded-md font-bold hover:bg-sky-600 transition"
                 >
                   Call Hub
                 </a>

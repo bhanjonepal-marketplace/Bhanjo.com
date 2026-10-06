@@ -425,9 +425,9 @@ export const Navbar = ({
             onOpenTrackOrder('');
             setIsOpen(false);
           }}
-          className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] text-slate-700 transition flex items-center gap-2 font-medium cursor-pointer"
+          className="w-full text-left p-2 rounded-lg hover:bg-sky-50 hover:text-sky-600 text-slate-700 transition flex items-center gap-2 font-medium cursor-pointer"
         >
-          <Truck className="w-3.5 h-3.5 text-blue-500" />
+          <Truck className="w-3.5 h-3.5 text-sky-500" />
           <span>Track Parcels</span>
         </button>
 
@@ -462,9 +462,9 @@ export const Navbar = ({
             {/* Track My Order */}
             <button
               onClick={() => onOpenTrackOrder('')}
-              className="hover:text-[#F85606] transition flex items-center gap-1 font-semibold text-slate-700"
+              className="hover:text-sky-600 transition flex items-center gap-1 font-semibold text-slate-700 cursor-pointer"
             >
-              <Truck className="w-3.5 h-3.5 text-[#F85606]" />
+              <Truck className="w-3.5 h-3.5 text-sky-500" />
               <span>{t('trackOrder')}</span>
             </button>
 
