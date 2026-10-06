@@ -121,12 +121,12 @@ export const TrackOrderModal = ({ isOpen, onClose, initialTrackingNo = '' }) => 
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150">
-      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-sky-200 overflow-hidden relative">
+      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border-2 border-sky-500 overflow-hidden relative">
         
         {/* Header */}
-        <div className="bg-white text-slate-800 px-6 py-4 flex items-center justify-between border-b border-sky-200">
+        <div className="bg-white text-slate-800 px-6 py-4 flex items-center justify-between border-b border-sky-100">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-white text-sky-500 flex items-center justify-center border border-sky-400 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-white text-sky-500 flex items-center justify-center border-2 border-sky-500 shadow-xs">
               <Truck className="w-5 h-5" />
             </div>
             <div>
