@@ -674,19 +674,6 @@ export function App() {
                 </div>
 
                 <div className="flex items-center gap-2 text-xs flex-wrap">
-                  {/* View All Products Button */}
-                  <button
-                    onClick={handleToggleViewAllEveryProduct}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer border ${
-                      forYouVisibleCount >= filteredProducts.length && selectedCategoryId === 'all' && !searchQuery && !filterAlibabaOnly
-                        ? 'bg-gradient-to-r from-[#F85606] to-amber-500 text-white border-transparent shadow-xs'
-                        : 'bg-white hover:bg-orange-50 text-slate-700 hover:text-[#F85606] border-slate-300'
-                    }`}
-                    title="Toggle viewing all products or 3 lines"
-                  >
-                    <span>👁️ {language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'}</span>
-                  </button>
-
                   {/* Mobile Filters Toggle Button */}
                   <button
                     onClick={() => setIsMobileFilterOpen(true)}
@@ -711,6 +698,7 @@ export function App() {
                     </button>
                   )}
 
+                  {/* Sort Dropdown (Left) */}
                   <div className="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs">
                     <span className="text-slate-400 mr-1">{t('sortLabel')}</span>
                     <select
@@ -723,6 +711,19 @@ export function App() {
                       <option value="price-high">{t('priceHighToLow')}</option>
                     </select>
                   </div>
+
+                  {/* View All Products Button (Right) */}
+                  <button
+                    onClick={handleToggleViewAllEveryProduct}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer border ${
+                      forYouVisibleCount >= filteredProducts.length && selectedCategoryId === 'all' && !searchQuery && !filterAlibabaOnly
+                        ? 'bg-gradient-to-r from-[#F85606] to-amber-500 text-white border-transparent shadow-xs'
+                        : 'bg-white hover:bg-orange-50 text-slate-700 hover:text-[#F85606] border-slate-300'
+                    }`}
+                    title="Toggle viewing all products or 3 lines"
+                  >
+                    <span>👁️ {language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'}</span>
+                  </button>
                 </div>
               </div>
 
