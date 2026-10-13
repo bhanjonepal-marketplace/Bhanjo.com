@@ -4,7 +4,8 @@ import {
   Truck, CheckCircle2, Clock, Trash2, ShoppingCart, 
   FileText, ShieldCheck, ArrowRight, Star, Sparkles, 
   Printer, X, AlertTriangle, RefreshCw, Check, Camera,
-  Lock, Eye, EyeOff, Upload, Bell, Calendar
+  Lock, Eye, EyeOff, Upload, Bell, Calendar,
+  ArrowLeft, Home
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCurrency } from '../context/CurrencyContext';
@@ -275,21 +276,23 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
   };
 
   return (
-    <div className="my-4 max-w-7xl mx-auto">
+    <div className="mt-1 mb-3.5 max-w-7xl mx-auto px-2 sm:px-0">
       
-      {/* Dashboard Top Header */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-5 mb-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="w-14 h-14 rounded-2xl bg-orange-500/10 text-[#F85606] flex items-center justify-center font-black text-xl border border-orange-200 overflow-hidden relative shadow-xs flex-shrink-0">
+      {/* Dashboard Top Header - Compact with Center Breadcrumb */}
+      <div className="bg-white rounded-2xl border border-slate-200/90 py-2.5 px-4 sm:py-3 sm:px-5 mb-3.5 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
+        
+        {/* Left: User Identity */}
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-orange-500/10 text-[#F85606] flex items-center justify-center font-black text-lg border border-orange-200 overflow-hidden relative shadow-2xs flex-shrink-0">
             {profileForm.avatar || user?.avatar ? (
               <img src={profileForm.avatar || user.avatar} alt={user?.name} className="w-full h-full object-cover" />
             ) : (
               user?.name ? user.name[0].toUpperCase() : 'U'
             )}
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-lg font-bold text-slate-900">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-sm sm:text-base font-bold text-slate-900 leading-tight">
                 {user?.name || "Bhanjo Shopper"}
               </h1>
               <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -297,27 +300,56 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
                 <span>Verified Buyer</span>
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 truncate">
               📱 {user?.phone ? `+977 ${user.phone}` : "No phone saved"} • ✉️ {user?.email || "No email saved"}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        {/* Center: Breadcrumb Navigation (Exact 2nd Image Layout) */}
+        <div className="flex items-center gap-2 text-xs py-1 px-3 rounded-xl bg-slate-50/80 border border-slate-100/90 shadow-2xs">
+          <button 
+            onClick={onBackToMarketplace}
+            className="inline-flex items-center gap-1.5 text-slate-700 hover:text-[#F85606] font-bold transition cursor-pointer group"
+          >
+            <Home className="w-3.5 h-3.5 text-[#F85606] transition group-hover:scale-110" />
+            <span>Home</span>
+          </button>
+          <span className="text-slate-300">/</span>
+          <span className="text-slate-500 font-medium">My Account</span>
+          <span className="text-slate-300">/</span>
+          <span className="text-[#F85606] font-bold capitalize">
+            {activeTab === 'profile' ? 'Profile & Settings' : activeTab === 'orders' ? 'My Orders' : activeTab === 'cart' ? 'My Cart' : activeTab === 'wishlist' ? 'Wishlist' : 'Delivery Addresses'}
+          </span>
+        </div>
+
+        {/* Right: Actions */}
+        <div className="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
+          {onBackToMarketplace && (
+            <button
+              onClick={onBackToMarketplace}
+              className="flex-1 md:flex-none px-3.5 py-1.5 rounded-xl bg-[#F85606] hover:bg-[#e04e05] text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-sm hover:shadow-orange-500/25 cursor-pointer group"
+              title="Return to Bhanjo Marketplace Home"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 transition group-hover:-translate-x-1" />
+              <span>Back to Home</span>
+            </button>
+          )}
+
           <button
             onClick={() => onOpenTrackOrder('')}
-            className="flex-1 sm:flex-none px-3.5 py-2 rounded-xl bg-sky-50 text-sky-600 font-bold text-xs hover:bg-sky-100 transition flex items-center justify-center gap-1.5 border border-sky-200 shadow-xs cursor-pointer"
+            className="flex-1 md:flex-none px-3 py-1.5 rounded-xl bg-sky-50 text-sky-600 font-bold text-xs hover:bg-sky-100 transition flex items-center justify-center gap-1.5 border border-sky-200 shadow-xs cursor-pointer"
           >
-            <Truck className="w-4 h-4 text-sky-500" />
+            <Truck className="w-3.5 h-3.5 text-sky-500" />
             <span>Track Any Parcel</span>
           </button>
 
           <button
             onClick={handleLogout}
-            className="px-3.5 py-2 rounded-xl border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-red-50 hover:text-red-600 transition flex items-center justify-center gap-1"
+            className="px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-red-50 hover:text-red-600 transition flex items-center justify-center gap-1 cursor-pointer"
             title="Logout"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-3.5 h-3.5" />
             <span>Logout</span>
           </button>
         </div>
@@ -328,7 +360,7 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
         
         {/* Left Dashboard Tabs Navigation */}
         <div className="lg:col-span-3">
-          <div className="bg-white rounded-2xl border border-slate-200 p-2 shadow-xs space-y-1">
+          <div className="bg-white rounded-2xl border border-slate-200/90 p-2 shadow-xs space-y-1">
             {[
               { id: 'profile', label: 'My Profile & Settings', icon: User },
               { id: 'orders', label: 'My Orders & Deliveries', icon: Package, badge: allUserOrders.length },
@@ -341,7 +373,7 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-semibold transition ${
+                  className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-semibold transition cursor-pointer ${
                     activeTab === tab.id 
                       ? 'bg-[#F85606] text-white shadow-xs font-bold' 
                       : 'text-slate-700 hover:bg-slate-50'
@@ -361,6 +393,21 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
                 </button>
               );
             })}
+
+            {onBackToMarketplace && (
+              <div className="pt-2 mt-2 border-t border-slate-100">
+                <button
+                  onClick={onBackToMarketplace}
+                  className="w-full flex items-center justify-between p-3 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#F85606] hover:bg-orange-50/60 transition cursor-pointer group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <ArrowLeft className="w-4 h-4 text-[#F85606] transition group-hover:-translate-x-1" />
+                    <span>Back to Home</span>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#F85606]" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -372,7 +419,7 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
             <div className="space-y-4">
               
               {/* Filter Sub-Bar */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-3 shadow-xs flex items-center justify-between">
+              <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <h2 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
                   <Package className="w-4 h-4 text-[#F85606]" />
                   <span>All Purchased Orders ({allUserOrders.length})</span>
@@ -562,7 +609,7 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
             <div className="space-y-4">
               
               {/* Cart Header Bar */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-xs flex items-center justify-between">
+              <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <ShoppingCart className="w-4 h-4 text-[#F85606]" />
                   <h2 className="font-bold text-sm text-slate-900">
@@ -793,7 +840,7 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
           {/* 3. My Wishlist Tab */}
           {activeTab === 'wishlist' && (
             <div className="space-y-4">
-              <div className="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-xs flex items-center justify-between">
+              <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex items-center justify-between">
                 <h2 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
                   <Heart className="w-4 h-4 text-red-500 fill-red-500" />
                   <span>My Saved Wishlist ({wishlist.length})</span>
@@ -924,396 +971,472 @@ export const MyOrdersDashboard = ({ onOpenTrackOrder, onSelectProduct, initialTa
 
           {/* 4. Complete Customer Profile & Account Settings */}
           {activeTab === 'profile' && (
-            <form onSubmit={handleSaveProfile} className="space-y-5 animate-in fade-in duration-150">
+            <form onSubmit={handleSaveProfile} className="space-y-4 animate-in fade-in duration-150">
               
-              {/* Profile Card Header */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div>
-                  <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
-                    <User className="w-4 h-4 text-[#F85606]" />
-                    <span>My Customer Profile & Settings</span>
-                  </h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Update your photo, delivery destination, postal code, phone number, and security password.
-                  </p>
+              {/* Profile Card Header with Back to Home Button */}
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-orange-50 text-[#F85606] border border-orange-200/60 flex items-center justify-center flex-shrink-0 shadow-2xs">
+                    <User className="w-5 h-5 text-[#F85606]" />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-base text-slate-900 tracking-tight">
+                      My Customer Profile & Settings
+                    </h2>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Manage your personal details, delivery addresses across Nepal, contact numbers, and security credentials.
+                    </p>
+                  </div>
                 </div>
 
                 {onBackToMarketplace && (
                   <button
                     type="button"
                     onClick={onBackToMarketplace}
-                    className="text-xs font-semibold text-slate-600 hover:text-[#F85606] transition flex items-center gap-1 cursor-pointer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-50 hover:bg-[#F85606] text-[#F85606] hover:text-white border border-orange-200 font-bold text-xs transition duration-150 shadow-2xs cursor-pointer group flex-shrink-0"
+                    title="Return to Bhanjo Home"
                   >
-                    <span>← Back to Shopping</span>
+                    <ArrowLeft className="w-4 h-4 transition group-hover:-translate-x-1" />
+                    <span>Back to Home</span>
                   </button>
                 )}
               </div>
 
               {/* Status Alert Messages */}
               {profileSuccess && (
-                <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 animate-in fade-in">
-                  <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-xs font-semibold flex items-center gap-2.5 shadow-2xs animate-in fade-in">
+                  <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                  </div>
                   <span>{profileSuccess}</span>
                 </div>
               )}
 
               {profileError && (
-                <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 animate-in fade-in">
-                  <AlertTriangle className="w-4 h-4 text-red-600 flex-shrink-0" />
+                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-xs font-semibold flex items-center gap-2.5 shadow-2xs animate-in fade-in">
+                  <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                    <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
+                  </div>
                   <span>{profileError}</span>
                 </div>
               )}
 
-              {/* SECTION 1: Profile Photo Upload */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
-                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-3">
-                  1. Profile Photo & Avatar
-                </h4>
+              {/* Master Unified Profile Form Container */}
+              <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs divide-y divide-slate-100 overflow-hidden">
 
-                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-                  {/* Photo Display with overlay */}
-                  <div className="relative group flex-shrink-0">
-                    <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-orange-100 shadow-md bg-gradient-to-tr from-orange-400 to-[#F85606] flex items-center justify-center text-white text-3xl font-black">
-                      {profileForm.avatar ? (
-                        <img 
-                          src={profileForm.avatar} 
-                          alt="Customer Avatar" 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span>{profileForm.name ? profileForm.name[0].toUpperCase() : 'U'}</span>
-                      )}
+                {/* SECTION 1: Profile Photo & Public Avatar */}
+                <div className="p-5 sm:p-6">
+                  <div className="flex items-center gap-2.5 mb-4">
+                    <div className="w-7 h-7 rounded-lg bg-orange-50 text-[#F85606] border border-orange-200/60 flex items-center justify-center font-bold text-xs">
+                      <Camera className="w-3.5 h-3.5" />
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => avatarInputRef.current?.click()}
-                      className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-slate-900 hover:bg-[#F85606] text-white flex items-center justify-center shadow-lg transition cursor-pointer border-2 border-white"
-                      title="Upload new photo"
-                    >
-                      <Camera className="w-4 h-4" />
-                    </button>
+                    <div>
+                      <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">
+                        1. Profile Photo & Public Avatar
+                      </h3>
+                      <p className="text-[11px] text-slate-400">
+                        Your avatar appears on verified customer reviews, doorstep deliveries, and the top navigation.
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Hidden Input File */}
-                  <input
-                    type="file"
-                    ref={avatarInputRef}
-                    onChange={handleAvatarFileChange}
-                    accept="image/*"
-                    className="hidden"
-                  />
+                  <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 pt-1">
+                    {/* Photo Display with overlay */}
+                    <div className="relative group flex-shrink-0">
+                      <div className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-orange-200 ring-4 ring-orange-50/80 shadow-md bg-gradient-to-tr from-orange-400 to-[#F85606] flex items-center justify-center text-white text-3xl font-black">
+                        {profileForm.avatar ? (
+                          <img 
+                            src={profileForm.avatar} 
+                            alt="Customer Avatar" 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span>{profileForm.name ? profileForm.name[0].toUpperCase() : 'U'}</span>
+                        )}
+                      </div>
 
-                  {/* Actions & Explanations */}
-                  <div className="space-y-2 text-center sm:text-left flex-1">
-                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                       <button
                         type="button"
                         onClick={() => avatarInputRef.current?.click()}
-                        className="px-3.5 py-1.5 bg-[#F85606] hover:bg-[#e04e05] text-white font-bold rounded-lg text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+                        className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-[#F85606] hover:bg-[#e04e05] text-white flex items-center justify-center shadow-lg transition cursor-pointer border-2 border-white group-hover:scale-110"
+                        title="Upload new photo"
                       >
-                        <Upload className="w-3.5 h-3.5" />
-                        <span>Upload New Photo</span>
+                        <Camera className="w-4 h-4" />
                       </button>
+                    </div>
 
-                      {profileForm.avatar && (
+                    {/* Hidden Input File */}
+                    <input
+                      type="file"
+                      ref={avatarInputRef}
+                      onChange={handleAvatarFileChange}
+                      accept="image/*"
+                      className="hidden"
+                    />
+
+                    {/* Actions & Explanations */}
+                    <div className="space-y-2.5 text-center sm:text-left flex-1">
+                      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
                         <button
                           type="button"
-                          onClick={handleRemoveAvatar}
-                          className="px-3 py-1.5 border border-slate-200 text-slate-600 hover:text-red-600 hover:border-red-200 rounded-lg text-xs transition cursor-pointer"
+                          onClick={() => avatarInputRef.current?.click()}
+                          className="px-4 py-2 bg-[#F85606] hover:bg-[#e04e05] text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer"
                         >
-                          Remove Photo
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Upload New Photo</span>
                         </button>
-                      )}
+
+                        {profileForm.avatar && (
+                          <button
+                            type="button"
+                            onClick={handleRemoveAvatar}
+                            className="px-3.5 py-2 border border-slate-200 text-slate-600 hover:text-red-600 hover:border-red-200 hover:bg-red-50/50 rounded-xl text-xs font-semibold transition cursor-pointer"
+                          >
+                            Remove Photo
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-slate-500">
+                        Supports high-resolution JPG, PNG, or WebP images (maximum 2MB file size).
+                      </p>
                     </div>
-                    <p className="text-[11px] text-slate-500">
-                      Supports JPG, PNG, or WebP (max 2MB). Your photo will appear in your orders, reviews, and header navigation.
-                    </p>
                   </div>
                 </div>
-              </div>
 
-              {/* SECTION 2: Personal Identification */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
-                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400">
-                  2. Personal Identification
-                </h4>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <label className="font-semibold text-slate-700 block mb-1">Full Legal Name *</label>
-                    <input
-                      type="text"
-                      required
-                      value={profileForm.name}
-                      onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-                      placeholder="e.g. Prashanna Ghimire"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
-                    />
+                {/* SECTION 2: Personal Identification */}
+                <div className="p-5 sm:p-6 space-y-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 border border-blue-200/60 flex items-center justify-center font-bold text-xs">
+                      <User className="w-3.5 h-3.5" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">
+                        2. Personal Identification
+                      </h3>
+                      <p className="text-[11px] text-slate-400">
+                        Official contact details used for dispatch courier verification and notifications.
+                      </p>
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="font-semibold text-slate-700 block mb-1">Mobile Phone (Nepal +977) *</label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-2 font-mono text-slate-400 font-bold">+977</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-1">
+                    <div>
+                      <label className="font-semibold text-slate-700 block mb-1.5">Full Legal Name *</label>
                       <input
-                        type="tel"
+                        type="text"
                         required
-                        maxLength={10}
-                        value={profileForm.phone}
-                        onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value.replace(/\D/g, '') })}
-                        placeholder="98XXXXXXXX"
-                        className="w-full pl-14 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none font-mono font-medium"
+                        value={profileForm.name}
+                        onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                        placeholder="e.g. Prashanna Ghimire"
+                        className="w-full px-3.5 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-[#F85606] focus:outline-none transition text-xs font-medium text-slate-800 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 block mb-1.5">Mobile Phone (Nepal +977) *</label>
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-2.5 font-mono text-slate-500 font-bold text-xs select-none">+977</span>
+                        <input
+                          type="tel"
+                          required
+                          maxLength={10}
+                          value={profileForm.phone}
+                          onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value.replace(/\D/g, '') })}
+                          placeholder="98XXXXXXXX"
+                          className="w-full pl-16 pr-3.5 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-[#F85606] focus:outline-none font-mono font-medium transition text-xs text-slate-800 shadow-2xs"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 block mb-1.5 flex items-center justify-between">
+                        <span>Email Address *</span>
+                        <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md font-bold flex items-center gap-1 border border-emerald-200/60">
+                          <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                          <span>Verified Account</span>
+                        </span>
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={profileForm.email}
+                        onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
+                        placeholder="e.g. customer@example.com"
+                        className="w-full px-3.5 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-[#F85606] focus:outline-none transition text-xs font-medium text-slate-800 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 block mb-1.5">Gender</label>
+                      <select
+                        value={profileForm.gender}
+                        onChange={(e) => setProfileForm({ ...profileForm, gender: e.target.value })}
+                        className="w-full px-3.5 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-[#F85606] focus:outline-none transition text-xs font-medium text-slate-800 shadow-2xs cursor-pointer"
+                      >
+                        <option value="Not Specified">Prefer not to say</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="font-semibold text-slate-700 block mb-1.5 flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                        <span>Date of Birth (Optional)</span>
+                      </label>
+                      <input
+                        type="date"
+                        value={profileForm.dob}
+                        onChange={(e) => setProfileForm({ ...profileForm, dob: e.target.value })}
+                        className="w-full px-3.5 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-[#F85606] focus:outline-none transition text-xs font-medium text-slate-800 shadow-2xs cursor-pointer"
                       />
                     </div>
                   </div>
+                </div>
 
-                  <div>
-                    <label className="font-semibold text-slate-700 block mb-1 flex items-center justify-between">
-                      <span>Email Address *</span>
-                      <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold flex items-center gap-0.5">
-                        <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                        <span>Verified Account</span>
+                {/* SECTION 3: Primary Delivery Destination */}
+                <div className="p-5 sm:p-6 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200/60 flex items-center justify-center font-bold text-xs">
+                        <MapPin className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">
+                          3. Primary Doorstep Delivery Destination (Nepal)
+                        </h3>
+                        <p className="text-[11px] text-slate-400">
+                          Pre-selected for quick 1-click checkout and accurate delivery timing.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-1">
+                    <div>
+                      <label className="font-semibold text-slate-700 block mb-1.5">Province (Nepal) *</label>
+                      <select
+                        value={profileForm.province}
+                        onChange={(e) => setProfileForm({ ...profileForm, province: e.target.value })}
+                        className="w-full px-3.5 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-[#F85606] focus:outline-none font-medium text-xs text-slate-800 shadow-2xs cursor-pointer"
+                      >
+                        <option value="Bagmati Province">Bagmati Province (Kathmandu, Lalitpur, Bhaktapur...)</option>
+                        <option value="Gandaki Province">Gandaki Province (Pokhara, Kaski...)</option>
+                        <option value="Koshi Province">Koshi Province (Biratnagar, Dharan...)</option>
+                        <option value="Madhesh Province">Madhesh Province (Janakpur, Birgunj...)</option>
+                        <option value="Lumbini Province">Lumbini Province (Butwal, Bhairahawa...)</option>
+                        <option value="Karnali Province">Karnali Province (Surkhet, Jumla...)</option>
+                        <option value="Sudurpashchim Province">Sudurpashchim Province (Dhangadhi, Mahendranagar...)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 block mb-1.5">City / Municipality *</label>
+                      <input
+                        type="text"
+                        value={profileForm.city}
+                        onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })}
+                        placeholder="e.g. Kathmandu, Pokhara, Butwal"
+                        className="w-full px-3.5 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-[#F85606] focus:outline-none transition text-xs font-medium text-slate-800 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 block mb-1.5">Postal / ZIP Code</label>
+                      <input
+                        type="text"
+                        value={profileForm.postal_code}
+                        onChange={(e) => setProfileForm({ ...profileForm, postal_code: e.target.value })}
+                        placeholder="e.g. 44600"
+                        className="w-full px-3.5 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-[#F85606] focus:outline-none font-mono transition text-xs font-medium text-slate-800 shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 block mb-1.5">Nearby Landmark / Chowk</label>
+                      <input
+                        type="text"
+                        value={profileForm.landmark}
+                        onChange={(e) => setProfileForm({ ...profileForm, landmark: e.target.value })}
+                        placeholder="e.g. Near Bhatbhateni Supermarket, New Road Gate"
+                        className="w-full px-3.5 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-[#F85606] focus:outline-none transition text-xs font-medium text-slate-800 shadow-2xs"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="font-semibold text-slate-700 block mb-1.5">Doorstep Street Address / Ward / House #</label>
+                      <input
+                        type="text"
+                        value={profileForm.address}
+                        onChange={(e) => setProfileForm({ ...profileForm, address: e.target.value })}
+                        placeholder="e.g. Ward #10, Baneshwor Height, House #42"
+                        className="w-full px-3.5 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-[#F85606] focus:outline-none transition text-xs font-medium text-slate-800 shadow-2xs"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECTION 4: Password & Security */}
+                <div className="p-5 sm:p-6 space-y-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-violet-50 text-violet-600 border border-violet-200/60 flex items-center justify-center font-bold text-xs">
+                      <Lock className="w-3.5 h-3.5" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">
+                        4. Change Password & Security
+                      </h3>
+                      <p className="text-[11px] text-slate-400">
+                        Leave these fields empty if you do not want to alter your login credentials.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs pt-1">
+                    <div>
+                      <label className="font-semibold text-slate-700 block mb-1.5">Current Password</label>
+                      <div className="relative">
+                        <input
+                          type={showCurrentPw ? "text" : "password"}
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                          placeholder="••••••••"
+                          className="w-full pl-3.5 pr-9 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-[#F85606] focus:outline-none font-mono transition text-xs shadow-2xs"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowCurrentPw(!showCurrentPw)}
+                          className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
+                        >
+                          {showCurrentPw ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 block mb-1.5">New Password</label>
+                      <div className="relative">
+                        <input
+                          type={showNewPw ? "text" : "password"}
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          placeholder="Min 6 characters"
+                          className="w-full pl-3.5 pr-9 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-[#F85606] focus:outline-none font-mono transition text-xs shadow-2xs"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPw(!showNewPw)}
+                          className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
+                        >
+                          {showNewPw ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="font-semibold text-slate-700 block mb-1.5">Confirm New Password</label>
+                      <div className="relative">
+                        <input
+                          type={showConfirmPw ? "text" : "password"}
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          placeholder="Repeat new password"
+                          className="w-full pl-3.5 pr-9 py-2.5 bg-slate-50/50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-orange-500/20 focus:border-[#F85606] focus:outline-none font-mono transition text-xs shadow-2xs"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPw(!showConfirmPw)}
+                          className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
+                        >
+                          {showConfirmPw ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECTION 5: Notification Preferences */}
+                <div className="p-5 sm:p-6 space-y-3.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 border border-amber-200/60 flex items-center justify-center font-bold text-xs">
+                      <Bell className="w-3.5 h-3.5" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">
+                        5. Order & Delivery Alerts
+                      </h3>
+                      <p className="text-[11px] text-slate-400">
+                        Stay informed on dispatch milestones and payment confirmation.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2.5 text-xs pt-1">
+                    <label className="flex items-start gap-3 p-3 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition">
+                      <input
+                        type="checkbox"
+                        checked={smsAlerts}
+                        onChange={(e) => setSmsAlerts(e.target.checked)}
+                        className="w-4 h-4 mt-0.5 text-[#F85606] rounded border-slate-300 focus:ring-orange-500 cursor-pointer accent-[#F85606]"
+                      />
+                      <span className="text-slate-700 leading-snug">
+                        Receive instant SMS alerts when parcel is dispatched, reaches your city hub, or is out for doorstep delivery.
                       </span>
                     </label>
-                    <input
-                      type="email"
-                      required
-                      value={profileForm.email}
-                      onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-                      placeholder="e.g. customer@example.com"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
-                    />
-                  </div>
 
-                  <div>
-                    <label className="font-semibold text-slate-700 block mb-1">Gender</label>
-                    <select
-                      value={profileForm.gender}
-                      onChange={(e) => setProfileForm({ ...profileForm, gender: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none bg-white"
-                    >
-                      <option value="Not Specified">Prefer not to say</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="font-semibold text-slate-700 block mb-1 flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Date of Birth (Optional)</span>
+                    <label className="flex items-start gap-3 p-3 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition">
+                      <input
+                        type="checkbox"
+                        checked={emailAlerts}
+                        onChange={(e) => setEmailAlerts(e.target.checked)}
+                        className="w-4 h-4 mt-0.5 text-[#F85606] rounded border-slate-300 focus:ring-orange-500 cursor-pointer accent-[#F85606]"
+                      />
+                      <span className="text-slate-700 leading-snug">
+                        Receive official digital tax invoice and email tracking receipts from <strong>bhanjonepal@gmail.com</strong>.
+                      </span>
                     </label>
-                    <input
-                      type="date"
-                      value={profileForm.dob}
-                      onChange={(e) => setProfileForm({ ...profileForm, dob: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none bg-white"
-                    />
                   </div>
                 </div>
-              </div>
 
-              {/* SECTION 3: Primary Delivery Destination */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400">
-                    3. Primary Doorstep Delivery Destination
-                  </h4>
-                  <span className="text-[10px] text-slate-400">Used for fast 1-click checkout</span>
-                </div>
+                {/* Form Action Controls Footer */}
+                <div className="p-5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                    <span>All updates are instantly saved and synchronized across your Bhanjo profile.</span>
+                  </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <label className="font-semibold text-slate-700 block mb-1">Province (Nepal) *</label>
-                    <select
-                      value={profileForm.province}
-                      onChange={(e) => setProfileForm({ ...profileForm, province: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none bg-white font-medium"
+                  <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                    {onBackToMarketplace && (
+                      <button
+                        type="button"
+                        onClick={onBackToMarketplace}
+                        className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-white font-bold text-xs transition cursor-pointer"
+                      >
+                        Back to Home
+                      </button>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={isSavingProfile}
+                      className="flex-1 sm:flex-none px-6 py-2.5 bg-gradient-to-r from-[#F85606] to-[#ff6622] hover:from-[#e04e05] hover:to-[#F85606] text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm hover:shadow-orange-500/25 cursor-pointer disabled:opacity-50"
                     >
-                      <option value="Bagmati Province">Bagmati Province (Kathmandu, Lalitpur, Bhaktapur...)</option>
-                      <option value="Gandaki Province">Gandaki Province (Pokhara, Kaski...)</option>
-                      <option value="Koshi Province">Koshi Province (Biratnagar, Dharan...)</option>
-                      <option value="Madhesh Province">Madhesh Province (Janakpur, Birgunj...)</option>
-                      <option value="Lumbini Province">Lumbini Province (Butwal, Bhairahawa...)</option>
-                      <option value="Karnali Province">Karnali Province (Surkhet, Jumla...)</option>
-                      <option value="Sudurpashchim Province">Sudurpashchim Province (Dhangadhi, Mahendranagar...)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="font-semibold text-slate-700 block mb-1">City / Municipality *</label>
-                    <input
-                      type="text"
-                      value={profileForm.city}
-                      onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })}
-                      placeholder="e.g. Kathmandu, Pokhara, Butwal"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="font-semibold text-slate-700 block mb-1">Postal / ZIP Code</label>
-                    <input
-                      type="text"
-                      value={profileForm.postal_code}
-                      onChange={(e) => setProfileForm({ ...profileForm, postal_code: e.target.value })}
-                      placeholder="e.g. 44600"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none font-mono"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="font-semibold text-slate-700 block mb-1">Nearby Landmark / Chowk</label>
-                    <input
-                      type="text"
-                      value={profileForm.landmark}
-                      onChange={(e) => setProfileForm({ ...profileForm, landmark: e.target.value })}
-                      placeholder="e.g. Near Bhatbhateni Supermarket, New Road Gate"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="font-semibold text-slate-700 block mb-1">Doorstep Street Address / Ward / House #</label>
-                    <input
-                      type="text"
-                      value={profileForm.address}
-                      onChange={(e) => setProfileForm({ ...profileForm, address: e.target.value })}
-                      placeholder="e.g. Ward #10, Baneshwor Height, House #42"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none"
-                    />
+                      {isSavingProfile ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <span>Saving Profile...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Check className="w-4 h-4" />
+                          <span>Save & Update Profile</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
-              </div>
 
-              {/* SECTION 4: Password & Security */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5 text-slate-500" />
-                    <span>4. Change Password & Security</span>
-                  </h4>
-                  <span className="text-[10px] text-slate-400">Leave blank if keeping existing password</span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                  <div>
-                    <label className="font-semibold text-slate-700 block mb-1">Current Password</label>
-                    <div className="relative">
-                      <input
-                        type={showCurrentPw ? "text" : "password"}
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        placeholder="••••••••"
-                        className="w-full pl-3 pr-8 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none font-mono"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowCurrentPw(!showCurrentPw)}
-                        className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
-                      >
-                        {showCurrentPw ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="font-semibold text-slate-700 block mb-1">New Password</label>
-                    <div className="relative">
-                      <input
-                        type={showNewPw ? "text" : "password"}
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="Min 6 characters"
-                        className="w-full pl-3 pr-8 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none font-mono"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowNewPw(!showNewPw)}
-                        className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
-                      >
-                        {showNewPw ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="font-semibold text-slate-700 block mb-1">Confirm New Password</label>
-                    <div className="relative">
-                      <input
-                        type={showConfirmPw ? "text" : "password"}
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="Repeat new password"
-                        className="w-full pl-3 pr-8 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:outline-none font-mono"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPw(!showConfirmPw)}
-                        className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
-                      >
-                        {showConfirmPw ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* SECTION 5: Notification Preferences */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
-                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                  <Bell className="w-3.5 h-3.5 text-slate-500" />
-                  <span>5. Order & Delivery Alerts</span>
-                </h4>
-
-                <div className="space-y-2 text-xs">
-                  <label className="flex items-center gap-2 text-slate-700 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={smsAlerts}
-                      onChange={(e) => setSmsAlerts(e.target.checked)}
-                      className="w-4 h-4 text-[#F85606] rounded border-slate-300 focus:ring-orange-500"
-                    />
-                    <span>Receive instant SMS alerts when parcel is dispatched or out for delivery</span>
-                  </label>
-
-                  <label className="flex items-center gap-2 text-slate-700 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={emailAlerts}
-                      onChange={(e) => setEmailAlerts(e.target.checked)}
-                      className="w-4 h-4 text-[#F85606] rounded border-slate-300 focus:ring-orange-500"
-                    />
-                    <span>Receive official digital tax invoice and email tracking receipts from <strong>bhanjonepal@gmail.com</strong></span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Form Action Controls */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
-                <span className="text-xs text-slate-500">
-                  All updates are instantly saved and synchronized across your account.
-                </span>
-
-                <button
-                  type="submit"
-                  disabled={isSavingProfile}
-                  className="w-full sm:w-auto px-6 py-2.5 bg-[#F85606] hover:bg-[#e04e05] text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
-                >
-                  {isSavingProfile ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                      <span>Saving Profile to Database...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Check className="w-4 h-4" />
-                      <span>Save & Update Profile</span>
-                    </>
-                  )}
-                </button>
               </div>
 
             </form>

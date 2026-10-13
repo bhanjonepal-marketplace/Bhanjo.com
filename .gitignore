@@ -42,3 +42,18 @@ server/1688_session.json
 *.njsproj
 *.sln
 *.sw?
+
+# Built application files
+*.apk
+*.aab
+
+# Root scratch images & test scripts
+/*.png
+/*.jpg
+/*.jpeg
+/test_*
+server/debug_*
+client/public/test_cache/
+
+
+

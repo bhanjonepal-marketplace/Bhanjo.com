@@ -843,13 +843,14 @@ export function getCategoryTreeItem(categoryId) {
   return ALIBABA_CATEGORY_TREE.find(c => c.id === categoryId) || ALIBABA_CATEGORY_TREE[0];
 }
 
-// Complete 38-category tree merging custom Alibaba trees with standard catalog categories
+// Complete category tree merging custom Alibaba trees with standard catalog categories
 export function getFullCategoryTree() {
   return CATEGORIES.map(cat => {
     const custom = ALIBABA_CATEGORY_TREE.find(t => t.id === cat.id);
     if (custom) {
       return {
         ...custom,
+        name: cat.name,
         nepaliName: cat.nepaliName,
         icon: cat.icon
       };

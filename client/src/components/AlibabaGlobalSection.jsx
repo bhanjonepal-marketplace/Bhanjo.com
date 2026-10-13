@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronDown, ShieldCheck, Globe } from 'lucide-react';
+import { ChevronDown, ChevronRight, ShieldCheck, Globe } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 
 export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll }) => {
@@ -45,24 +45,55 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
   if (alibabaProducts.length === 0) return null;
 
   return (
-    <section className="my-10 sm:my-14 pb-8 border-b border-slate-200/80" id="global-catalog-section">
+    <section 
+      id="global-catalog-section"
+      className="my-5 rounded-2xl border-2 border-sky-300 shadow-[0_10px_35px_rgba(56,189,248,0.15)] overflow-hidden bg-gradient-to-b from-sky-50/50 via-white to-white transition-all duration-200 ring-1 ring-sky-200/60"
+    >
       
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 px-1 gap-2">
-        <div className="flex items-center gap-2.5">
-          <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
-            International Trending Collection
-          </h2>
+      {/* UNIFIED MODERN SKY HEADER BANNER (Matching Popular Departments style) */}
+      <div className="bg-gradient-to-r from-sky-50 via-white to-sky-50/70 border-b border-sky-200/80 px-3.5 sm:px-5 py-2.5 sm:py-3 text-slate-900 flex items-center justify-between gap-3 shadow-2xs relative overflow-hidden">
+        {/* Subtle decorative glow */}
+        <div className="absolute -right-8 -top-8 w-44 h-44 bg-sky-100/60 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute left-1/4 -bottom-8 w-36 h-36 bg-sky-200/40 rounded-full blur-xl pointer-events-none" />
+
+        {/* Left Side: Icon + Titles & Badges */}
+        <div className="flex items-center gap-3 relative z-10 min-w-0">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-md shadow-sky-500/20 flex items-center justify-center flex-shrink-0 border border-sky-400/30">
+            <Globe className="w-5 h-5 sm:w-5.5 sm:h-5.5 stroke-[2.4]" />
+          </div>
+
+          <div className="min-w-0">
+            {/* Top Row: Badges & Announcement */}
+            <div className="flex items-center gap-2 flex-wrap mb-0.5">
+              <span className="bg-sky-600 text-white text-[9.5px] sm:text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-2xs leading-none">
+                OVERSEAS PAVILION
+              </span>
+              <span className="text-[10.5px] sm:text-[11px] font-black text-sky-800 tracking-wide uppercase truncate">
+                ✈️ {language === 'ne' ? 'प्रमाणित फ्याक्ट्री मूल्य • ग्लोबल डाइरेक्ट' : 'GLOBAL DIRECT SOURCING • VERIFIED FACTORY PRICING'}
+              </span>
+            </div>
+
+            {/* Bottom Row: Main Heading + Count/Subtitle */}
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-[17px] sm:text-[19px] font-black text-slate-950 tracking-tight leading-none">
+                {language === 'ne' ? 'अन्तर्राष्ट्रिय ट्रेन्डिङ संकलन' : 'International Trending Collection'}
+              </h2>
+              <span className="text-[11px] sm:text-xs font-black text-sky-800/90 hidden sm:inline">
+                • 🌐 {language === 'ne' ? 'प्रत्यक्ष आयात' : 'Direct Global Sourcing'}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap sm:flex-nowrap">
-          {/* Sort Dropdown near View All */}
-          <div className="bg-white border border-slate-300 rounded-xl px-2.5 py-1 text-xs shadow-2xs hover:border-orange-400 transition flex items-center">
-            <span className="text-slate-400 mr-1.5 font-medium">{t('sortLabel') || 'Sort:'}</span>
+        {/* Right Side: Sort & View All Controls */}
+        <div className="flex items-center gap-2 relative z-10 flex-shrink-0">
+          {/* Sort Dropdown */}
+          <div className="bg-white border border-sky-200/90 hover:border-sky-300 rounded-xl px-2.5 py-1 text-xs text-slate-800 flex items-center shadow-2xs transition-colors">
+            <span className="text-sky-700 mr-1.5 font-bold text-[11px]">{t('sortLabel') || 'Sort:'}</span>
             <select
               value={globalSortBy}
               onChange={(e) => setGlobalSortBy(e.target.value)}
-              className="bg-transparent text-slate-800 font-bold focus:outline-none cursor-pointer"
+              className="bg-transparent text-slate-900 font-bold text-xs focus:outline-none cursor-pointer"
             >
               <option value="popular">{t('popular') || 'Popular'}</option>
               <option value="price-low">{t('priceLowToHigh') || 'Price: Low to High'}</option>
@@ -81,16 +112,17 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
                 if (catalogElem) catalogElem.scrollIntoView({ behavior: 'smooth' });
               }
             }}
-            className="px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer border bg-white hover:bg-orange-50 text-slate-700 hover:text-[#F85606] border-slate-300 shadow-2xs"
+            className="bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-black text-xs px-3.5 py-1.5 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer group"
             title="View all Global Direct products in catalog"
           >
-            <span>👁️ {language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'}</span>
+            <span>{language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'}</span>
+            <ChevronRight className="w-3.5 h-3.5 stroke-[2.5] group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>
       </div>
 
-      {/* Grid of Cards (Loaded progressively via Load More) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      {/* 3. Products Grid */}
+      <div className="p-3 sm:p-4 pb-1.5 sm:pb-2 bg-gradient-to-b from-sky-50/40 via-white to-white grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {sortedAlibabaProducts.slice(0, visibleCount).map((item) => {
           const displayPrice = item.priceTiers?.[item.priceTiers.length - 1]?.price || item.samplePrice || 25;
           const originalPrice = displayPrice * 1.35;
@@ -99,7 +131,7 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
             <div
               key={item.id}
               onClick={() => onSelectProduct(item.id)}
-              className="bg-white rounded-xl border border-slate-200 hover:border-orange-400 hover:shadow-md transition duration-150 p-2.5 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
+              className="bg-white rounded-xl border border-sky-100 hover:border-sky-500 hover:shadow-xl hover:shadow-sky-500/15 transition-all duration-200 p-2.5 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
             >
               {/* Image Box */}
               <div className="aspect-square rounded-lg overflow-hidden bg-slate-50 relative mb-2">
@@ -109,7 +141,7 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                 />
 
-                <span className="absolute top-1.5 left-1.5 bg-[#FF6A00] text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-xs z-10 flex items-center gap-0.5">
+                <span className="absolute top-1.5 left-1.5 bg-gradient-to-r from-sky-500 to-sky-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-xs z-10 flex items-center gap-0.5">
                   ✈️ Global Direct
                 </span>
 
@@ -120,17 +152,17 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
 
               {/* Title & Specs */}
               <div>
-                <span className="text-[10px] text-orange-600 font-bold block mb-0.5 truncate">
+                <span className="text-[10px] text-sky-600 font-bold block mb-0.5 truncate">
                   {item.categoryName || 'Global Collection'}
                 </span>
 
-                <h3 className="text-xs font-semibold text-slate-800 line-clamp-2 leading-tight group-hover:text-[#FF6A00] transition">
+                <h3 className="text-xs font-semibold text-slate-800 line-clamp-2 leading-tight group-hover:text-sky-600 transition">
                   {item.title}
                 </h3>
 
                 <div className="mt-2">
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-sm font-black text-[#FF6A00]">
+                    <span className="text-sm font-black text-sky-600">
                       {formatPrice(displayPrice)}
                     </span>
                     <span className="text-[10px] text-slate-400 line-through">
@@ -146,7 +178,7 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
               {/* Footer Badge */}
               <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
                 <span className="flex items-center gap-0.5 truncate">
-                  <ShieldCheck className="w-3 h-3 text-amber-500 flex-shrink-0" />
+                  <ShieldCheck className="w-3 h-3 text-sky-500 flex-shrink-0" />
                   <span className="truncate">
                     Verified Seller
                   </span>
@@ -158,13 +190,13 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
         })}
       </div>
 
-      {/* Centered Load More Option in the Down Middle (Matching Flash Deal Style) */}
+      {/* 4. Bottom Centered Load More Option (Matching Flash Deal Style) */}
       {visibleCount < sortedAlibabaProducts.length && (
-        <div className="mt-5 sm:mt-6 flex justify-center items-center">
+        <div className="pt-1.5 pb-2 sm:pt-2 sm:pb-2.5 bg-white/90 backdrop-blur-xs flex justify-center items-center border-t border-sky-100/80">
           <button
             type="button"
             onClick={() => setVisibleCount(prev => Math.min(prev + 6, sortedAlibabaProducts.length))}
-            className="bg-gradient-to-r from-[#FF6A00] to-[#F85606] hover:from-[#EE5007] hover:to-[#e04e05] active:scale-95 text-white font-extrabold text-xs sm:text-sm px-8 sm:px-12 py-2.5 rounded-full shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer group"
+            className="bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 active:scale-95 text-white font-extrabold text-xs sm:text-sm px-8 sm:px-12 py-1.5 sm:py-2 rounded-full shadow-md shadow-sky-500/25 hover:shadow-lg hover:shadow-sky-500/35 transition-all flex items-center justify-center gap-2 cursor-pointer group"
           >
             <span>{language === 'ne' ? 'थप देखाउनुहोस्' : 'Load More'}</span>
             <ChevronDown className="w-4 h-4 stroke-[2.5] group-hover:translate-y-0.5 transition-transform" />

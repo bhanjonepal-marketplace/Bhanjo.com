@@ -1,17 +1,17 @@
 // Official Bhanjo.com Active Categories
 // Ordered list of 7 primary categories:
-// 1. Luggage and bag
-// 2. Apparel and accessories
-// 3. Shoes and accessories
-// 4. Jewelry, eyewear and watches
-// 5. Gift, kids and toys
-// 6. Vehicles and accessories
-// 7. Phone and laptop cases
+// 1. Luggage & Travel
+// 2. Clothing & Accessories
+// 3. Footwear & Shoe Care
+// 4. Jewelry, Watches & Eyewear
+// 5. Gifts, Kids & Toys
+// 6. Auto & Vehicle Accessories
+// 7. Phone & Laptop Cases
 
 export const CATEGORIES = [
   {
     id: "luggage-bags-cases",
-    name: "Luggage and Bag",
+    name: "Luggage & Travel",
     nepaliName: "झोला, ब्याग तथा लगेज",
     icon: "Briefcase",
     banner: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=1200&q=80",
@@ -36,7 +36,7 @@ export const CATEGORIES = [
   },
   {
     id: "apparel-accessories",
-    name: "Apparel & Accessories",
+    name: "Clothing & Accessories",
     nepaliName: "पोशाक तथा फेसन सामग्री",
     icon: "Shirt",
     banner: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=1200&q=80",
@@ -61,7 +61,7 @@ export const CATEGORIES = [
   },
   {
     id: "shoes-accessories",
-    name: "Shoes & Accessories",
+    name: "Footwear & Shoe Care",
     nepaliName: "जुत्ता तथा जुत्ताका सामग्रीहरू",
     icon: "Footprints",
     banner: "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=1200&q=80",
@@ -86,7 +86,7 @@ export const CATEGORIES = [
   },
   {
     id: "jewelry-eyewear-watches",
-    name: "Jewelry, Eyewear & Watches",
+    name: "Jewelry, Watches & Eyewear",
     nepaliName: "गहना, चश्मा तथा घडीहरू",
     icon: "Watch",
     banner: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1200&q=80",
@@ -111,7 +111,7 @@ export const CATEGORIES = [
   },
   {
     id: "gift-kids-toys",
-    name: "Gift, Kids & Toys",
+    name: "Gifts, Kids & Toys",
     nepaliName: "उपहार, बालबालिका तथा खेलौनाहरू",
     icon: "Gift",
     banner: "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?auto=format&fit=crop&w=1200&q=80",
@@ -136,7 +136,7 @@ export const CATEGORIES = [
   },
   {
     id: "vehicle-parts-accessories",
-    name: "Vehicles & Accessories",
+    name: "Auto & Vehicle Accessories",
     nepaliName: "सवारी साधन तथा पाटपुर्जा",
     icon: "Car",
     banner: "https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=1200&q=80",

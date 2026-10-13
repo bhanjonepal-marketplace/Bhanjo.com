@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Bhanjo</string>
+    <string name="title_activity_main">Bhanjo</string>
+    <string name="package_name">com.bhanjo.marketplace</string>
+    <string name="custom_url_scheme">com.bhanjo.marketplace</string>
+</resources>

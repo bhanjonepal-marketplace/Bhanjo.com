@@ -1,0 +1,12 @@
+{
+  "appId": "com.bhanjo.marketplace",
+  "appName": "Bhanjo",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

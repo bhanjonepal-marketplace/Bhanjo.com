@@ -7,7 +7,7 @@ export const Footer = ({ onSelectCategory, onOpenAdminUnlock }) => {
     <footer className="bg-[#f5f5f5] text-slate-600 text-xs border-t border-slate-200 mt-12 pt-10 pb-8">
       <div className="max-w-[1560px] mx-auto px-4 sm:px-6">
         
-        {/* 4 Clean Value Propositions (Daraz Style) */}
+        {/* 4 Clean Value Propositions (Bhanjo Style) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-8 border-b border-slate-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-orange-100 text-[#F85606] flex items-center justify-center flex-shrink-0">

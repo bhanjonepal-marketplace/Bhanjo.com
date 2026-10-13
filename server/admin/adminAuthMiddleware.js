@@ -39,10 +39,25 @@ export const getClientIp = (req) => {
 };
 
 // Layer 4: IP Whitelisting Shield
+// Also blocks ALL tunnel/proxy traffic (Cloudflare, localtunnel, ngrok, etc.)
+// The admin panel is ONLY accessible via a direct localhost connection on your own machine.
 export const verifyAdminIp = (req, res, next) => {
+  // Block immediately if request came through any reverse proxy or tunnel.
+  // Cloudflare Quick Tunnel, localtunnel, and ngrok all inject x-forwarded-for / cf-connecting-ip.
+  // A direct local browser request on your own machine never has these headers.
+  const isViaProxy = Boolean(
+    req.headers['x-forwarded-for'] ||
+    req.headers['cf-connecting-ip'] ||
+    req.headers['x-real-ip']
+  );
+  if (isViaProxy) {
+    console.warn('\u{1F6A8} [SECURITY] Tunnel/proxy attempt blocked for Master Admin Portal.');
+    return res.status(404).send('Not Found');
+  }
+
   const ip = getClientIp(req);
   
-  // Always permit local development interfaces
+  // Permit only direct local/LAN connections
   const isLocal = ip === '127.0.0.1' || ip === '::1' || ip === 'localhost';
   const isLan = ip.startsWith('192.168.') || ip.startsWith('10.') || /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip);
 

@@ -1,10 +1,100 @@
-import React from 'react';
-import { ChevronRight } from 'lucide-react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { ChevronRight, ChevronLeft, Sparkles, LayoutGrid, Layers } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 
-// 4 Signature Extra-Large Curated Amazon Quad Department Cards
+// 10 Curated Extra-Large Amazon-Style Quad Department Cards
 const FEATURED_QUAD_CARDS = [
-  {
+{
+    id: 'luggage-travel',
+    title: 'Bag, luggage and other essential',
+    nepaliTitle: 'झोला, लगेज तथा अन्य सामग्री',
+    categoryId: 'luggage-bags-cases',
+    searchKeyword: 'Bag',
+    quadrants: [
+      {
+        id: 'tote-crossbody',
+        label: 'Totes & Purses',
+        nepaliLabel: 'टोट तथा पर्स',
+        keyword: 'Tote Bag',
+        bg: 'bg-white',
+        image: '/categories/tote_crossbody_slouchy.jpg?v=ai_gen',
+        alt: 'Designer Slouchy Tote Bag'
+      },
+      {
+        id: 'gym-bags',
+        label: 'Duffle Bag',
+        nepaliLabel: 'डफल ब्याग',
+        keyword: 'Duffle Bag',
+        bg: 'bg-white',
+        image: '/categories/gym_bag.jpg?v=ai_gen',
+        alt: 'Athletic Duffle Bag'
+      },
+      {
+        id: 'rolling-luggage',
+        label: 'Suitcases',
+        nepaliLabel: 'लगेज सुटकेस',
+        keyword: 'Luggage',
+        bg: 'bg-white',
+        image: '/categories/suitcase_blue.jpg?v=ai_gen',
+        alt: 'Hardshell Spinner Suitcase'
+      },
+      {
+        id: 'duffle-bags',
+        label: 'Bagpack',
+        nepaliLabel: 'ब्याकप्याक',
+        keyword: 'Backpack',
+        bg: 'bg-white',
+        image: '/categories/hemp_backpacks.jpg?v=ai_gen',
+        alt: 'Vintage Canvas Leather Backpack'
+      }
+    ]
+  },
+{
+    id: 'winter-apparel',
+    title: 'Himalayan Warmth & Fashion',
+    nepaliTitle: 'न्यानो पोशाक तथा फेसन',
+    categoryId: 'apparel-accessories',
+    searchKeyword: 'Apparel',
+    quadrants: [
+      {
+        id: 'pashmina-shawls',
+        label: 'Cashmere & Shawls',
+        nepaliLabel: 'पश्मिना तथा शल',
+        keyword: 'Pashmina',
+        bg: 'bg-white',
+        image: '/categories/pashmina_shawls_white.jpg',
+        alt: 'Himalayan Cashmere Shawl'
+      },
+      {
+        id: 'hoodies-sweats',
+        label: 'Cozy Hoodies',
+        nepaliLabel: 'हुडिज तथा स्वेटर',
+        keyword: 'Hoodie',
+        bg: 'bg-white',
+        image: '/categories/hoodies_sweats_white.jpg',
+        alt: 'Warm Heavyweight Hoodie'
+      },
+      {
+        id: 'winter-jackets',
+        label: 'Jackets & Vests',
+        nepaliLabel: 'ज्याकेट तथा भेस्ट',
+        keyword: 'Jacket',
+        bg: 'bg-white',
+        image: '/categories/winter_jackets_white.jpg',
+        alt: 'Puffer Winter Jacket'
+      },
+      {
+        id: 'streetwear-fashion',
+        label: 'Streetwear',
+        nepaliLabel: 'स्ट्रिटवेयर फेसन',
+        keyword: 'Clothing',
+        bg: 'bg-white',
+        image: '/categories/streetwear_fashion_white.jpg',
+        alt: 'Casual Modern Apparel'
+      }
+    ]
+  },
+{
     id: 'shoes-trends',
     title: 'Fashion trends in Shoes',
     nepaliTitle: 'फेसन ट्रेन्ड्स: जुत्ता तथा स्यान्डल',
@@ -13,20 +103,20 @@ const FEATURED_QUAD_CARDS = [
     quadrants: [
       {
         id: 'women-shoes',
-        label: "Women's",
-        nepaliLabel: 'महिला जुत्ता',
-        keyword: 'Women Heels',
-        bg: 'bg-[#ffccd6]',
-        image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=600&q=80',
-        alt: "Women's Trendy Shoes"
+        label: 'Sandals',
+        nepaliLabel: 'स्यान्डल',
+        keyword: 'Sandals',
+        bg: 'bg-white',
+        image: '/categories/women_shoes.jpg',
+        alt: "Women's Sandals & Heels"
       },
       {
         id: 'men-shoes',
         label: "Men's",
         nepaliLabel: 'पुरुष स्निकर्स',
         keyword: 'Sneakers',
-        bg: 'bg-[#ffea75]',
-        image: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/men_shoes.jpg',
         alt: "Men's Shoes & Sneakers"
       },
       {
@@ -34,22 +124,202 @@ const FEATURED_QUAD_CARDS = [
         label: "Kids'",
         nepaliLabel: 'बालबालिका स्यान्डल',
         keyword: 'Kids Sandals',
-        bg: 'bg-[#3ca3b5]',
-        image: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/kids_shoes.jpg',
         alt: "Kids' Sandals"
       },
       {
         id: 'all-shoes',
-        label: 'All shoes',
-        nepaliLabel: 'सबै जुत्ताहरू',
-        keyword: 'Shoes',
-        bg: 'bg-[#e5a84e]',
-        image: 'https://images.unsplash.com/photo-1603808033192-082d6919d3e1?auto=format&fit=crop&w=600&q=80',
-        alt: 'All Shoes & Footwear'
+        label: "Women's",
+        nepaliLabel: 'महिला जुत्ता',
+        keyword: 'Women Shoes',
+        bg: 'bg-white',
+        image: '/categories/all_shoes.jpg',
+        alt: "Women's Shoes & Sneakers"
       }
     ]
   },
-  {
+{
+    id: 'vehicle-gear',
+    title: 'Riding Gear & Vehicle Care',
+    nepaliTitle: 'सवारी साधन तथा राइडिङ सामग्री',
+    categoryId: 'vehicles-accessories',
+    searchKeyword: 'Vehicle',
+    quadrants: [
+      {
+        id: 'helmet-gear',
+        label: 'Helmets & Visors',
+        nepaliLabel: 'हेल्मेट तथा भाइजर',
+        keyword: 'Helmet',
+        bg: 'bg-white',
+        image: '/categories/helmet_gear_white.jpg',
+        alt: 'Riding Helmet Protection'
+      },
+      {
+        id: 'phone-mounts',
+        label: 'Phone Mounts',
+        nepaliLabel: 'मोबाइल होल्डर',
+        keyword: 'Car Mount',
+        bg: 'bg-white',
+        image: '/categories/phone_mount_white.jpg',
+        alt: 'Universal Vehicle Phone Mount'
+      },
+      {
+        id: 'care-polish',
+        label: 'Car Care & Clean',
+        nepaliLabel: 'सफाइ तथा पोलिस',
+        keyword: 'Car Care',
+        bg: 'bg-white',
+        image: '/categories/car_care_kit.jpg',
+        alt: 'Vehicle Cleaning Detail Kit'
+      },
+      {
+        id: 'riding-gloves',
+        label: 'Riding Gloves',
+        nepaliLabel: 'राइडिङ पञ्जा',
+        keyword: 'Gloves',
+        bg: 'bg-white',
+        image: '/categories/motorcycle_gloves.jpg',
+        alt: 'Motorcycle Protective Riding Gloves'
+      }
+    ]
+  },
+{
+    id: 'toys-creative',
+    title: 'Toys & Creative kids corner',
+    nepaliTitle: 'खेलौना तथा क्रियटिभ बालबालिका कर्नर',
+    categoryId: 'gift-kids-toys',
+    searchKeyword: 'Toy',
+    quadrants: [
+      {
+        id: 'stem-blocks',
+        label: 'Building Blocks',
+        nepaliLabel: 'ब्लक्स तथा खेलौना',
+        keyword: 'Building Blocks',
+        bg: 'bg-white',
+        image: '/categories/stem_blocks.jpg',
+        alt: 'Colorful Building Blocks'
+      },
+      {
+        id: 'soft-plushies',
+        label: 'Soft Plushies',
+        nepaliLabel: 'सफ्ट खेलौनाहरू',
+        keyword: 'Plush Toy',
+        bg: 'bg-white',
+        image: '/categories/soft_plushies.jpg',
+        alt: 'Soft Stuffed Teddy Bear'
+      },
+      {
+        id: 'drawing-crafts',
+        label: 'Drawing & Crafts',
+        nepaliLabel: 'चित्रकला सामग्री',
+        keyword: 'Art Set',
+        bg: 'bg-white',
+        image: '/categories/drawing_crafts.jpg',
+        alt: 'Kids Drawing Art Supplies'
+      },
+      {
+        id: 'board-puzzles',
+        label: 'Brain Puzzles',
+        nepaliLabel: 'दिमागी पजल खेल',
+        keyword: 'Puzzle',
+        bg: 'bg-white',
+        image: '/categories/board_puzzles.jpg',
+        alt: 'Brain Strategy Puzzle Games'
+      }
+    ]
+  },
+{
+    id: 'trending-tech',
+    title: 'Trending Tech & Gadgets',
+    nepaliTitle: 'आधुनिक ग्याजेट तथा मोबाइल सामग्री',
+    categoryId: 'phone-laptop-cases',
+    searchKeyword: 'Case',
+    quadrants: [
+      {
+        id: 'phone-cases',
+        label: 'Phone Cases',
+        nepaliLabel: 'मोबाइल कभर',
+        keyword: 'Phone Case',
+        bg: 'bg-white',
+        image: '/categories/phone_cases.jpg',
+        alt: 'Slim Protective Phone Case'
+      },
+      {
+        id: 'laptop-sleeves',
+        label: 'Laptop Sleeves',
+        nepaliLabel: 'ल्यापटप स्लिभ',
+        keyword: 'Laptop Sleeve',
+        bg: 'bg-white',
+        image: '/categories/laptop_sleeves.jpg',
+        alt: 'Padded Laptop Sleeve'
+      },
+      {
+        id: 'wireless-audio',
+        label: 'Audio & Earbuds',
+        nepaliLabel: 'इयरबड्स तथा अडियो',
+        keyword: 'Earbuds',
+        bg: 'bg-white',
+        image: '/categories/wireless_audio.jpg',
+        alt: 'True Wireless Earbuds'
+      },
+      {
+        id: 'chargers-power',
+        label: 'Fast Chargers',
+        nepaliLabel: 'फास्ट चार्जर',
+        keyword: 'Charger',
+        bg: 'bg-white',
+        image: '/categories/chargers_power.jpg',
+        alt: 'Fast Charger Adapter'
+      }
+    ]
+  },
+{
+    id: 'watches-eyewear',
+    title: 'Jewelry, Eyewear & Watches',
+    nepaliTitle: 'घडी, चस्मा तथा गहना',
+    categoryId: 'jewelry-eyewear-watches',
+    searchKeyword: 'Watch',
+    quadrants: [
+      {
+        id: 'sunglasses-shades',
+        label: 'Eyewear',
+        nepaliLabel: 'आईवेयर चस्मा',
+        keyword: 'Eyewear',
+        bg: 'bg-white',
+        image: '/categories/eyewear_sunglasses.jpg',
+        alt: 'Designer Eyewear Sunglasses'
+      },
+      {
+        id: 'classic-watches',
+        label: 'Wristwear',
+        nepaliLabel: 'रिस्टवेयर घडी',
+        keyword: 'Wristwear',
+        bg: 'bg-white',
+        image: '/categories/classic_watches.jpg',
+        alt: 'Luxury Wristwear Watch'
+      },
+      {
+        id: 'rings-jewelry',
+        label: 'Jewelry & Accessories',
+        nepaliLabel: 'गहना तथा एक्सेसरिज',
+        keyword: 'Jewelry',
+        bg: 'bg-white',
+        image: '/categories/rings_jewelry.jpg',
+        alt: 'Fine Jewelry & Accessories'
+      },
+      {
+        id: 'smart-bands',
+        label: 'Smart Bands',
+        nepaliLabel: 'स्मार्ट ब्यान्ड',
+        keyword: 'Smart Watch',
+        bg: 'bg-white',
+        image: '/categories/smart_bands.jpg',
+        alt: 'Fitness Smart Fitness Band'
+      }
+    ]
+  },
+{
     id: 'home-harmony',
     title: 'Home harmony',
     nepaliTitle: 'घर तथा भान्छा सजावट',
@@ -61,8 +331,8 @@ const FEATURED_QUAD_CARDS = [
         label: 'Kitchen essentials',
         nepaliLabel: 'भान्छा सामग्री',
         keyword: 'Kitchen',
-        bg: 'bg-[#f4efe8]',
-        image: 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/kitchen_essentials.jpg',
         alt: 'Kitchen essentials power blender'
       },
       {
@@ -70,8 +340,8 @@ const FEATURED_QUAD_CARDS = [
         label: 'Home comfort',
         nepaliLabel: 'बैठक कोठा सजावट',
         keyword: 'Living Room',
-        bg: 'bg-[#f0ebe1]',
-        image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/home_comfort.jpg',
         alt: 'Home comfort living room'
       },
       {
@@ -79,8 +349,8 @@ const FEATURED_QUAD_CARDS = [
         label: 'Decorate with elegance',
         nepaliLabel: 'कलात्मक सजावट',
         keyword: 'Decor',
-        bg: 'bg-[#ece7df]',
-        image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/decorate_elegance.jpg',
         alt: 'Decorate with elegance vases and flowers'
       },
       {
@@ -88,13 +358,13 @@ const FEATURED_QUAD_CARDS = [
         label: 'Light it Right',
         nepaliLabel: 'आधुनिक बत्तीहरू',
         keyword: 'Lamp',
-        bg: 'bg-[#f7eedc]',
-        image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/light_it_right.jpg',
         alt: 'Table night lamp'
       }
     ]
   },
-  {
+{
     id: 'budget-shoes',
     title: 'Shoes Under Rs. 3,000',
     nepaliTitle: 'किफायती जुत्ता अफरहरू',
@@ -106,8 +376,8 @@ const FEATURED_QUAD_CARDS = [
         label: "Women's",
         nepaliLabel: 'महिला पम्प्स',
         keyword: 'Heels',
-        bg: 'bg-[#ffd3db]',
-        image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/budget_womens.jpg',
         alt: "Women's Nude High Heels"
       },
       {
@@ -115,8 +385,8 @@ const FEATURED_QUAD_CARDS = [
         label: "Men's",
         nepaliLabel: 'पुरुष छालाको जुत्ता',
         keyword: 'Formal Shoes',
-        bg: 'bg-[#f0dfcc]',
-        image: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/budget_mens.jpg',
         alt: "Men's Leather Dress Shoes"
       },
       {
@@ -124,8 +394,8 @@ const FEATURED_QUAD_CARDS = [
         label: "Girl's",
         nepaliLabel: 'बालिका जुत्ता',
         keyword: 'School Shoes',
-        bg: 'bg-[#d2edd7]',
-        image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/budget_girls.jpg',
         alt: "Girl's School Shoes"
       },
       {
@@ -133,15 +403,15 @@ const FEATURED_QUAD_CARDS = [
         label: "Boy's",
         nepaliLabel: 'बालक स्निकर',
         keyword: 'Kids Sneakers',
-        bg: 'bg-[#3ec7e8]',
-        image: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/budget_boys.jpg',
         alt: "Boy's Toddler Blue Sneakers"
       }
     ]
   },
   {
     id: 'furry-friends',
-    title: 'What you need for furry friends',
+    title: 'Everything for Your Pets',
     nepaliTitle: 'घरपालुवा जनावरका सामग्री',
     categoryId: 'gift-kids-toys',
     searchKeyword: 'Pet',
@@ -151,8 +421,8 @@ const FEATURED_QUAD_CARDS = [
         label: 'Dogs',
         nepaliLabel: 'कुकुरका सामग्री',
         keyword: 'Dog',
-        bg: 'bg-[#f4efe8]',
-        image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/dogs.jpg',
         alt: 'Happy Fluffy Dog'
       },
       {
@@ -160,8 +430,8 @@ const FEATURED_QUAD_CARDS = [
         label: 'Cats',
         nepaliLabel: 'बिरालोका सामग्री',
         keyword: 'Cat',
-        bg: 'bg-[#f5f1ea]',
-        image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/cats.jpg',
         alt: 'Adorable Ginger Cat'
       },
       {
@@ -169,8 +439,8 @@ const FEATURED_QUAD_CARDS = [
         label: 'Small Pets',
         nepaliLabel: 'साना घरपालुवा जनावर',
         keyword: 'Pet',
-        bg: 'bg-[#f0ebe3]',
-        image: 'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/small_pets.jpg',
         alt: 'Cute Hamster Small Pet'
       },
       {
@@ -178,12 +448,13 @@ const FEATURED_QUAD_CARDS = [
         label: 'Deals',
         nepaliLabel: 'विशेष छुट अफरहरू',
         keyword: 'Pet Toy',
-        bg: 'bg-[#f8f5f0]',
-        image: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=600&q=80',
+        bg: 'bg-white',
+        image: '/categories/pet_deals.jpg',
         alt: 'Pet toys and accessories deals'
       }
     ]
   }
+
 ];
 
 export const AmazonQuadCatalog = ({
@@ -191,6 +462,46 @@ export const AmazonQuadCatalog = ({
   selectedCategoryId = 'all'
 }) => {
   const { language } = useCurrency();
+  const scrollContainerRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // Check scroll position to dynamically show/hide side buttons
+  const updateScrollState = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+    setCanScrollLeft(scrollLeft > 15);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 15);
+  }, []);
+
+  useEffect(() => {
+    updateScrollState();
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    container.addEventListener('scroll', updateScrollState, { passive: true });
+    window.addEventListener('resize', updateScrollState);
+
+    return () => {
+      container.removeEventListener('scroll', updateScrollState);
+      window.removeEventListener('resize', updateScrollState);
+    };
+  }, [updateScrollState]);
+
+  // Smooth scroll sideways on clicking side arrow buttons
+  const handleSideScroll = (direction) => {
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    // Scroll by visible width or ~1-2 cards
+    const scrollAmount = container.clientWidth >= 1024
+      ? container.clientWidth * 0.78
+      : container.clientWidth * 0.88;
+
+    container.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth'
+    });
+  };
 
   const handleCardHeaderClick = (card) => {
     if (onSelectCategory) {
@@ -206,67 +517,168 @@ export const AmazonQuadCatalog = ({
   };
 
   return (
-    <section className="mt-8 mb-12 sm:mb-16" id="amazon-quad-catalog">
-      {/* 4 Extra-Large Amazon-Style Quad Department Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
-        {FEATURED_QUAD_CARDS.map((card) => {
-          const cardTitle = language === 'ne' ? card.nepaliTitle : card.title;
+    <section 
+      className="my-3 sm:my-5 rounded-2xl border-2 border-emerald-300 shadow-[0_10px_35px_rgba(16,185,129,0.14)] overflow-hidden bg-gradient-to-b from-emerald-50/40 via-white to-white transition-all duration-200 ring-1 ring-emerald-200/60" 
+      id="amazon-quad-catalog"
+    >
+      {/* UNIFIED MODERN EMERALD HEADER BANNER */}
+      <div className="bg-gradient-to-r from-emerald-50 via-white to-emerald-50/70 border-b border-emerald-200/80 px-3 sm:px-5 py-2 sm:py-3 text-slate-900 flex items-center justify-between gap-2.5 sm:gap-3 shadow-2xs relative overflow-hidden">
+        {/* Subtle decorative glow */}
+        <div className="absolute -right-8 -top-8 w-44 h-44 bg-emerald-100/60 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute left-1/4 -bottom-8 w-36 h-36 bg-emerald-200/40 rounded-full blur-xl pointer-events-none" />
 
-          return (
-            <div
-              key={card.id}
-              className="bg-white rounded-[22px] sm:rounded-[26px] border border-slate-200/90 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_32px_-6px_rgba(0,0,0,0.12)] transition-all duration-300 p-5 sm:p-6 pb-6 sm:pb-7 flex flex-col justify-between"
-            >
-              {/* Card Header (Bold title with chevron > link) */}
-              <div
-                onClick={() => handleCardHeaderClick(card)}
-                className="flex items-center justify-between gap-2 group/header cursor-pointer mb-4 sm:mb-5 select-none"
-                title={`Explore all ${cardTitle}`}
-              >
-                <h3 className="text-[19px] sm:text-[20px] font-black text-slate-900 tracking-tight leading-snug group-hover/header:text-[#F85606] transition-colors line-clamp-2">
-                  {cardTitle}
-                </h3>
-                <ChevronRight className="w-5 h-5 text-slate-800 flex-shrink-0 group-hover/header:translate-x-1 group-hover/header:text-[#F85606] transition-all stroke-[2.5]" />
-              </div>
+        {/* Left Side: Icon + Titles & Badges */}
+        <div className="flex items-center gap-2.5 sm:gap-3 relative z-10 min-w-0">
+          <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 text-white shadow-md shadow-emerald-500/20 flex items-center justify-center flex-shrink-0 border border-emerald-400/30">
+            <LayoutGrid className="w-4 h-4 sm:w-5.5 sm:h-5.5 stroke-[2.4]" />
+          </div>
 
-              {/* 2x2 Quadrant Grid (Bigger boxes, edge-to-edge zoomed in images) */}
-              <div className="grid grid-cols-2 gap-3.5 sm:gap-4 flex-1">
-                {card.quadrants.map((quad) => {
-                  const quadLabel = language === 'ne' ? quad.nepaliLabel : quad.label;
-
-                  return (
-                    <div
-                      key={quad.id}
-                      onClick={(e) => handleQuadrantClick(card, quad, e)}
-                      className="group/item flex flex-col cursor-pointer"
-                      title={`Filter by ${quadLabel}`}
-                    >
-                      {/* Thumbnail Container: Extra spacious, zero padding, full bleed zoomed-in image */}
-                      <div
-                        className={`aspect-square w-full rounded-[16px] sm:rounded-[20px] overflow-hidden relative ${quad.bg} shadow-xs group-hover/item:shadow-md transition-all duration-300`}
-                      >
-                        <img
-                          src={quad.image}
-                          alt={quad.alt || quadLabel}
-                          loading="lazy"
-                          className="w-full h-full object-cover scale-100 group-hover/item:scale-108 transition-transform duration-500 ease-out"
-                          onError={(e) => {
-                            e.target.src = 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80';
-                          }}
-                        />
-                      </div>
-
-                      {/* Item Caption Underneath: Clean, crisp and properly proportioned without awkward truncation */}
-                      <span className="mt-1.5 text-[11.5px] sm:text-[12.5px] font-medium text-slate-800 leading-snug line-clamp-2 min-h-[30px] flex items-start group-hover/item:text-[#F85606] transition-colors">
-                        {quadLabel}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+          <div className="min-w-0">
+            {/* Top Row: Badges & Announcement */}
+            <div className="flex items-center gap-2 flex-wrap mb-0.5">
+              <span className="bg-emerald-600 text-white text-[8.5px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded-full uppercase tracking-wider shadow-2xs leading-none">
+                FEATURED HUBS
+              </span>
+              <span className="text-[10.5px] sm:text-[11px] font-black text-emerald-800 tracking-wide uppercase truncate hidden sm:inline">
+                🌱 {language === 'ne' ? 'प्रमुख क्याटागोरी विभागहरू' : 'CURATED LIFESTYLE DEPARTMENTS'}
+              </span>
             </div>
-          );
-        })}
+
+            {/* Bottom Row: Main Heading + Count */}
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-[15px] sm:text-[19px] font-black text-slate-950 tracking-tight leading-tight">
+                {language === 'ne' ? 'प्रमुख विभागहरू' : 'Popular Departments'}
+              </h2>
+              <span className="text-[11px] sm:text-xs font-black text-emerald-800/90 hidden sm:inline">
+                • 🌿 {language === 'ne' ? '१० क्युरेटेड सेट' : '10 Curated Sets'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side: Chevrons */}
+        <div className="flex items-center gap-1 sm:gap-1.5 relative z-10 flex-shrink-0">
+          <button
+            onClick={() => handleSideScroll('left')}
+            disabled={!canScrollLeft}
+            aria-label="Scroll left"
+            className={`w-7.5 h-7.5 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl border flex items-center justify-center transition-all shadow-2xs ${
+              canScrollLeft
+                ? 'bg-white text-emerald-800 border-emerald-300 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 cursor-pointer active:scale-95'
+                : 'bg-white/60 text-slate-300 border-slate-200 cursor-not-allowed opacity-50'
+            }`}
+          >
+            <ChevronLeft className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.5]" />
+          </button>
+          <button
+            onClick={() => handleSideScroll('right')}
+            disabled={!canScrollRight}
+            aria-label="Scroll right"
+            className={`w-7.5 h-7.5 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl border flex items-center justify-center transition-all shadow-2xs ${
+              canScrollRight
+                ? 'bg-white text-emerald-800 border-emerald-300 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 cursor-pointer active:scale-95'
+                : 'bg-white/60 text-slate-300 border-slate-200 cursor-not-allowed opacity-50'
+            }`}
+          >
+            <ChevronRight className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.5]" />
+          </button>
+        </div>
+      </div>
+
+      {/* Main Carousel Wrapper with Floating Side Navigation Buttons (Desktop only to never obscure photos on mobile) */}
+      <div className="p-3 sm:p-4 relative group/carousel">
+        {/* Left Floating Side Button (desktop only) */}
+        <button
+          onClick={() => handleSideScroll('left')}
+          disabled={!canScrollLeft}
+          aria-label="Previous categories"
+          className={`hidden sm:flex absolute left-2 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/95 backdrop-blur-xs text-slate-800 border border-emerald-300/80 shadow-[0_4px_16px_rgba(0,0,0,0.18)] items-center justify-center hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer ${
+            canScrollLeft ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-75 pointer-events-none'
+          }`}
+        >
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
+        </button>
+
+        {/* Right Floating Side Button (desktop only) */}
+        <button
+          onClick={() => handleSideScroll('right')}
+          disabled={!canScrollRight}
+          aria-label="Next categories"
+          className={`hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/95 backdrop-blur-xs text-slate-800 border border-emerald-300/80 shadow-[0_4px_16px_rgba(0,0,0,0.18)] items-center justify-center hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer ${
+            canScrollRight ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-75 pointer-events-none'
+          }`}
+        >
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
+        </button>
+
+        {/* Horizontally Scrollable Quad Department Cards Container */}
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-3 sm:gap-4 lg:gap-5 overflow-x-auto scroll-smooth no-scrollbar py-1 px-1 -mx-1 snap-x snap-mandatory"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {FEATURED_QUAD_CARDS.map((card) => {
+            const cardTitle = language === 'ne' ? card.nepaliTitle : card.title;
+
+            return (
+              <div
+                key={card.id}
+                className="w-[280px] sm:w-[305px] md:w-[calc(33.333%-12px)] lg:w-[calc(25%-15px)] flex-shrink-0 snap-start bg-white rounded-[18px] sm:rounded-[20px] border border-slate-200/90 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.12)] transition-all duration-300 p-2.5 sm:p-3 pb-2 sm:pb-2.5 flex flex-col"
+              >
+                {/* Card Header (Bold title with chevron > link) */}
+                <div
+                  onClick={() => handleCardHeaderClick(card)}
+                  className="flex items-center justify-between gap-1.5 group/header cursor-pointer mb-1.5 sm:mb-2 select-none"
+                  title={`Explore all ${cardTitle}`}
+                >
+                  <h3 className="text-[14.5px] sm:text-[15.5px] font-black text-slate-900 tracking-tight leading-tight group-hover/header:text-[#F85606] transition-colors line-clamp-2 min-h-[34px] flex items-center">
+                    {cardTitle}
+                  </h3>
+                  <ChevronRight className="w-4 h-4 text-slate-800 flex-shrink-0 group-hover/header:translate-x-1 group-hover/header:text-[#F85606] transition-all stroke-[2.5]" />
+                </div>
+
+                {/* 2x2 Quadrant Grid */}
+                <div className="grid grid-cols-2 gap-x-2 gap-y-1 sm:gap-x-2.5 sm:gap-y-1.5">
+                  {card.quadrants.map((quad) => {
+                    const quadLabel = language === 'ne' ? quad.nepaliLabel : quad.label;
+
+                    return (
+                      <div
+                        key={quad.id}
+                        onClick={(e) => handleQuadrantClick(card, quad, e)}
+                        className="group/item flex flex-col cursor-pointer"
+                        title={`Filter by ${quadLabel}`}
+                      >
+                        {/* Thumbnail Container */}
+                        <div
+                          className="aspect-square w-full rounded-[12px] sm:rounded-[14px] overflow-hidden relative bg-white border border-slate-100/90 shadow-2xs group-hover/item:shadow-md transition-all duration-300 flex items-center justify-center p-1 sm:p-1.5"
+                        >
+                          <img
+                            src={quad.image}
+                            alt={quad.alt || quadLabel}
+                            loading="lazy"
+                            className="w-full h-full object-contain scale-100 group-hover/item:scale-108 transition-transform duration-500 ease-out bg-white"
+                            onError={(e) => {
+                              e.target.src = 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80';
+                            }}
+                          />
+                        </div>
+
+                        {/* Item Caption Underneath */}
+                        <span
+                          className="mt-0.5 text-[10.5px] sm:text-[11px] font-medium text-slate-800 leading-tight line-clamp-1 group-hover/item:text-[#F85606] transition-colors"
+                          title={quadLabel}
+                        >
+                          {quadLabel}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

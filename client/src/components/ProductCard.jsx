@@ -144,25 +144,25 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
       </div>
 
       {/* Details Container */}
-      <div className="p-3 flex-1 flex flex-col justify-between">
+      <div className="p-2 sm:p-2.5 flex-1 flex flex-col justify-between">
         
         <div>
           {/* Title */}
           <h3 
-            className="text-xs font-medium text-slate-800 group-hover:text-[#F85606] transition line-clamp-2 leading-snug"
+            className="text-xs font-medium text-slate-800 group-hover:text-[#F85606] transition line-clamp-2 leading-tight min-h-[30px]"
             title={product.title}
           >
             {product.title}
           </h3>
 
-          {/* Pricing (Daraz & Multi-Currency Style: Nepali + Yen) */}
-          <div className="mt-2">
+          {/* Pricing (Bhanjo & Multi-Currency Style: Nepali + Yen) */}
+          <div className="mt-1">
             <div className="flex items-center justify-between gap-1 flex-wrap">
               <div className="flex items-baseline gap-1.5 flex-wrap">
-                <span className="text-sm sm:text-base font-extrabold text-[#F85606]">
+                <span className="text-sm font-extrabold text-[#F85606]">
                   {formatPrice(retailPrice)}
                 </span>
-                <span className="text-[11px] text-slate-400 line-through">
+                <span className="text-[10px] text-slate-400 line-through">
                   {formatPrice(originalPrice)}
                 </span>
               </div>
@@ -182,7 +182,7 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
             </div>
           </div>
 
-          <div className="text-[10px] text-emerald-700 font-semibold mt-1 flex items-center justify-between">
+          <div className="text-[10px] text-emerald-700 font-semibold mt-0.5 flex items-center justify-between leading-none">
             <span>Free Delivery</span>
             {product.alibabaBaseRate && (
               <span className="text-[9px] text-amber-700 font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60">
@@ -193,7 +193,7 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
         </div>
 
         {/* Rating & Supplier Location */}
-        <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+        <div className="mt-1.5 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
           <div className="flex items-center text-amber-500 font-bold gap-0.5">
             <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
             <span>{product.rating}</span>

@@ -165,7 +165,7 @@ export const SellerCentralDashboard = ({ onProductAdded, onBackToMarketplace, on
   return (
     <div className="my-8 max-w-7xl mx-auto">
       
-      {/* Top Banner: Amazon Seller Central / Daraz Seller Center Header */}
+      {/* Top Banner: Amazon / Bhanjo Seller Central Header */}
       <div className="relative overflow-hidden bg-gradient-to-br from-[#121316] via-[#17181c] to-[#0e0f12] text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-neutral-800/80 mb-8">
         
         {/* Warm Ambient Glow Effects (Replaces cold blue with warm brand tones) */}
@@ -311,7 +311,7 @@ export const SellerCentralDashboard = ({ onProductAdded, onBackToMarketplace, on
         </button>
       </div>
 
-      {/* Tab 1: Orders Fulfillment Tab (Amazon / Daraz Merchant Orders) */}
+      {/* Tab 1: Orders Fulfillment Tab (Amazon / Bhanjo Merchant Orders) */}
       {activeTab === 'overview' && (
         <div className="space-y-4">
           <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
@@ -582,7 +582,7 @@ export const SellerCentralDashboard = ({ onProductAdded, onBackToMarketplace, on
         </div>
       )}
 
-      {/* Add Product Modal (Daraz / Amazon Seller Listing Creation) */}
+      {/* Add Product Modal (Bhanjo / Amazon Seller Listing Creation) */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 p-6">

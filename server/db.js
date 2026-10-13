@@ -62,6 +62,8 @@ db.exec(`
     user_city TEXT DEFAULT 'Kathmandu',
     rating INTEGER NOT NULL,
     comment TEXT NOT NULL,
+    images TEXT DEFAULT '[]',
+    sentiment TEXT DEFAULT 'positive',
     is_verified BOOLEAN DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
@@ -178,6 +180,17 @@ try {
 } catch (e) {}
 try {
   db.exec(`CREATE INDEX IF NOT EXISTS idx_user_claimed_vouchers ON user_claimed_vouchers(user_id);`);
+} catch (e) {}
+
+// Safe migrations for reviews table
+try {
+  db.exec(`ALTER TABLE reviews ADD COLUMN images TEXT DEFAULT '[]';`);
+} catch (e) {}
+try {
+  db.exec(`ALTER TABLE reviews ADD COLUMN sentiment TEXT DEFAULT 'positive';`);
+} catch (e) {}
+try {
+  db.exec(`CREATE INDEX IF NOT EXISTS idx_reviews_product_id ON reviews(product_id);`);
 } catch (e) {}
 
 // Seed default flash sale settings if not exist

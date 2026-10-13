@@ -136,11 +136,11 @@ export const CatalogTopFilterBar = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/90 p-3 sm:p-3.5 mb-5 shadow-xs transition-all">
+    <div className="bg-white rounded-2xl border border-slate-200/90 p-2 sm:p-2.5 mb-3 shadow-xs transition-all">
       <div className="flex flex-wrap items-center justify-between gap-2.5">
         
         {/* Left Side: Filter Chips & Quick Selectors */}
-        <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar sm:flex-wrap flex-1 min-w-0 py-0.5">
           
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 pr-2 border-r border-slate-200 flex-shrink-0">
             <Filter className="w-3.5 h-3.5 text-[#F85606]" />
@@ -156,7 +156,7 @@ export const CatalogTopFilterBar = ({
           <button
             type="button"
             onClick={() => setFilterOnlyNepal(!filterOnlyNepal)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer border ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer border flex-shrink-0 ${
               filterOnlyNepal
                 ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-transparent shadow-xs'
                 : 'bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border-slate-200'
@@ -167,7 +167,7 @@ export const CatalogTopFilterBar = ({
           </button>
 
           {/* Price Range Dropdown Pill */}
-          <div className="relative" ref={priceRef}>
+          <div className="relative flex-shrink-0" ref={priceRef}>
             <button
               type="button"
               onClick={() => setIsPriceDropdownOpen(!isPriceDropdownOpen)}
@@ -277,7 +277,7 @@ export const CatalogTopFilterBar = ({
           </div>
 
           {/* Rating Dropdown Pill */}
-          <div className="relative" ref={ratingRef}>
+          <div className="relative flex-shrink-0" ref={ratingRef}>
             <button
               type="button"
               onClick={() => setIsRatingDropdownOpen(!isRatingDropdownOpen)}

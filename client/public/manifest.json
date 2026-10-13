@@ -1,0 +1,50 @@
+{
+  "name": "Bhanjo - Nepal's Premier Online Shopping",
+  "short_name": "Bhanjo",
+  "description": "Shop authentic Nepali products, global direct imports, fashion, and electronics with nationwide delivery and Cash on Delivery across Nepal.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#F85606",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Flash Deals",
+      "short_name": "Deals",
+      "description": "Check hourly flash sales and crazy price drops",
+      "url": "/#flash-deals",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Global Direct",
+      "short_name": "Global",
+      "description": "Shop factory direct imports to Nepal",
+      "url": "/#global-direct",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

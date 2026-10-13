@@ -164,7 +164,7 @@ export const CatalogFilterSidebar = ({
         </div>
       </div>
 
-      {/* Service & Promotion Checkboxes (Daraz Style) */}
+      {/* Service & Promotion Checkboxes (Bhanjo Style) */}
       <div>
         <h4 className="font-bold text-slate-800 mb-2">{t('servicePromotion')}</h4>
         <div className="space-y-1.5 text-slate-600">

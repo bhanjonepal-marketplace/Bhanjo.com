@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
+import { VoucherSubsidiesCards } from './components/VoucherSubsidiesCards';
 import { MegaMenu } from './components/MegaMenu';
-import { DarazChannels } from './components/DarazChannels';
-import { DarazFlashSale } from './components/DarazFlashSale';
-import { DarazMall } from './components/DarazMall';
+import { BhanjoPillars } from './components/BhanjoPillars';
+import { TopPicksTrendDiscovery } from './components/TopPicksTrendDiscovery';
+import { BhanjoFlashSale } from './components/BhanjoFlashSale';
+import { BhanjoDhamaka } from './components/BhanjoDhamaka';
 import { NepaliPavilion } from './components/NepaliPavilion';
 import { CatalogFilterSidebar } from './components/CatalogFilterSidebar';
 import { CatalogTopFilterBar } from './components/CatalogTopFilterBar';
@@ -23,12 +25,16 @@ import { ProductEditModal } from './components/ProductEditModal';
 import { CategoriesSection } from './components/CategoriesSection';
 import { AmazonQuadCatalog } from './components/AmazonQuadCatalog';
 import { FlashSalePage } from './components/FlashSalePage';
+import { TopPicksShowcasePage } from './components/TopPicksShowcasePage';
+import { PWAInstallPrompt } from './components/PWAInstallPrompt';
+import { MobileAppBottomNav } from './components/MobileAppBottomNav';
+import { Capacitor } from '@capacitor/core';
 
 import { CATEGORIES } from './data/categories';
 import { PRODUCTS } from './data/products';
 import { SUPPLIERS } from './data/suppliers';
 
-import { Search, Filter, ShieldCheck, X, Camera, Sparkles, ChevronDown } from 'lucide-react';
+import { Search, Filter, ShieldCheck, X, Camera, Sparkles, ChevronDown, ArrowLeft, ChevronRight, Home } from 'lucide-react';
 import { useCurrency } from './context/CurrencyContext';
 import { useAuth } from './context/AuthContext';
 import { matchesProductSearch } from './utils/searchMatcher';
@@ -129,8 +135,93 @@ export function App() {
         catalogElem.scrollIntoView({ behavior: 'smooth' });
       }
     }, 60);
-    const globalCount = allProducts.filter(p => p.isAlibabaImport || p.is1688Import || p.id?.startsWith('ali-') || p.id?.startsWith('1688-')).length;
-    showToast(`Showing all ${globalCount} Global Direct products (including Hoodies & Winterwear)!`);
+  };
+
+  const handleFilterMallChannel = () => {
+    setSelectedCategoryId('all');
+    setSearchQuery('');
+    setFilterMallOnly(true);
+    setFilterAlibabaOnly(false);
+    setFilterOnlyNepal(false);
+    setFilterFreeDelivery(false);
+    setMinRating(0);
+    setPriceRange({ min: 0, max: Infinity });
+    setVisualSearch(null);
+    setActiveView('marketplace');
+    setTimeout(() => {
+      const elem = document.getElementById('catalog-section');
+      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+    }, 60);
+  };
+
+  const handleFilterFreeDeliveryChannel = () => {
+    setSelectedCategoryId('all');
+    setSearchQuery('');
+    setFilterFreeDelivery(true);
+    setFilterMallOnly(false);
+    setFilterAlibabaOnly(false);
+    setFilterOnlyNepal(false);
+    setMinRating(0);
+    setPriceRange({ min: 0, max: Infinity });
+    setVisualSearch(null);
+    setActiveView('marketplace');
+    setTimeout(() => {
+      const elem = document.getElementById('catalog-section');
+      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+    }, 60);
+  };
+
+  const handleFilterNepalChannel = () => {
+    setSelectedCategoryId('all');
+    setSearchQuery('');
+    setFilterOnlyNepal(true);
+    setFilterMallOnly(false);
+    setFilterAlibabaOnly(false);
+    setFilterFreeDelivery(false);
+    setMinRating(0);
+    setPriceRange({ min: 0, max: Infinity });
+    setVisualSearch(null);
+    setActiveView('marketplace');
+    setTimeout(() => {
+      const elem = document.getElementById('catalog-section');
+      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+    }, 60);
+  };
+
+  const handleFilterBudgetChannel = () => {
+    setSelectedCategoryId('all');
+    setSearchQuery('');
+    setFilterMallOnly(false);
+    setFilterAlibabaOnly(false);
+    setFilterOnlyNepal(false);
+    setFilterFreeDelivery(false);
+    setMinRating(0);
+    setPriceRange({ min: 0, max: 4.5 }); // Under ~Rs. 600
+    setSortBy('price-low');
+    setVisualSearch(null);
+    setActiveView('marketplace');
+    setTimeout(() => {
+      const elem = document.getElementById('catalog-section');
+      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+    }, 60);
+  };
+
+  const handleFilterBestSellersChannel = () => {
+    setSelectedCategoryId('all');
+    setSearchQuery('');
+    setFilterMallOnly(false);
+    setFilterAlibabaOnly(false);
+    setFilterOnlyNepal(false);
+    setFilterFreeDelivery(false);
+    setMinRating(4.5);
+    setSortBy('popular');
+    setPriceRange({ min: 0, max: Infinity });
+    setVisualSearch(null);
+    setActiveView('marketplace');
+    setTimeout(() => {
+      const elem = document.getElementById('catalog-section');
+      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+    }, 60);
   };
 
   const handleToggleViewAllEveryProduct = () => {
@@ -158,7 +249,6 @@ export function App() {
           catalogElem.scrollIntoView({ behavior: 'smooth' });
         }
       }, 60);
-      showToast(`Showing all ${allProducts.length} products saved in Bhanjo catalog!`);
     }
   };
 
@@ -172,16 +262,60 @@ export function App() {
       setSearchQuery('');
       setFilterAlibabaOnly(false);
       setFilterOnlyNepal(false);
+      setFilterMallOnly(false);
+      setFilterFreeDelivery(false);
     }
     setForYouVisibleCount(18);
+    setCurrentPage(1);
     setActiveView('marketplace');
+    if (typeof window !== 'undefined' && window.history?.pushState) {
+      window.history.pushState({ catId, subCategoryKeyword, view: 'marketplace' }, '');
+    }
     setTimeout(() => {
-      const catalogElem = document.getElementById('catalog-section');
-      if (catalogElem) {
-        catalogElem.scrollIntoView({ behavior: 'smooth' });
+      if (catId !== 'all' || subCategoryKeyword) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        const catalogElem = document.getElementById('catalog-section');
+        if (catalogElem) {
+          catalogElem.scrollIntoView({ behavior: 'smooth' });
+        }
       }
     }, 60);
   };
+
+  const handleBackToHome = () => {
+    setSelectedCategoryId('all');
+    setSearchQuery('');
+    setFilterAlibabaOnly(false);
+    setFilterOnlyNepal(false);
+    setFilterMallOnly(false);
+    setFilterFreeDelivery(false);
+    setMinRating(0);
+    setPriceRange({ min: 0, max: Infinity });
+    setVisualSearch(null);
+    setForYouVisibleCount(18);
+    setCurrentPage(1);
+    setSelectedProductId(null);
+    setActiveView('marketplace');
+    if (typeof window !== 'undefined' && window.history?.pushState) {
+      window.history.pushState({ catId: 'all', subCategoryKeyword: '', view: 'marketplace' }, '');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    const handlePopState = (e) => {
+      if (e.state) {
+        setSelectedCategoryId(e.state.catId || 'all');
+        setSearchQuery(e.state.subCategoryKeyword || '');
+        if (e.state.view) setActiveView(e.state.view);
+      } else {
+        handleBackToHome();
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const handleProductAdded = (newProd) => {
     setAllProducts(prev => [newProd, ...prev]);
@@ -434,8 +568,53 @@ export function App() {
 
   const activeCategoryObj = CATEGORIES.find(c => c.id === selectedCategoryId);
 
+  const isHomeActive = activeView === 'marketplace' && 
+    selectedCategoryId === 'all' && 
+    !searchQuery && 
+    !filterAlibabaOnly && 
+    !filterMallOnly && 
+    !filterOnlyNepal && 
+    !filterFreeDelivery && 
+    !visualSearch;
+
+  // Robust App Mode Detector: Handles Capacitor APK, Android bridge, and standalone mode
+  const checkIsAppMode = () => {
+    if (typeof window === 'undefined') return false;
+    if (new URLSearchParams(window.location.search).get('app_mode') === 'true') return true;
+    if (Capacitor.isNativePlatform() || Capacitor.getPlatform() === 'android' || Capacitor.getPlatform() === 'ios') return true;
+    if (window.androidBridge || window.Capacitor?.isNativePlatform?.() || window.Capacitor?.getPlatform?.() === 'android') return true;
+    if (window.location.hostname === 'localhost' && (!window.location.port || window.location.port === '80' || window.location.port === '443')) return true;
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) return true;
+    return false;
+  };
+
+  const [isAppMode, setIsAppMode] = useState(() => checkIsAppMode());
+
+  useEffect(() => {
+    const update = () => {
+      if (checkIsAppMode()) {
+        setIsAppMode(true);
+      }
+    };
+    update();
+    const t1 = setTimeout(update, 50);
+    const t2 = setTimeout(update, 300);
+    const t3 = setTimeout(update, 1000);
+    window.addEventListener('DOMContentLoaded', update);
+    window.addEventListener('load', update);
+    document.addEventListener('deviceready', update);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      window.removeEventListener('DOMContentLoaded', update);
+      window.removeEventListener('load', update);
+      document.removeEventListener('deviceready', update);
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F5F5] font-sans antialiased text-[#212121]">
+    <div className={`min-h-screen flex flex-col bg-[#F5F5F5] font-sans antialiased text-[#212121] ${isAppMode ? 'pb-20' : 'pb-16 md:pb-0'}`}>
 
       {/* 1. Global Navigation Bar */}
       <Navbar
@@ -464,6 +643,8 @@ export function App() {
         setActiveView={setActiveView}
         products={allProducts}
         onVisualSearch={handleVisualSearch}
+        onResetToHome={handleBackToHome}
+        isHomeActive={isHomeActive}
       />
 
       {/* 2. Mega Menu Flyout */}
@@ -487,7 +668,7 @@ export function App() {
       )}
 
       {/* 3. Main Content Container (Expansive Amazon-width layout) */}
-      <main className={activeView === 'flash-sale' ? 'flex-1 w-full' : 'flex-1 max-w-[1560px] mx-auto px-3 sm:px-5 w-full pt-3 pb-12 sm:pb-16'}>
+      <main className={['flash-sale', 'top-picks'].includes(activeView) ? 'flex-1 w-full' : 'flex-1 max-w-[1560px] mx-auto px-3 sm:px-5 w-full pt-1 sm:pt-2 pb-12 sm:pb-16'}>
         
         {/* Personal Account, Profile, Wishlist, Cart & Orders Dashboard (Only when logged in) */}
         {user && ['my-orders', 'dashboard', 'profile', 'wishlist', 'addresses', 'cart'].includes(activeView) ? (
@@ -513,37 +694,55 @@ export function App() {
             onRequireAuth={handleRequireAuth}
             products={allProducts}
           />
+        ) : activeView === 'top-picks' ? (
+          <TopPicksShowcasePage
+            onBack={() => setActiveView('marketplace')}
+            onSelectProduct={handleSelectProduct}
+            products={allProducts}
+          />
         ) : (
           <div>
             
-            {/* 1. Daraz Hero Carousel + Categories */}
+            {/* 1. Taobao-Style Hero Section: Categories + Scrollable Quad Cards + Side Promo */}
             {selectedCategoryId === 'all' && !searchQuery && (
               <HeroSection
                 onSelectCategory={handleSelectCategory}
                 onViewAll={handleViewAllEveryProduct}
+                onSelectProduct={handleSelectProduct}
+                products={allProducts}
               />
             )}
 
-            {/* 2. Daraz 6 Channel Shortcut Tiles */}
+            {/* 1b. The 5 Shortcut Pillars (Dedicated Standalone Box - Laptop / Desktop) */}
             {selectedCategoryId === 'all' && !searchQuery && (
-              <DarazChannels
+              <div className="hidden lg:block">
+                <BhanjoPillars
+                  onSelectCategory={handleSelectCategory}
+                  onOpenVouchers={() => {
+                    showToast("Use voucher code BHANJO10 for 10% off at checkout!");
+                    setIsCartOpen(true);
+                  }}
+                  onScrollToFlashSale={() => setActiveView('flash-sale')}
+                  onFilterFreeDelivery={handleFilterFreeDeliveryChannel}
+                  onFilterBudget={handleFilterBudgetChannel}
+                  onFilterBestSellers={handleFilterBestSellersChannel}
+                />
+              </div>
+            )}
+
+            {/* 2. Top Picks (Standalone Box with Side-Scrollable Items) & Curated Trend Discovery */}
+            {selectedCategoryId === 'all' && !searchQuery && (
+              <TopPicksTrendDiscovery
+                products={allProducts}
+                onSelectProduct={handleSelectProduct}
                 onSelectCategory={handleSelectCategory}
-                onFilterGlobal={() => {
-                  setFilterAlibabaOnly(true);
-                  const elem = document.getElementById('catalog-section');
-                  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-                }}
-                onOpenVouchers={() => {
-                  showToast("Use voucher code BHANJO10 for 10% off at checkout!");
-                  setIsCartOpen(true);
-                }}
-                onScrollToFlashSale={() => setActiveView('flash-sale')}
+                onOpenTopPicksShowcase={() => setActiveView('top-picks')}
               />
             )}
 
-            {/* 4. Bhanjo Mall Flash Sale Display */}
+            {/* 4. Bhanjo Utsav Dhamaka Display */}
             {selectedCategoryId === 'all' && !searchQuery && allProducts.length > 0 && (
-              <DarazMall
+              <BhanjoDhamaka
                 products={allProducts}
                 onSelectProduct={handleSelectProduct}
                 onSelectCategory={(catId) => setSelectedCategoryId(catId)}
@@ -636,12 +835,140 @@ export function App() {
               </div>
             )}
 
+            {/* Top Back Navigation Banner & Breadcrumbs (when viewing category/subcategory/search) */}
+            {!isHomeActive && (
+              <div className="mb-4 bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200/90 shadow-2xs animate-in fade-in duration-150">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+                    {/* Primary Back to Home Button */}
+                    <button
+                      onClick={handleBackToHome}
+                      className="inline-flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-orange-500 to-[#F85606] hover:from-[#F85606] hover:to-orange-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition hover:shadow-md cursor-pointer group select-none active:scale-95"
+                      title="Return to Bhanjo Home Page"
+                    >
+                      <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                      <span>Back to Home</span>
+                    </button>
+
+                    {/* Breadcrumbs Navigation Trail */}
+                    <nav aria-label="Breadcrumbs" className="flex items-center gap-1.5 text-xs text-slate-500 flex-wrap">
+                      <button 
+                        onClick={handleBackToHome} 
+                        className="hover:text-[#F85606] flex items-center gap-1 font-semibold text-slate-700 transition cursor-pointer"
+                      >
+                        <Home className="w-3.5 h-3.5 text-slate-500" />
+                        <span>Home</span>
+                      </button>
+                      <ChevronRight className="w-3 h-3 text-slate-400 flex-shrink-0" />
+                      {selectedCategoryId !== 'all' ? (
+                        <>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('');
+                              setFilterAlibabaOnly(false);
+                            }}
+                            className={`font-semibold transition cursor-pointer ${
+                              !searchQuery ? 'text-[#F85606] font-bold' : 'text-slate-700 hover:text-[#F85606]'
+                            }`}
+                          >
+                            {language === 'ne' ? (activeCategoryObj?.nepaliName || activeCategoryObj?.name) : (activeCategoryObj?.name || selectedCategoryId)}
+                          </button>
+                          {searchQuery && (
+                            <>
+                              <ChevronRight className="w-3 h-3 text-slate-400 flex-shrink-0" />
+                              <span className="font-bold text-[#F85606] bg-orange-50 px-2.5 py-0.5 rounded-lg border border-orange-200/70">
+                                {searchQuery}
+                              </span>
+                            </>
+                          )}
+                        </>
+                      ) : searchQuery ? (
+                        <span className="font-bold text-[#F85606] bg-orange-50 px-2.5 py-0.5 rounded-lg border border-orange-200/70">
+                          Search: "{searchQuery}"
+                        </span>
+                      ) : filterAlibabaOnly ? (
+                        <span className="font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200">
+                          ✈️ Global Direct Sourcing
+                        </span>
+                      ) : filterMallOnly ? (
+                        <span className="font-bold text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-lg border border-rose-200">
+                          🏬 Bhanjo Mall
+                        </span>
+                      ) : filterOnlyNepal ? (
+                        <span className="font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200">
+                          🇳🇵 Himalayan Pavilion
+                        </span>
+                      ) : (
+                        <span className="font-bold text-slate-800">Filtered Catalog</span>
+                      )}
+                    </nav>
+                  </div>
+
+                  {/* Right Status Badge */}
+                  <div className="flex items-center gap-2.5 text-xs text-slate-500">
+                    <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg font-bold">
+                      {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'} Found
+                    </span>
+                    <button
+                      onClick={handleBackToHome}
+                      className="text-[#F85606] hover:underline font-semibold cursor-pointer text-xs"
+                    >
+                      Clear All &amp; Home
+                    </button>
+                  </div>
+                </div>
+
+                {/* Subcategories Chip Selector for active category */}
+                {activeCategoryObj && activeCategoryObj.subcategories && activeCategoryObj.subcategories.length > 0 && (
+                  <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+                    <span className="text-slate-400 font-semibold flex-shrink-0 mr-1 text-[11px]">Subcategories:</span>
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className={`px-2.5 py-1 rounded-lg font-semibold flex-shrink-0 transition cursor-pointer ${
+                        !searchQuery 
+                          ? 'bg-[#F85606] text-white shadow-2xs font-bold' 
+                          : 'bg-slate-100 hover:bg-orange-50 text-slate-700 hover:text-[#F85606]'
+                      }`}
+                    >
+                      All {activeCategoryObj.name}
+                    </button>
+                    {activeCategoryObj.subcategories.map((sub, idx) => {
+                      const isSubActive = searchQuery.toLowerCase() === sub.toLowerCase();
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => setSearchQuery(sub)}
+                          className={`px-2.5 py-1 rounded-lg font-semibold flex-shrink-0 transition cursor-pointer ${
+                            isSubActive 
+                              ? 'bg-[#F85606] text-white shadow-2xs font-bold' 
+                              : 'bg-slate-100 hover:bg-orange-50 text-slate-700 hover:text-[#F85606]'
+                          }`}
+                        >
+                          {sub}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* 6. Catalog Section with Left Filter Sidebar & Right Product Grid */}
-            <div id="catalog-section" className="mt-12 sm:mt-16 mb-12 sm:mb-16 scroll-mt-28">
+            <div id="catalog-section" className="mt-4 sm:mt-5 mb-8 sm:mb-10 scroll-mt-28">
               
-              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200 mb-4">
+              <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-slate-200 mb-2.5">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
+                    {!isHomeActive && (
+                      <button
+                        onClick={handleBackToHome}
+                        className="p-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-[#F85606] border border-orange-200 transition cursor-pointer flex items-center justify-center group active:scale-95"
+                        title="Go back to Home"
+                        aria-label="Back to Home"
+                      >
+                        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+                      </button>
+                    )}
                     <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
                       {selectedCategoryId === 'all' 
                         ? (searchQuery ? `"${searchQuery}"` : (filterAlibabaOnly ? '✈️ All Bhanjo Global Direct Products' : t('justForYou'))) 
@@ -668,9 +995,6 @@ export function App() {
                       </button>
                     )}
                   </div>
-                  <span className="text-xs text-slate-500">
-                    {filteredProducts.length.toLocaleString()} {t('productsAvailable')} {selectedCategoryId === 'all' ? (filterAlibabaOnly ? 'in Global Direct' : t('acrossAll38')) : (language === 'ne' ? activeCategoryObj?.nepaliName : activeCategoryObj?.name)}
-                  </span>
                 </div>
 
                 <div className="flex items-center gap-2 text-xs flex-wrap">
@@ -771,7 +1095,7 @@ export function App() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-3.5">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3">
                       {displayedProducts.map((product) => (
                         <ProductCard
                           key={product.id}
@@ -825,6 +1149,31 @@ export function App() {
 
             </div>
 
+            {/* ================= DOWN BELOW / BOTTOM OF HOMEPAGE (Phone / Mobile Screens) ================= */}
+            {selectedCategoryId === 'all' && !searchQuery && (
+              <div className="lg:hidden mt-8 mb-4 pt-6 border-t border-slate-200/80 space-y-4">
+                {/* 1. Voucher Collection, National Subsidies & Feature Cards */}
+                <VoucherSubsidiesCards
+                  onSelectCategory={handleSelectCategory}
+                  onSelectProduct={handleSelectProduct}
+                  products={allProducts}
+                />
+
+                {/* 2. The 5 Shortcut Channels (Flash Sale, Free Delivery, Daily Vouchers, Low Price, Best Sellers) */}
+                <BhanjoPillars
+                  onSelectCategory={handleSelectCategory}
+                  onOpenVouchers={() => {
+                    showToast("Use voucher code BHANJO10 for 10% off at checkout!");
+                    setIsCartOpen(true);
+                  }}
+                  onScrollToFlashSale={() => setActiveView('flash-sale')}
+                  onFilterFreeDelivery={handleFilterFreeDeliveryChannel}
+                  onFilterBudget={handleFilterBudgetChannel}
+                  onFilterBestSellers={handleFilterBestSellersChannel}
+                />
+              </div>
+            )}
+
           </div>
         )}
 
@@ -858,6 +1207,11 @@ export function App() {
           onRequireAuth={handleRequireAuth}
           onDeleteProduct={isAdmin ? handleDeleteProduct : undefined}
           onEditProduct={isAdmin ? (p) => setEditingProduct(p) : undefined}
+          onBackToHome={handleBackToHome}
+          onSelectCategory={(catId) => {
+            setSelectedProductId(null);
+            handleSelectCategory(catId);
+          }}
         />
       )}
 
@@ -933,13 +1287,29 @@ export function App() {
         }}
       />
 
-      {/* 5. Minimal Daraz Footer */}
-      <Footer
-        onSelectCategory={(catId) => {
-          setSelectedCategoryId(catId);
-          setActiveView('marketplace');
-        }}
-      />
+      {/* PWA Mobile App Install Prompt disabled for now until launch */}
+
+      {/* 5. Minimal Bhanjo Footer (Only in standard web browser) */}
+      {!isAppMode && (
+        <Footer
+          onSelectCategory={(catId) => {
+            setSelectedCategoryId(catId);
+            setActiveView('marketplace');
+          }}
+        />
+      )}
+
+      {/* 6. Mobile Bottom Navigation Bar (Active in native App mode AND on mobile smartphone screens) */}
+      <div className={isAppMode ? 'block' : 'block md:hidden'}>
+        <MobileAppBottomNav
+          activeView={activeView}
+          setActiveView={setActiveView}
+          onOpenCart={() => setIsCartOpen(true)}
+          onOpenAuthModal={(msg, mode = 'login') => handleRequireAuth(() => {}, msg, mode)}
+          onToggleCategories={() => setIsMegaMenuOpen(!isMegaMenuOpen)}
+          onResetToHome={handleBackToHome}
+        />
+      </div>
 
     </div>
   );

@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
-  Search, ShoppingCart, User, Menu, X, ChevronDown,
+  Search, ShoppingCart, User, Menu, X, ChevronDown, Check,
   Store, HelpCircle, PhoneCall, Globe, Layers,
   MapPin, Sparkles, Zap, Gift, Flame, Heart, Truck,
-  LogOut, Package, Clock, ArrowRight, Tag, Star, ShieldCheck, Eye, Camera, Image as ImageIcon
+  LogOut, Package, Clock, ArrowRight, ArrowLeft, Tag, Star, ShieldCheck, Eye, Camera, Image as ImageIcon, Smartphone
 } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 import { useCart } from '../context/CartContext';
@@ -28,7 +28,9 @@ export const Navbar = ({
   activeView,
   setActiveView,
   products = [],
-  onVisualSearch
+  onVisualSearch,
+  onResetToHome,
+  isHomeActive = true
 }) => {
   const { currency, setCurrency, currencies, language, setLanguage, formatPrice, t } = useCurrency();
   const { cartCount } = useCart();
@@ -38,6 +40,8 @@ export const Navbar = ({
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isScrolledUserMenuOpen, setIsScrolledUserMenuOpen] = useState(false);
+  const [searchScope, setSearchScope] = useState('All');
+  const [isScopeDropdownOpen, setIsScopeDropdownOpen] = useState(false);
   const [isImageSearchOpen, setIsImageSearchOpen] = useState(false);
   const [isImagePopoverOpen, setIsImagePopoverOpen] = useState(false);
   const [uploadedImage, setUploadedImage] = useState(null);
@@ -55,6 +59,9 @@ export const Navbar = ({
 
   // High-performance RAF scroll listener with hysteresis to eliminate all lag and jitter
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // Restore desktop upper part (logo, cart, wishlist, profile/login, currency/language, track order)
+  const SHOW_UPPER_PART = true;
 
   useEffect(() => {
     let ticking = false;
@@ -80,6 +87,7 @@ export const Navbar = ({
   }, []);
 
   const searchContainerRef = useRef(null);
+  const scopeRef = useRef(null);
   const userMenuRef = useRef(null);
   const scrolledUserMenuRef = useRef(null);
   const inputRef = useRef(null);
@@ -238,6 +246,9 @@ export const Navbar = ({
       if (searchContainerRef.current && !searchContainerRef.current.contains(e.target)) {
         setIsSearchFocused(false);
       }
+      if (scopeRef.current && !scopeRef.current.contains(e.target)) {
+        setIsScopeDropdownOpen(false);
+      }
       if (imagePopoverRef.current && !imagePopoverRef.current.contains(e.target)) {
         setIsImagePopoverOpen(false);
       }
@@ -334,9 +345,11 @@ export const Navbar = ({
   const renderUserDropdownMenu = (isOpen, setIsOpen) => {
     if (!isOpen || !user) return null;
     return (
-      <div className="absolute right-0 top-full mt-1.5 w-56 bg-white rounded-xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in text-xs space-y-1">
-        <div className="p-2.5 border-b border-slate-100 flex items-center gap-2.5 bg-orange-50/40 rounded-lg">
-          <div className="w-9 h-9 rounded-full overflow-hidden bg-[#F85606] text-white text-xs flex items-center justify-center font-bold flex-shrink-0 shadow-xs">
+      <div className="absolute right-0 top-full mt-2.5 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-3 z-50 animate-in fade-in zoom-in-95 duration-150 text-xs">
+        
+        {/* User Identity Header Card */}
+        <div className="p-3 mb-2.5 bg-gradient-to-br from-orange-50/90 via-white to-amber-50/40 rounded-xl border border-orange-100/80 flex items-center gap-3 shadow-2xs">
+          <div className="w-11 h-11 rounded-full overflow-hidden bg-[#F85606] text-white text-sm flex items-center justify-center font-black flex-shrink-0 shadow-xs border-2 border-white ring-2 ring-orange-200">
             {user.avatar ? (
               <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
             ) : (
@@ -344,107 +357,137 @@ export const Navbar = ({
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="font-bold text-slate-900 truncate">{user.name}</div>
-            <div className="text-[10px] text-slate-500 truncate">{user.email || user.phone}</div>
+            <div className="font-bold text-sm text-slate-900 truncate leading-snug">{user.name}</div>
+            <div className="text-[11px] text-slate-500 truncate mt-0.5">{user.email || user.phone}</div>
           </div>
         </div>
 
-        {/* 1. My Profile & Settings (Highlighted) */}
-        <button
-          onClick={() => {
-            setActiveView('profile');
-            setIsOpen(false);
-          }}
-          className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] text-slate-800 transition flex items-center justify-between font-semibold cursor-pointer"
-        >
-          <div className="flex items-center gap-2">
-            <User className="w-3.5 h-3.5 text-[#F85606]" />
-            <span>My Profile & Settings</span>
-          </div>
-          <span className="text-[9px] bg-orange-100 text-[#F85606] font-bold px-1.5 py-0.5 rounded">Edit</span>
-        </button>
+        {/* Menu Items List with Roomy Spacing */}
+        <div className="space-y-1">
 
-        {/* 2. My Orders */}
-        <button
-          onClick={() => {
-            setActiveView('my-orders');
-            setIsOpen(false);
-          }}
-          className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] text-slate-700 transition flex items-center gap-2 font-medium cursor-pointer"
-        >
-          <Package className="w-3.5 h-3.5 text-[#F85606]" />
-          <span>My Orders ({userOrders.length})</span>
-        </button>
+          {/* 1. My Profile & Settings */}
+          <button
+            onClick={() => {
+              setActiveView('profile');
+              setIsOpen(false);
+            }}
+            className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-orange-50/70 text-slate-800 transition flex items-center justify-between font-semibold cursor-pointer group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-orange-100/70 text-[#F85606] flex items-center justify-center flex-shrink-0 transition group-hover:bg-[#F85606] group-hover:text-white">
+                <User className="w-4 h-4" />
+              </div>
+              <span className="group-hover:text-[#F85606] transition">My Profile & Settings</span>
+            </div>
+            <span className="text-[10px] bg-orange-100 text-[#F85606] font-bold px-2 py-0.5 rounded-md">Edit</span>
+          </button>
 
-        {/* 3. My Cart */}
-        <button
-          onClick={() => {
-            setActiveView('cart');
-            setIsOpen(false);
-          }}
-          className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] text-slate-700 transition flex items-center justify-between font-medium cursor-pointer"
-        >
-          <div className="flex items-center gap-2">
-            <ShoppingCart className="w-3.5 h-3.5 text-[#F85606]" />
-            <span>My Cart</span>
-          </div>
-          {cartCount > 0 && (
-            <span className="text-[10px] bg-[#F85606] text-white font-bold px-1.5 py-0.2 rounded-full">
-              {cartCount}
+          {/* 2. My Orders */}
+          <button
+            onClick={() => {
+              setActiveView('my-orders');
+              setIsOpen(false);
+            }}
+            className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 text-slate-700 transition flex items-center justify-between font-medium cursor-pointer group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0 transition group-hover:bg-[#F85606] group-hover:text-white">
+                <Package className="w-4 h-4" />
+              </div>
+              <span className="group-hover:text-slate-900 font-semibold transition">My Orders</span>
+            </div>
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+              {userOrders.length}
             </span>
-          )}
-        </button>
+          </button>
 
-        {/* 4. My Wishlist */}
-        <button
-          onClick={() => {
-            setActiveView('wishlist');
-            setIsOpen(false);
-          }}
-          className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] text-slate-700 transition flex items-center gap-2 font-medium cursor-pointer"
-        >
-          <Heart className="w-3.5 h-3.5 text-red-500" />
-          <span>My Wishlist ({wishlist.length})</span>
-        </button>
+          {/* 3. My Cart */}
+          <button
+            onClick={() => {
+              setActiveView('cart');
+              setIsOpen(false);
+            }}
+            className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 text-slate-700 transition flex items-center justify-between font-medium cursor-pointer group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0 transition group-hover:bg-[#F85606] group-hover:text-white">
+                <ShoppingCart className="w-4 h-4" />
+              </div>
+              <span className="group-hover:text-slate-900 font-semibold transition">My Cart</span>
+            </div>
+            {cartCount > 0 && (
+              <span className="text-[10px] bg-[#F85606] text-white font-bold px-2 py-0.5 rounded-full shadow-2xs">
+                {cartCount}
+              </span>
+            )}
+          </button>
 
-        {/* 5. Saved Delivery Addresses */}
-        <button
-          onClick={() => {
-            setActiveView('addresses');
-            setIsOpen(false);
-          }}
-          className="w-full text-left p-2 rounded-lg hover:bg-orange-50 hover:text-[#F85606] text-slate-700 transition flex items-center gap-2 font-medium cursor-pointer"
-        >
-          <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Delivery Addresses</span>
-        </button>
+          {/* 4. My Wishlist */}
+          <button
+            onClick={() => {
+              setActiveView('wishlist');
+              setIsOpen(false);
+            }}
+            className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 text-slate-700 transition flex items-center justify-between font-medium cursor-pointer group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center flex-shrink-0 transition group-hover:bg-red-500 group-hover:text-white">
+                <Heart className="w-4 h-4" />
+              </div>
+              <span className="group-hover:text-slate-900 font-semibold transition">My Wishlist</span>
+            </div>
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-600">
+              {wishlist.length}
+            </span>
+          </button>
 
-        {/* 6. Track Parcels */}
-        <button
-          onClick={() => {
-            onOpenTrackOrder('');
-            setIsOpen(false);
-          }}
-          className="w-full text-left p-2 rounded-lg hover:bg-sky-50 hover:text-sky-600 text-slate-700 transition flex items-center gap-2 font-medium cursor-pointer"
-        >
-          <Truck className="w-3.5 h-3.5 text-sky-500" />
-          <span>Track Parcels</span>
-        </button>
+          {/* 5. Saved Delivery Addresses */}
+          <button
+            onClick={() => {
+              setActiveView('addresses');
+              setIsOpen(false);
+            }}
+            className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-50 text-slate-700 transition flex items-center gap-3 font-semibold cursor-pointer group"
+          >
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 transition group-hover:bg-emerald-600 group-hover:text-white">
+              <MapPin className="w-4 h-4" />
+            </div>
+            <span className="group-hover:text-slate-900 transition">Delivery Addresses</span>
+          </button>
 
-        {/* Sign Out */}
-        <div className="pt-1 border-t border-slate-100">
+          {/* 6. Track Parcels */}
+          <button
+            onClick={() => {
+              onOpenTrackOrder('');
+              setIsOpen(false);
+            }}
+            className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-sky-50 text-slate-700 transition flex items-center gap-3 font-semibold cursor-pointer group"
+          >
+            <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center flex-shrink-0 transition group-hover:bg-sky-600 group-hover:text-white">
+              <Truck className="w-4 h-4" />
+            </div>
+            <span className="group-hover:text-sky-600 transition">Track Parcels</span>
+          </button>
+
+        </div>
+
+        {/* Sign Out Section with Breathing Room */}
+        <div className="mt-2 pt-2 border-t border-slate-100">
           <button
             onClick={() => {
               logout();
               setActiveView('marketplace');
               setIsOpen(false);
             }}
-            className="w-full text-left p-2 rounded-lg hover:bg-red-50 text-red-600 transition flex items-center gap-2 font-semibold cursor-pointer"
+            className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-red-50 text-red-600 transition flex items-center gap-3 font-bold cursor-pointer group"
           >
-            <LogOut className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0 transition group-hover:bg-red-600 group-hover:text-white">
+              <LogOut className="w-4 h-4" />
+            </div>
             <span>Sign Out</span>
           </button>
         </div>
+
       </div>
     );
   };
@@ -452,12 +495,12 @@ export const Navbar = ({
   return (
     <>
 
-      {/* 1. Top Daraz Utility Micro Strip (Scrolls naturally off-screen at 120fps with zero layout thrash) */}
-      <div className="bg-[#f8f8f8] text-[#757575] text-[11px] px-4 sm:px-8 py-1 border-b border-slate-200">
+      {/* 1. Top Bhanjo Utility Micro Strip (Desktop / Laptop only - shown on Home page, hidden on Category views) */}
+      {(SHOW_UPPER_PART && isHomeActive) && (
+        <div className="hidden sm:block bg-[#f8f8f8] text-[#757575] text-[10px] sm:text-[11px] px-3 sm:px-8 py-1 border-b border-slate-200">
         <div className="max-w-[1560px] mx-auto flex items-center justify-between">
 
-          <div className="flex items-center gap-4">
-
+          <div className="flex items-center gap-2 sm:gap-4">
 
             {/* Track My Order */}
             <button
@@ -468,8 +511,6 @@ export const Navbar = ({
               <span>{t('trackOrder')}</span>
             </button>
 
-
-
             <span className="hidden md:inline text-slate-300">|</span>
 
             <span className="hidden md:inline text-slate-500">
@@ -477,10 +518,10 @@ export const Navbar = ({
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
 
-            {/* Currency (Fixed NPR only) */}
-            <div className="flex items-center gap-1.5 text-xs">
+            {/* Currency (Fixed NPR only, visible sm+) */}
+            <div className="hidden sm:flex items-center gap-1.5 text-xs">
               <span className="text-slate-400">{t('currencyLabel')}</span>
               <span className="font-bold text-[11px] text-slate-800 flex items-center gap-1">
                 <span>🇳🇵</span>
@@ -488,23 +529,23 @@ export const Navbar = ({
               </span>
             </div>
 
-            <span className="text-slate-300">|</span>
+            <span className="hidden sm:inline text-slate-300">|</span>
 
             {/* Language Switcher (Active Visual Indicator) */}
-            <div className="flex items-center bg-slate-200/80 p-0.5 rounded-md text-[11px] font-bold">
+            <div className="flex items-center bg-slate-200/80 p-0.5 rounded-md text-[10px] sm:text-[11px] font-bold">
               <button
                 onClick={() => setLanguage('en')}
-                className={`px-2 py-0.5 rounded transition ${language === 'en'
+                className={`px-1.5 sm:px-2 py-0.5 rounded transition ${language === 'en'
                     ? 'bg-[#F85606] text-white shadow-2xs font-black'
                     : 'text-slate-600 hover:text-slate-900'
                   }`}
                 title="Switch interface to English"
               >
-                English
+                EN
               </button>
               <button
                 onClick={() => setLanguage('ne')}
-                className={`px-2 py-0.5 rounded transition ${language === 'ne'
+                className={`px-1.5 sm:px-2 py-0.5 rounded transition ${language === 'ne'
                     ? 'bg-[#F85606] text-white shadow-2xs font-black'
                     : 'text-slate-600 hover:text-slate-900'
                   }`}
@@ -521,7 +562,7 @@ export const Navbar = ({
               {user ? (
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-1.5 font-bold text-slate-800 hover:text-[#F85606] transition"
+                  className="flex items-center gap-1 sm:gap-1.5 font-bold text-slate-800 hover:text-[#F85606] transition"
                 >
                   <div className="w-5 h-5 rounded-full overflow-hidden bg-[#F85606] text-white text-[10px] flex items-center justify-center font-black flex-shrink-0 shadow-xs border border-orange-200">
                     {user.avatar ? (
@@ -530,13 +571,13 @@ export const Navbar = ({
                       user.name ? user.name[0].toUpperCase() : 'U'
                     )}
                   </div>
-                  <span className="max-w-[110px] truncate">{t('hiUser')}, {user.name.split(' ')[0]}</span>
+                  <span className="max-w-[70px] sm:max-w-[110px] truncate">{user.name.split(' ')[0]}</span>
                   <ChevronDown className="w-3 h-3 text-slate-400" />
                 </button>
               ) : (
                 <button
                   onClick={() => onOpenAuthModal()}
-                  className="font-bold text-[#F85606] hover:underline flex items-center gap-1"
+                  className="font-bold text-[#F85606] hover:underline flex items-center gap-1 text-[11px]"
                 >
                   <User className="w-3.5 h-3.5" />
                   <span>{t('loginSignup')}</span>
@@ -551,107 +592,241 @@ export const Navbar = ({
 
         </div>
       </div>
+      )}
 
-      {/* 2. Main Sticky Header Bar (Sleek Alibaba-style shrink-on-scroll with GPU hardware acceleration) */}
-      <header className={`sticky top-0 z-50 bg-white/95 backdrop-blur-md transition-[padding,box-shadow,border-color] duration-200 ease-out border-b ${
-        isScrolled ? 'py-1.5 sm:py-2 shadow-md border-slate-200/90' : 'py-3 sm:py-3.5 shadow-xs border-slate-200'
-      }`}>
-        <div className="px-4 sm:px-8">
-          <div className="max-w-[1560px] mx-auto flex items-center justify-between gap-4">
+      {/* 2. Main Sticky Header Bar (Sleek Alibaba/Taobao shrink-on-scroll with GPU hardware acceleration) */}
+      <header 
+        style={{ position: 'sticky', top: 0, zIndex: 50 }}
+        className={`sticky top-0 z-50 bg-white/95 backdrop-blur-md transition-[padding,box-shadow,border-color] duration-200 ease-out border-b ${
+          isScrolled ? 'py-1.5 sm:py-2 shadow-md border-slate-200/90' : 'py-2 sm:py-3.5 shadow-xs border-slate-200'
+        }`}
+      >
+        <div className="px-3 sm:px-8">
+          <div className="max-w-[1560px] mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-4">
 
-          {/* Brand Logo */}
-          <div
-            onClick={() => {
-              setActiveView('marketplace');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="flex items-center cursor-pointer flex-shrink-0 group select-none py-0.5"
-            title="Bhanjo | Nepal's Premier Online Shopping Platform"
-          >
-            <img
-              src="/bhanjo-logo-horizontal.png"
-              alt="भान्जो Bhanjo"
-              className={`w-auto object-contain transition-all duration-300 group-hover:scale-[1.04] ${
-                isScrolled ? 'h-8 sm:h-9' : 'h-10 sm:h-11 md:h-[48px]'
-              }`}
-            />
-          </div>
-
-          {/* Interactive Search Bar with In-Bar Camera & 1688-Style Floating Visual Popover */}
-          <div ref={searchContainerRef} className="flex-1 max-w-2xl mx-2 sm:mx-6 relative">
-            <form
-              onSubmit={handleSearchSubmit}
-              className={`w-full flex items-center bg-white rounded-xl overflow-hidden border-2 border-orange-500 focus-within:border-[#F85606] transition-all duration-300 shadow-xs ${
-                isScrolled ? 'p-0.5' : 'p-1'
-              }`}
-            >
-              <div className="pl-3 pr-1 text-slate-400">
-                <Search className={`text-orange-500 transition-all duration-300 ${isScrolled ? 'w-3.5 h-3.5' : 'w-4 h-4'}`} />
+            {/* Mobile Header Row 1: Brand Logo + Mobile Wishlist & Cart (Disabled for mobile per user request) */}
+            {false && (
+              <div className="flex sm:hidden items-center justify-between w-full">
+              <div className="flex items-center gap-1.5">
+                <div
+                  onClick={() => {
+                    if (onResetToHome) {
+                      onResetToHome();
+                    } else {
+                      setActiveView('marketplace');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  className="flex items-center cursor-pointer flex-shrink-0 group select-none py-0.5"
+                  title="Bhanjo | Nepal's Premier Online Shopping Platform"
+                >
+                  <img
+                    src="/bhanjo-logo-horizontal.png"
+                    alt="भान्जो Bhanjo"
+                    className="h-7 w-auto object-contain"
+                  />
+                </div>
               </div>
 
-              <input
-                ref={inputRef}
-                type="text"
-                placeholder={t('searchPlaceholder') || 'Search in Bhanjo'}
-                value={searchQuery}
-                onFocus={() => {
-                  setIsSearchFocused(true);
-                  setIsImagePopoverOpen(false);
-                }}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setIsSearchFocused(true);
-                  if (onSearch) onSearch(e.target.value);
-                }}
-                className={`flex-1 px-2 text-xs sm:text-sm bg-transparent text-slate-800 focus:outline-none placeholder-slate-400 font-medium transition-all duration-300 ${
-                  isScrolled ? 'py-1' : 'py-1.5'
-                }`}
-              />
+              {/* Mobile Right Icons: Scrolled Auth / Wishlist / Cart */}
+              <div className="flex items-center gap-1">
+                {isScrolled && user && (
+                  <div className="relative mr-1">
+                    <button
+                      type="button"
+                      onClick={() => setIsScrolledUserMenuOpen(!isScrolledUserMenuOpen)}
+                      className="p-1 rounded-lg bg-orange-50 text-slate-800 border border-orange-200"
+                    >
+                      <div className="w-5 h-5 rounded-full overflow-hidden bg-[#F85606] text-white text-[9px] flex items-center justify-center font-black">
+                        {user.avatar ? <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" /> : (user.name ? user.name[0].toUpperCase() : 'U')}
+                      </div>
+                    </button>
+                    {renderUserDropdownMenu(isScrolledUserMenuOpen, setIsScrolledUserMenuOpen)}
+                  </div>
+                )}
 
-              {/* Hidden file input for direct device upload */}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-
-              {/* Clear button (X) when text exists */}
-              {searchQuery && (
                 <button
-                  type="button"
-                  onClick={handleClearInput}
-                  className="p-1 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 mr-1 transition"
-                  title="Clear search"
+                  onClick={() => {
+                    if (!user) {
+                      onOpenAuthModal('Please login or sign up to access your Wishlist');
+                    } else {
+                      setActiveView('wishlist');
+                    }
+                  }}
+                  className="relative p-1.5 text-slate-700 hover:text-red-500 transition"
+                  title="My Wishlist"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <Heart className="w-5 h-5" />
+                  {user && wishlist.length > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white font-black text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center">
+                      {wishlist.length}
+                    </span>
+                  )}
                 </button>
-              )}
 
-              {/* Camera Icon Button INSIDE search bar (Hover to Reveal Lens / Click to Upload) */}
-              <button
-                type="button"
-                onClick={handleCameraClick}
-                onMouseEnter={handleCameraMouseEnter}
-                onMouseLeave={handleCameraMouseLeave}
-                title="Search by image (Upload or drag photo)"
-                className="p-1.5 text-orange-500 hover:text-[#e04e05] hover:bg-orange-50 rounded-lg transition active:scale-95 flex items-center justify-center mr-1 cursor-pointer group"
-              >
-                <Camera className={`text-orange-500 group-hover:scale-110 transition-transform stroke-[2] ${isScrolled ? 'w-4 h-4' : 'w-5 h-5'}`} />
-              </button>
+                <button
+                  onClick={() => {
+                    if (!user) {
+                      onOpenAuthModal('Please login or sign up to access your Shopping Cart');
+                    } else {
+                      onOpenCart();
+                    }
+                  }}
+                  className="relative p-1.5 text-slate-700 hover:text-[#F85606] transition flex items-center gap-1"
+                  title="Shopping Cart"
+                >
+                  <div className="relative">
+                    <ShoppingCart className="w-5 h-5" />
+                    {user && cartCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-[#F85606] text-white font-black text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center">
+                        {cartCount}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              </div>
+            </div>
+            )}
 
-              {/* Solid Orange Primary Search Button */}
-              <button
-                type="submit"
-                className={`bg-gradient-to-r from-[#FF7A00] to-[#F85606] hover:from-[#f06e00] hover:to-[#e04e05] text-white rounded-lg text-xs font-extrabold flex items-center justify-center transition-all duration-300 gap-1.5 cursor-pointer shadow-xs active:scale-95 flex-shrink-0 ${
-                  isScrolled ? 'px-4 py-1.5' : 'px-5 sm:px-6 py-2 sm:text-sm'
-                }`}
-              >
-                <Search className={`stroke-[2.5] ${isScrolled ? 'w-3.5 h-3.5' : 'w-4 h-4'}`} />
-                <span>{t('searchBtn') || 'Search'}</span>
-              </button>
-            </form>
+            {/* Desktop Brand Logo (sm+ only, hidden temporarily per user request) */}
+            {SHOW_UPPER_PART && (
+              <div className="hidden sm:flex items-center gap-2.5 flex-shrink-0">
+                <div
+                  onClick={() => {
+                    if (onResetToHome) {
+                      onResetToHome();
+                    } else {
+                      setActiveView('marketplace');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  className="flex items-center cursor-pointer flex-shrink-0 group select-none py-0.5"
+                  title="Bhanjo | Nepal's Premier Online Shopping Platform"
+                >
+                  <img
+                    src="/bhanjo-logo-horizontal.png"
+                    alt="भान्जो Bhanjo"
+                    className={`w-auto object-contain transition-all duration-300 group-hover:scale-[1.04] ${
+                      isScrolled ? 'h-8 sm:h-9' : 'h-10 sm:h-11 md:h-[48px]'
+                    }`}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Taobao-Style Search Area: Search Pill + "Search for similar items" Button */}
+            <div className={`w-full ${SHOW_UPPER_PART ? 'sm:flex-1 sm:max-w-3xl sm:mx-2 md:mx-4' : 'max-w-4xl mx-auto'} flex items-center gap-2`}>
+              <div ref={searchContainerRef} className="flex-1 relative">
+                <form
+                  onSubmit={handleSearchSubmit}
+                  className="w-full flex items-center bg-white rounded-2xl overflow-hidden border-2 border-[#FF5000] focus-within:border-[#F85606] transition-all duration-200 shadow-xs p-0.5"
+                >
+                  {/* Category Scope Dropdown (Taobao-style e.g. Baby ⌄, All ⌄) */}
+                  <div className="relative flex-shrink-0" ref={scopeRef}>
+                    <button
+                      type="button"
+                      onClick={() => setIsScopeDropdownOpen(!isScopeDropdownOpen)}
+                      className="flex items-center gap-1 pl-3 pr-2 py-1.5 text-xs font-bold text-slate-700 hover:text-[#FF5000] transition cursor-pointer select-none"
+                    >
+                      <span>{searchScope}</span>
+                      <ChevronDown className="w-3 h-3 text-slate-400" />
+                    </button>
+
+                    {isScopeDropdownOpen && (
+                      <div className="absolute left-0 top-full mt-2 w-40 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-60 text-xs font-semibold animate-in fade-in zoom-in-95 duration-100">
+                        {[
+                          { id: 'all', label: 'All Products', short: 'All' },
+                          { id: 'mall', label: 'Bhanjo Mall', short: 'Mall' },
+                          { id: 'nepal', label: 'Nepal Pavilion', short: 'Nepal' },
+                          { id: 'direct', label: 'Global Direct', short: 'Direct' }
+                        ].map(item => (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => {
+                              setSearchScope(item.short);
+                              setIsScopeDropdownOpen(false);
+                              if (item.id === 'mall') {
+                                setActiveView('marketplace');
+                              } else if (item.id === 'nepal') {
+                                setActiveView('nepal-pavilion');
+                              }
+                            }}
+                            className={`w-full text-left px-3 py-1.5 transition flex items-center justify-between hover:bg-orange-50 hover:text-[#FF5000] cursor-pointer ${
+                              searchScope === item.short ? 'text-[#FF5000] bg-orange-50/60 font-bold' : 'text-slate-700'
+                            }`}
+                          >
+                            <span>{item.label}</span>
+                            {searchScope === item.short && <Check className="w-3.5 h-3.5 text-[#FF5000]" />}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Subtle Vertical Divider */}
+                  <div className="w-[1px] h-4 bg-slate-200 flex-shrink-0 mx-0.5"></div>
+
+                  {/* Search Input */}
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    placeholder={t('searchPlaceholder') || 'Search in Bhanjo'}
+                    value={searchQuery}
+                    onFocus={() => {
+                      setIsSearchFocused(true);
+                      setIsImagePopoverOpen(false);
+                    }}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setIsSearchFocused(true);
+                      if (onSearch) onSearch(e.target.value);
+                    }}
+                    className="flex-1 px-2.5 text-sm bg-transparent text-slate-800 focus:outline-none placeholder-slate-400 placeholder:text-sm font-medium py-1.5 min-w-0"
+                  />
+
+                  {/* Hidden file input for direct device upload */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+
+                  {/* Clear button (X) when text exists */}
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={handleClearInput}
+                      className="p-1 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 mr-0.5 transition cursor-pointer"
+                      title="Clear search"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+
+                  {/* Camera Icon inside search bar (for desktop & mobile) */}
+                  <button
+                    type="button"
+                    onClick={handleCameraClick}
+                    onMouseEnter={handleCameraMouseEnter}
+                    onMouseLeave={handleCameraMouseLeave}
+                    title="Search by image or find similar items"
+                    className="p-1 sm:p-1.5 text-[#FF5000] hover:bg-orange-50 rounded-xl transition-all active:scale-95 flex items-center justify-center mr-1.5 cursor-pointer group"
+                    aria-label="Search by image"
+                  >
+                    <Camera className="w-5.5 h-5.5 sm:w-6 sm:h-6 text-[#FF5000] group-hover:scale-110 transition-transform stroke-[2.2]" />
+                  </button>
+
+                  {/* Solid Orange Primary Search Button (Taobao Style) */}
+                  <button
+                    type="submit"
+                    className="bg-gradient-to-r from-[#FF7A00] to-[#FF5000] hover:from-[#f06e00] hover:to-[#e04500] text-white rounded-xl text-xs sm:text-sm font-black flex items-center justify-center transition-all duration-200 px-4 sm:px-6 py-2 cursor-pointer shadow-xs active:scale-95 flex-shrink-0"
+                  >
+                    <span>{t('searchBtn') || 'Search'}</span>
+                  </button>
+                </form>
 
             {/* Floating Image Search Popover Dropdown (Reveals on Cursor Touch) */}
             {isImagePopoverOpen && (
@@ -953,79 +1128,17 @@ export const Navbar = ({
 
                   </div>
                 )}
-
               </div>
             )}
           </div>
 
-          {/* Right Header Actions: Auth (when scrolled), Wishlist & Cart */}
-          <div className="flex items-center gap-2 sm:gap-3">
+        </div>
 
-            {/* Scrolled / Sticky Header Auth Options: Displays Login and Sign Up when scrolled down */}
-            {isScrolled && (
-              <div className="flex items-center gap-1.5 sm:gap-2 mr-0.5 sm:mr-1 animate-in fade-in zoom-in-95 duration-200">
-                {user ? (
-                  /* Logged-in User Chip Dropdown */
-                  <div ref={scrolledUserMenuRef} className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setIsScrolledUserMenuOpen(!isScrolledUserMenuOpen)}
-                      className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-orange-50 hover:bg-orange-100 text-slate-800 transition border border-orange-200 cursor-pointer shadow-2xs active:scale-95"
-                      title={user.name}
-                    >
-                      <div className="w-6 h-6 rounded-full overflow-hidden bg-[#F85606] text-white text-[11px] flex items-center justify-center font-black flex-shrink-0 shadow-xs border border-orange-200">
-                        {user.avatar ? (
-                          <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                        ) : (
-                          user.name ? user.name[0].toUpperCase() : 'U'
-                        )}
-                      </div>
-                      <span className="hidden md:inline font-bold text-xs max-w-[85px] truncate">
-                        {user.name.split(' ')[0]}
-                      </span>
-                      <ChevronDown className="w-3 h-3 text-slate-400" />
-                    </button>
-                    {renderUserDropdownMenu(isScrolledUserMenuOpen, setIsScrolledUserMenuOpen)}
-                  </div>
-                ) : (
-                  /* Guest: Crisp Login and Sign Up Options */
-                  <>
-                    {/* Desktop: Clear separate Login and Sign Up buttons */}
-                    <div className="hidden sm:flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => onOpenAuthModal('Please login to your account', 'login')}
-                        className="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-[#F85606] hover:bg-orange-50 border border-slate-200 transition active:scale-95 cursor-pointer flex items-center gap-1.5 shadow-2xs"
-                      >
-                        <User className="w-3.5 h-3.5 text-slate-500" />
-                        <span>{language === 'ne' ? 'लगइन' : 'Login'}</span>
-                      </button>
+            {/* Right Header Actions: Auth, Wishlist & Cart (Hidden temporarily per user request) */}
+            {SHOW_UPPER_PART && (
+              <div className="hidden sm:flex items-center gap-2 sm:gap-3 flex-shrink-0">
 
-                      <button
-                        type="button"
-                        onClick={() => onOpenAuthModal('Create your free Bhanjo account', 'signup')}
-                        className="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-extrabold text-white bg-gradient-to-r from-[#FF7A00] to-[#F85606] hover:from-[#f06e00] hover:to-[#e04e05] shadow-xs hover:shadow transition active:scale-95 cursor-pointer flex items-center gap-1.5"
-                      >
-                        <Sparkles className="w-3.5 h-3.5 text-amber-200" />
-                        <span>{language === 'ne' ? 'दर्ता' : 'Sign Up'}</span>
-                      </button>
-                    </div>
 
-                    {/* Mobile (< sm): Compact user auth icon button */}
-                    <button
-                      type="button"
-                      onClick={() => onOpenAuthModal('Please login or sign up to continue', 'login')}
-                      className="sm:hidden p-1.5 text-slate-700 hover:text-[#F85606] hover:bg-orange-50 rounded-lg border border-slate-200 transition cursor-pointer"
-                      title={language === 'ne' ? 'लगइन / दर्ता' : 'Login / Sign Up'}
-                    >
-                      <User className="w-4 h-4 text-[#F85606]" />
-                    </button>
-                  </>
-                )}
-
-                <span className="hidden sm:inline text-slate-300 mx-0.5">|</span>
-              </div>
-            )}
 
             {/* Wishlist Shortcut */}
             <button
@@ -1069,50 +1182,54 @@ export const Navbar = ({
               </div>
             </button>
 
+              </div>
+            )}
           </div>
         </div>
-      </div>
-    </header>
+      </header>
 
-      {/* 3. Sub-Navigation Bar (Scrolls naturally off-screen with zero lag) */}
-      <div className="border-b border-slate-200 px-4 sm:px-8 py-1.5 bg-white text-xs font-medium text-slate-700">
-        <div className="max-w-[1560px] mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-5 flex-shrink-0">
+      {/* 3. Sub-Navigation Bar (Only shown on Homepage; hidden when category/search is open) */}
+      {isHomeActive && (
+        <div className="border-b border-slate-200 px-3.5 sm:px-8 py-2 sm:py-1.5 bg-white text-xs font-medium text-slate-700">
+          <div className="max-w-[1560px] mx-auto w-full flex items-center justify-between sm:justify-start sm:gap-5">
+            {/* Left: Categories (Phone: left, Laptop: first in row) */}
             <button
               onClick={onToggleMegaMenu}
-              className={`flex items-center gap-1.5 py-1 text-xs font-bold transition ${isMegaMenuOpen ? 'text-[#F85606]' : 'text-slate-800 hover:text-[#F85606]'
-                }`}
+              className={`flex items-center gap-1.5 py-0.5 text-[13.5px] sm:text-xs font-bold transition flex-shrink-0 cursor-pointer ${
+                isMegaMenuOpen ? 'text-[#F85606]' : 'text-slate-800 hover:text-[#F85606]'
+              }`}
             >
-              <Layers className="w-3.5 h-3.5 text-[#F85606]" />
+              <Layers className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-[#F85606]" />
               <span>{t('all38Categories')}</span>
               <ChevronDown className="w-3.5 h-3.5" />
             </button>
 
+            {/* Middle: Bhanjo Mall (Phone: center, Laptop: second in row) */}
             <button
               onClick={() => {
                 setActiveView('marketplace');
                 onSelectCategory('all');
               }}
-              className="hover:text-[#F85606] transition"
+              className="text-[13.5px] sm:text-xs font-bold text-slate-800 hover:text-[#F85606] transition text-center px-1 cursor-pointer"
             >
               {t('bhanjoMall')}
             </button>
 
+            {/* Right: Flash Sale (Phone: right, Laptop: third in row) */}
             <button
               onClick={() => setActiveView('flash-sale')}
-              className="flex items-center gap-1.5 text-red-600 font-extrabold hover:text-red-700 transition cursor-pointer px-2 py-0.5 rounded-full hover:bg-red-50"
+              className="flex items-center gap-1 sm:gap-1.5 text-red-600 font-extrabold hover:text-red-700 transition cursor-pointer px-1.5 sm:px-2 py-0.5 rounded-full hover:bg-red-50 text-[13.5px] sm:text-xs flex-shrink-0"
               title="Open Flash Sale"
             >
               <Clock className="w-3.5 h-3.5 text-red-600 animate-pulse stroke-[2.5]" />
               <span>Flash Sale</span>
-              <span className="bg-red-600 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase animate-pulse">
+              <span className="bg-red-600 text-white text-[8.5px] sm:text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase animate-pulse">
                 70% OFF
               </span>
             </button>
-
           </div>
         </div>
-      </div>
+      )}
 
       {/* 4. Visual Lens / Image Search Modal (1688 / Taobao / Bhanjo Visual AI) */}
       <ImageSearchModal

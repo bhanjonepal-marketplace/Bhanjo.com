@@ -87,14 +87,37 @@ export const CartDrawer = ({ isOpen, onClose, onRequireAuth, onOpenTrackOrder })
     setIsProcessing(true);
     const trackingNo = `BJ-EXP-${Math.floor(100000 + Math.random() * 900000)}`;
 
-    const normalizedItems = items.map(it => ({
-      id: it.productId || it.id,
-      title: it.title || it.product?.title || 'Bhanjo Item',
-      image: it.image || it.product?.images?.[0] || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400',
-      unitPriceUSD: it.unitPriceUSD || it.unitPrice || 15,
-      quantity: it.quantity,
-      totalPrice: it.totalPrice
-    }));
+    const normalizedItems = items.map(it => {
+      const prod = it.product || {};
+      const pId = String(it.productId || it.id || prod.id || '');
+      let sourcingUrl = prod.alibabaSourceUrl || prod.sourceUrl || prod.url || it.sourceUrl || null;
+      if (!sourcingUrl) {
+        const offerMatch = pId.match(/(?:1688|direct|offer)[-_]?([0-9]{8,18})/i) || pId.match(/([0-9]{9,16})/);
+        if (offerMatch && offerMatch[1]) {
+          sourcingUrl = `https://detail.1688.com/offer/${offerMatch[1]}.html`;
+        }
+      }
+
+      const unitPriceNPR = prod.priceNPR || Math.round((it.unitPriceUSD || it.unitPrice || 15) * 135);
+      const qty = it.quantity || 1;
+
+      return {
+        id: pId,
+        productId: pId,
+        title: it.title || prod.title || 'Bhanjo Item',
+        image: it.image || prod.images?.[0] || prod.featuredImage || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400',
+        unitPriceUSD: it.unitPriceUSD || it.unitPrice || 15,
+        unitPriceNPR,
+        quantity: qty,
+        totalPrice: it.totalPrice || (it.unitPrice * qty),
+        totalPriceNPR: unitPriceNPR * qty,
+        sourceUrl: sourcingUrl,
+        distributorName: prod.supplierName || prod.supplier || prod.distributorName || '1688 Verified Direct Manufacturer',
+        variant: it.variant || it.color || it.size || it.customNotes || ''
+      };
+    });
+
+    const grandTotalNPR = Math.round(grandTotalUSD * 135);
 
     const orderPayload = {
       userId: user?.id || null,
@@ -102,8 +125,8 @@ export const CartDrawer = ({ isOpen, onClose, onRequireAuth, onOpenTrackOrder })
       customerPhone: shippingInfo.phone || user?.phone || '98XXXXXXXX',
       customerAddress: `${shippingInfo.address}, ${shippingInfo.city}, Nepal`,
       items: normalizedItems,
-      totalAmount: grandTotalUSD,
-      currency: currentCurrency?.code || 'NPR',
+      totalAmount: grandTotalNPR,
+      currency: 'NPR',
       paymentMethod,
       trackingNumber: trackingNo
     };

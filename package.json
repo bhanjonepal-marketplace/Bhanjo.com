@@ -8,6 +8,7 @@
     "dev:server": "npm --prefix server run dev",
     "install:all": "npm install && npm --prefix server install && npm --prefix client install",
     "build": "npm --prefix client run build",
+    "build:apk": "npm --prefix client run build && npm --prefix client run cap:sync && powershell -Command \"Set-Location client/android; .\\gradlew.bat assembleDebug; Copy-Item .\\app\\build\\outputs\\apk\\debug\\app-debug.apk ../../Bhanjo-v1.0.apk -Force\"",
     "start": "npm --prefix server start"
   },
   "devDependencies": {

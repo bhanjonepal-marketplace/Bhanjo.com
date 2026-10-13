@@ -8,14 +8,13 @@ import { useCurrency } from '../context/CurrencyContext';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import confetti from 'canvas-confetti';
-import { RedAlarmClock } from './RedAlarmClock';
 
 export const FlashSalePage = ({ 
   onBack, 
   onSelectProduct, 
-  onOpenAdminManager,
-  onRequireAuth,
-  products = []
+  onOpenAdminManager, 
+  onRequireAuth, 
+  products = [] 
 }) => {
   const { formatPrice, formatNPR } = useCurrency();
   const { addToCart } = useCart();
@@ -29,22 +28,22 @@ export const FlashSalePage = ({
   const [claimedVouchers, setClaimedVouchers] = useState(new Set());
   const [justAddedId, setJustAddedId] = useState(null);
 
-  // Dynamic Backend Campaign Settings & Vouchers
+  // Dynamic Backend Campaign Settings & Vouchers (Mascot Dhamaka Theme)
   const [campaignSettings, setCampaignSettings] = useState({
-    title: 'FLASH SALE',
-    subtitle: 'Massive limited-time price drops • Direct China Factory Pricing • Refreshes Hourly',
-    badge_text: 'International Direct Deals',
+    title: 'BHANJO UTSAV DHAMAKA',
+    subtitle: 'Himalayan Mega Price Crash • 100% Authentic Nepali Utsav Deals • Refreshes Hourly',
+    badge_text: '🇳🇵 Bhanjo Utsav Special',
     sales_count_text: '🔥 570K+ Sold Across Nepal',
-    countdown_label: 'Current Rush Session Ends In:',
+    countdown_label: 'Utsav Dhamaka Session Ends In:',
     duration_hours: 4,
     duration_minutes: 28,
     duration_seconds: 15,
     ends_at: null,
-    session_name: '⚡ ONGOING RUSH',
+    session_name: '🪔 LIVE UTSAV RUSH',
     upcoming_sessions: [
-      { id: '16:00', time: '16:00', title: '16:00 Coming Up', tag: 'Soon' },
-      { id: '20:00', time: '20:00', title: '20:00 Night Drop', tag: 'Popular' },
-      { id: 'tomorrow', time: 'Tomorrow 10:00', title: 'Tomorrow 10:00 Mega Drop', tag: 'Huge Deals' }
+      { id: '16:00', time: '16:00', title: '16:00 Afternoon Drop', tag: 'Soon' },
+      { id: '20:00', time: '20:00', title: '20:00 Evening Dhamaka', tag: 'Popular' },
+      { id: 'tomorrow', time: 'Tomorrow 10:00', title: 'Tomorrow Morning Utsav', tag: 'Huge Deals' }
     ]
   });
 
@@ -52,22 +51,22 @@ export const FlashSalePage = ({
     {
       id: 'vouch-250',
       title: 'Rs. 250 Off',
-      tag: 'Flash Voucher',
+      tag: 'Dhamaka Voucher',
       expiry_text: 'Min Spend Rs. 1,000',
-      code: 'FLASH250',
+      code: 'DHAMAKA250',
       discount_amount: 250,
-      icon: '⚡',
+      icon: '🪔',
       color: 'amber'
     },
     {
       id: 'vouch-500',
-      title: 'Rs. 500 Gift Voucher',
-      tag: 'Hourly Drop',
+      title: 'Rs. 500 Utsav Gift',
+      tag: 'Hourly Dhamaka',
       expiry_text: 'Expiring in 2 hours',
-      code: 'GIFT500',
+      code: 'UTSAV500',
       discount_amount: 500,
       icon: '🎁',
-      color: 'purple'
+      color: 'red'
     }
   ]);
 
@@ -116,7 +115,11 @@ export const FlashSalePage = ({
       const res = await fetch('/api/flash-sale');
       const data = await res.json();
       if (data.success && Array.isArray(data.items)) {
-        setFlashItems(data.items);
+        const valid = data.items.filter(it => {
+          const p = it.product;
+          return p && p.title && p.title !== 'Flash Sale Premium Item' && p.id;
+        });
+        setFlashItems(valid);
       }
     } catch (err) {
       console.error('Error fetching flash sale items:', err);
@@ -280,24 +283,25 @@ export const FlashSalePage = ({
   const displayedItems = filteredItems.slice(0, visibleCount);
 
   return (
-    <div className="min-h-screen bg-[#FFF5F5] pb-16 font-sans">
+    <div className="min-h-screen bg-[#FFF9F9] pb-16 font-sans">
       
-      {/* Top Banner & Header (1688 / Taobao / Daraz Vibrant Red & Crimson Theme) */}
-      <div className="bg-gradient-to-b from-[#E00028] via-[#FF0036] to-[#FF2E55] text-white pt-3 pb-8 px-3 sm:px-6 shadow-xl relative overflow-hidden">
+      {/* Top Banner & Header (High-Key Frosted Utsav Dhamaka Luxe Theme) */}
+      <div className="bg-gradient-to-b from-rose-50/70 via-white to-[#FFF5F5] border-b border-rose-200/80 text-slate-900 pt-3 pb-8 px-3 sm:px-6 shadow-xs relative overflow-hidden">
         
-        {/* Subtle decorative glowing background circles */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-400/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-10 left-10 w-80 h-80 bg-red-800/30 rounded-full blur-2xl pointer-events-none" />
+        {/* Soft decorative glowing background circles */}
+        <div className="absolute top-0 right-10 w-96 h-96 bg-rose-200/40 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-10 left-10 w-80 h-80 bg-amber-200/40 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute left-1/3 top-1/4 w-72 h-72 bg-red-100/30 rounded-full blur-2xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto relative z-10">
           
           {/* Top Navigation Row */}
-          <div className="flex items-center justify-between pb-3 border-b border-white/15">
+          <div className="flex items-center justify-between pb-3 border-b border-rose-100/90">
             <button
               onClick={onBack}
-              className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-white/90 hover:text-white bg-black/20 hover:bg-black/30 px-3 py-1.5 rounded-full transition cursor-pointer backdrop-blur-xs"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-rose-950 bg-rose-50 hover:bg-rose-100/90 border border-rose-200/90 px-3.5 py-1.5 rounded-full transition cursor-pointer shadow-2xs active:scale-95"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 text-red-600 stroke-[2.5]" />
               <span>Back to Marketplace</span>
             </button>
 
@@ -308,7 +312,7 @@ export const FlashSalePage = ({
                   if (onOpenAdminManager) onOpenAdminManager();
                   else window.open('/admin#tab-flash-sale', '_blank');
                 }}
-                className="bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black text-xs px-3.5 py-1.5 rounded-full transition shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95"
+                className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs px-3.5 py-1.5 rounded-full transition shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95 border border-amber-300"
                 title="Open Flash Sale Admin Manager to edit timer, texts, upcoming events & vouchers"
               >
                 <Zap className="w-3.5 h-3.5 fill-current text-slate-950" />
@@ -317,59 +321,74 @@ export const FlashSalePage = ({
             )}
           </div>
 
-          {/* Flash Sale Main Title & Alarm Section */}
+          {/* Flash Sale Main Title & Mascot Section */}
           <div className="mt-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             
             <div className="flex items-center gap-3 sm:gap-4">
-              {/* Animated Red Alarm Clock */}
-              <div className="relative flex-shrink-0 group transition-transform hover:scale-108 active:scale-95">
-                <RedAlarmClock className="w-14 h-14 sm:w-16 sm:h-16" />
+              {/* 3D Bhanjo Red Panda Mascot */}
+              <div 
+                className="relative flex-shrink-0 group transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+                title="Bhanjo Utsav Dhamaka Mascot"
+              >
+                <div className="absolute -inset-1.5 bg-gradient-to-r from-rose-400 via-orange-400 to-amber-400 rounded-2xl blur-xs opacity-60 animate-pulse" />
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-b from-amber-50 to-rose-100/60 border-2 border-rose-200 shadow-md flex items-center justify-center overflow-hidden">
+                  <img 
+                    src="/mascot/bhanjo_mascot_3d_clean.png?v=3" 
+                    alt="Bhanjo Red Panda Mascot" 
+                    className="w-full h-full object-contain transform scale-110 group-hover:scale-125 transition-transform duration-300" 
+                  />
+                </div>
+                <span className="absolute -bottom-1 -right-1 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black text-[9px] px-1.5 py-0.5 rounded-full shadow border border-white">
+                  🪔 DHAMAKA
+                </span>
               </div>
 
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="bg-yellow-400 text-red-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
-                    <Flame className="w-3 h-3 fill-current text-red-600" />
-                    <span>{campaignSettings.badge_text || 'International Direct Deals'}</span>
+                  <span className="bg-gradient-to-r from-[#E53935] to-[#FF5722] text-white text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-2xs flex items-center gap-1">
+                    <Flame className="w-3 h-3 fill-current text-yellow-300" />
+                    <span>{campaignSettings.badge_text || '🇳🇵 Bhanjo Utsav Special'}</span>
                   </span>
-                  <span className="text-[11px] text-white/80 hidden sm:inline">
+                  <span className="text-[11px] text-rose-800 font-bold hidden sm:inline">
                     {campaignSettings.sales_count_text || '🔥 570K+ Sold Across Nepal'}
                   </span>
                 </div>
 
-                <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight flex items-center gap-2 mt-1 drop-shadow-sm">
-                  <span>{campaignSettings.title || 'FLASH SALE'}</span>
-                  <span className="text-yellow-300 font-extrabold flex items-center">
-                    ⚡
+                <h1 className="text-2xl sm:text-4xl font-black text-slate-950 tracking-tight flex items-center gap-2 mt-1 drop-shadow-2xs">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D81B60] via-[#E53935] to-[#FF5722]">
+                    {campaignSettings.title || 'BHANJO UTSAV DHAMAKA'}
+                  </span>
+                  <span className="text-amber-500 font-extrabold flex items-center">
+                    🪔
                   </span>
                 </h1>
-                <p className="text-xs text-white/80 mt-0.5">
-                  {campaignSettings.subtitle || 'Massive limited-time price drops • Direct China Factory Pricing • Refreshes Hourly'}
+                <p className="text-xs text-slate-600 font-medium mt-0.5">
+                  {campaignSettings.subtitle || 'Himalayan Mega Price Crash • 100% Authentic Nepali Utsav Deals • Refreshes Hourly'}
                 </p>
               </div>
             </div>
 
-            {/* High-Impact Master Live Countdown with Milliseconds */}
-            <div className="bg-black/35 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-white/20 shadow-2xl flex flex-col items-center sm:items-end">
-              <span className="text-[11px] font-bold text-yellow-300 uppercase tracking-wider flex items-center gap-1 mb-1.5">
-                <Clock className="w-3.5 h-3.5 animate-pulse" />
+            {/* High-Impact Master Live Countdown (Frosted Glass Box) */}
+            <div className="bg-white/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-rose-200/90 shadow-[0_8px_30px_rgba(229,57,53,0.08)] flex flex-col items-center sm:items-end">
+              <span className="text-[11px] font-bold text-rose-600 uppercase tracking-wider flex items-center gap-1 mb-1.5">
+                <Clock className="w-3.5 h-3.5 animate-pulse text-red-600" />
                 <span>{campaignSettings.countdown_label || 'Current Rush Session Ends In:'}</span>
               </span>
 
-              <div className="flex items-center gap-1 text-white font-mono font-black">
-                <div className="bg-white/20 px-2 py-1 rounded-lg text-sm sm:text-base border border-white/20">
+              <div className="flex items-center gap-1 text-slate-900 font-mono font-black">
+                <div className="bg-rose-50/90 px-2 py-1 rounded-lg text-sm sm:text-base border border-rose-200 text-rose-950 shadow-2xs">
                   {pad(masterTime.hours)}h
                 </div>
-                <span>:</span>
-                <div className="bg-white/20 px-2 py-1 rounded-lg text-sm sm:text-base border border-white/20">
+                <span className="text-rose-400">:</span>
+                <div className="bg-rose-50/90 px-2 py-1 rounded-lg text-sm sm:text-base border border-rose-200 text-rose-950 shadow-2xs">
                   {pad(masterTime.minutes)}m
                 </div>
-                <span>:</span>
-                <div className="bg-white/20 px-2 py-1 rounded-lg text-sm sm:text-base border border-white/20">
+                <span className="text-rose-400">:</span>
+                <div className="bg-rose-50/90 px-2 py-1 rounded-lg text-sm sm:text-base border border-rose-200 text-rose-950 shadow-2xs">
                   {pad(masterTime.seconds)}s
                 </div>
-                <span>.</span>
-                <div className="bg-yellow-400 text-slate-950 px-2 py-1 rounded-lg text-sm sm:text-base font-black shadow-inner animate-pulse">
+                <span className="text-rose-400">.</span>
+                <div className="bg-gradient-to-r from-[#E53935] to-[#FF5722] text-white px-2 py-1 rounded-lg text-sm sm:text-base font-black shadow-xs animate-pulse">
                   {masterTime.millis}
                 </div>
               </div>
@@ -377,12 +396,12 @@ export const FlashSalePage = ({
 
           </div>
 
-          {/* Flash Sale Daily Voucher Cards - Dynamically loaded from Backend */}
+          {/* Flash Sale Daily Voucher Cards - Frosted Luxury Style */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
             
-            <div className="bg-white/95 text-slate-900 rounded-xl p-3 shadow-md border border-white/30 flex items-center justify-between">
+            <div className="bg-white/95 rounded-xl p-3 shadow-2xs border border-rose-200/80 flex items-center justify-between hover:shadow-md transition-all">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center font-black text-sm">
+                <div className="w-10 h-10 rounded-lg bg-rose-50 text-red-600 flex items-center justify-center font-black text-sm border border-rose-100">
                   ⚡
                 </div>
                 <div>
@@ -391,26 +410,26 @@ export const FlashSalePage = ({
                   <span className="text-[10px] text-slate-500 block">All categories verified</span>
                 </div>
               </div>
-              <span className="bg-red-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg shadow-xs">
+              <span className="bg-gradient-to-r from-red-600 to-rose-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg shadow-xs">
                 HOT
               </span>
             </div>
 
             {vouchers.map((vouch) => {
               const isClaimed = claimedVouchers.has(vouch.id);
-              const colorBg = vouch.color === 'purple' ? 'bg-purple-50 text-purple-600' :
-                              vouch.color === 'emerald' ? 'bg-emerald-50 text-emerald-600' :
-                              vouch.color === 'red' ? 'bg-red-50 text-red-600' :
-                              'bg-amber-50 text-amber-600';
+              const colorBg = vouch.color === 'purple' ? 'bg-purple-50 text-purple-600 border-purple-100' :
+                              vouch.color === 'emerald' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                              vouch.color === 'red' ? 'bg-red-50 text-red-600 border-red-100' :
+                              'bg-amber-50 text-amber-600 border-amber-100';
               const colorText = vouch.color === 'purple' ? 'text-purple-600' :
                                 vouch.color === 'emerald' ? 'text-emerald-600' :
                                 vouch.color === 'red' ? 'text-red-600' :
                                 'text-amber-600';
 
               return (
-                <div key={vouch.id} className="bg-white/95 text-slate-900 rounded-xl p-3 shadow-md border border-white/30 flex items-center justify-between">
+                <div key={vouch.id} className="bg-white/95 rounded-xl p-3 shadow-2xs border border-rose-200/80 flex items-center justify-between hover:shadow-md transition-all">
                   <div className="flex items-center gap-2.5">
-                    <div className={`w-10 h-10 rounded-lg ${colorBg} flex items-center justify-center font-black text-sm`}>
+                    <div className={`w-10 h-10 rounded-lg ${colorBg} border flex items-center justify-center font-black text-sm`}>
                       {vouch.icon || '🎁'}
                     </div>
                     <div>
@@ -421,10 +440,10 @@ export const FlashSalePage = ({
                   </div>
                   <button
                     onClick={() => handleClaimVoucher(vouch.id, vouch.title)}
-                    className={`text-[10px] font-black px-3 py-1 rounded-lg transition cursor-pointer ${
+                    className={`text-[10px] font-black px-3 py-1.5 rounded-lg transition cursor-pointer select-none active:scale-95 ${
                       isClaimed
-                        ? 'bg-emerald-600 text-white cursor-default'
-                        : 'bg-red-600 hover:bg-red-700 text-white shadow-xs'
+                        ? 'bg-emerald-600 text-white cursor-default shadow-xs'
+                        : 'bg-gradient-to-r from-[#E53935] to-[#FF5722] hover:from-[#D32F2F] hover:to-[#F4511E] text-white shadow-xs'
                     }`}
                   >
                     {isClaimed ? 'Claimed ✓' : 'Claim'}
@@ -435,20 +454,20 @@ export const FlashSalePage = ({
 
           </div>
 
-          {/* Time Slot Session Tabs - Dynamically loaded from Backend */}
+          {/* Time Slot Session Tabs - Frosted Style */}
           <div className="flex items-center gap-2 mt-5 overflow-x-auto pb-1 scrollbar-none">
             
             <button
               onClick={() => setActiveSession('active')}
               className={`flex-shrink-0 px-4 py-2 rounded-xl font-black text-xs transition-all flex items-center gap-2 cursor-pointer ${
                 activeSession === 'active'
-                  ? 'bg-white text-red-600 shadow-lg scale-105'
-                  : 'bg-white/15 text-white hover:bg-white/25'
+                  ? 'bg-gradient-to-r from-[#E53935] to-[#FF5722] text-white shadow-md scale-105'
+                  : 'bg-white/80 hover:bg-white text-slate-700 border border-rose-200/70 hover:text-red-600'
               }`}
             >
-              <Flame className="w-3.5 h-3.5 fill-current text-red-500" />
+              <Flame className="w-3.5 h-3.5 fill-current text-yellow-300" />
               <span>{campaignSettings.session_name || '⚡ ONGOING RUSH'}</span>
-              <span className="bg-red-600 text-white text-[9px] px-1.5 py-0.2 rounded font-mono">
+              <span className="bg-black/25 text-white text-[9px] px-1.5 py-0.5 rounded font-mono">
                 {pad(masterTime.minutes)}:{pad(masterTime.seconds)}.{masterTime.millis}
               </span>
             </button>
@@ -459,13 +478,13 @@ export const FlashSalePage = ({
                 onClick={() => setActiveSession(slot.id || String(sIdx))}
                 className={`flex-shrink-0 px-4 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
                   activeSession === (slot.id || String(sIdx))
-                    ? 'bg-white text-red-600 shadow-lg scale-105 font-black'
-                    : 'bg-white/15 text-white hover:bg-white/25'
+                    ? 'bg-gradient-to-r from-[#E53935] to-[#FF5722] text-white shadow-md scale-105 font-black'
+                    : 'bg-white/80 hover:bg-white text-slate-700 border border-rose-200/70 hover:text-red-600'
                 }`}
               >
                 <Clock className="w-3.5 h-3.5" />
                 <span>{slot.title || slot.time}</span>
-                {slot.tag && <span className="text-[10px] text-white/70">{slot.tag}</span>}
+                {slot.tag && <span className="text-[10px] text-slate-500">{slot.tag}</span>}
               </button>
             ))}
 
@@ -592,12 +611,12 @@ export const FlashSalePage = ({
                 <div
                   key={item.id}
                   onClick={() => onSelectProduct && onSelectProduct(prod.id)}
-                  className="group bg-white rounded-2xl border border-slate-200 hover:border-red-500 hover:shadow-xl transition-all duration-200 flex flex-col justify-between overflow-hidden cursor-pointer relative"
+                  className="group bg-white rounded-2xl border border-slate-200 hover:border-[#E65100] hover:shadow-xl transition-all duration-200 flex flex-col justify-between overflow-hidden cursor-pointer relative"
                 >
                   {/* Thumbnail Image Container */}
                   <div className="relative aspect-square overflow-hidden bg-slate-100">
                     <img
-                      src={prod.images?.[0] || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600'}
+                      src={prod.images?.[0] || prod.image || 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80'}
                       alt={prod.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
@@ -605,7 +624,7 @@ export const FlashSalePage = ({
 
                     {/* Top Discount Tag */}
                     <div className="absolute top-2 left-2 flex items-center gap-1 z-10">
-                      <span className="bg-[#E00028] text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md">
+                      <span className="bg-gradient-to-r from-[#D84315] to-[#E65100] text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md">
                         -{discountPercent}%
                       </span>
                     </div>
@@ -617,11 +636,11 @@ export const FlashSalePage = ({
                       </span>
                     </div>
 
-                    {/* Bottom Yellow Flash Deal Live Timer Banner (Matches Screenshot 5!) */}
+                    {/* Bottom Yellow Flash Deal Live Timer Banner */}
                     <div className="absolute bottom-0 inset-x-0 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400 text-slate-950 font-black text-[10px] py-1 px-2 flex items-center justify-between shadow-md z-10 font-mono">
                       <span className="uppercase text-[9px] tracking-tight font-black flex items-center gap-0.5">
-                        <Zap className="w-2.5 h-2.5 fill-current text-red-600" />
-                        <span>Flash Deal</span>
+                        <Flame className="w-2.5 h-2.5 fill-current text-red-600" />
+                        <span>Dhamaka Deal</span>
                       </span>
                       <span className="font-extrabold text-[10px] tracking-tight">
                         {pad(itemHours)}:{pad(itemMins)}:{pad(itemSecs)}.{itemMillis} Left
@@ -634,16 +653,16 @@ export const FlashSalePage = ({
                     <div>
                       {/* Title */}
                       <h3 
-                        className="text-xs font-semibold text-slate-800 line-clamp-2 leading-snug group-hover:text-red-600 transition-colors"
+                        className="text-xs font-semibold text-slate-800 line-clamp-2 leading-snug group-hover:text-[#D84315] transition-colors min-h-[32px]"
                         title={prod.title}
                       >
                         {prod.title}
                       </h3>
 
-                      {/* Stock / Sold Progress Bar (Matches Screenshot 5) */}
-                      <div className="mt-2 space-y-1">
+                      {/* Stock / Sold Progress Bar */}
+                      <div className="mt-1.5 space-y-1">
                         <div className="flex items-center justify-between text-[10px]">
-                          <span className="font-bold text-red-600 flex items-center gap-0.5">
+                          <span className="font-bold text-[#D84315] flex items-center gap-0.5">
                             <Flame className="w-2.5 h-2.5 fill-current" />
                             <span>Sold {percentSold}%</span>
                           </span>
@@ -653,26 +672,26 @@ export const FlashSalePage = ({
                         </div>
                         <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
                           <div 
-                            className="h-full bg-gradient-to-r from-amber-500 to-red-600 rounded-full transition-all duration-300"
+                            className="h-full bg-gradient-to-r from-amber-500 to-[#E65100] rounded-full transition-all duration-300"
                             style={{ width: `${percentSold}%` }}
                           />
                         </div>
                       </div>
 
-                      {/* Yellow Savings Badge (Screenshot 5) */}
-                      <div className="mt-2 flex items-center">
-                        <span className="bg-amber-100 border border-amber-300 text-amber-900 text-[10px] font-black px-1.5 py-0.2 rounded-md flex items-center gap-0.5">
-                          <span>⚡</span>
-                          <span>Save Rs. {savingsNPR.toLocaleString()}</span>
+                      {/* Savings Badge */}
+                      <div className="mt-1.5 flex items-center">
+                        <span className="bg-orange-50 border border-orange-200 text-orange-800 text-[10px] font-black px-1.5 py-0.2 rounded-md flex items-center gap-0.5">
+                          <span>🪔</span>
+                          <span>Bachat Rs. {savingsNPR.toLocaleString()}</span>
                         </span>
                       </div>
 
                       {/* Pricing */}
-                      <div className="mt-2">
-                        <div className="text-sm sm:text-base font-black text-red-600">
+                      <div className="mt-1">
+                        <div className="text-sm sm:text-base font-black text-[#D84315] leading-tight">
                           {formatNPR(flashPriceUSD)}
                         </div>
-                        <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
+                        <div className="flex items-center gap-1.5 text-[10px] text-slate-400 mt-0.5 leading-none">
                           <span className="line-through">{formatNPR(origPriceUSD)}</span>
                           <span className="font-mono text-slate-500">({formatPrice(flashPriceUSD)})</span>
                         </div>
@@ -680,14 +699,14 @@ export const FlashSalePage = ({
                     </div>
 
                     {/* Buy Now / Grab Deal Button */}
-                    <div className="mt-3 pt-2 border-t border-slate-100 flex items-center gap-2">
+                    <div className="mt-1.5 flex items-center gap-2">
                       <button
                         type="button"
                         onClick={(e) => handleQuickBuy(item, e)}
-                        className={`w-full py-2 rounded-xl font-black text-xs transition shadow-sm flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 ${
+                        className={`w-full py-1.5 rounded-xl font-black text-xs transition shadow-sm flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 ${
                           isAdded
                             ? 'bg-emerald-600 text-white'
-                            : 'bg-gradient-to-r from-red-600 to-[#FF0036] hover:from-red-700 hover:to-[#E00028] text-white'
+                            : 'bg-gradient-to-r from-[#D84315] to-[#E65100] hover:from-[#BF360C] hover:to-[#D84315] text-white shadow-orange-500/20'
                         }`}
                       >
                         {isAdded ? (
@@ -697,8 +716,8 @@ export const FlashSalePage = ({
                           </>
                         ) : (
                           <>
-                            <ShoppingBag className="w-3.5 h-3.5" />
-                            <span>Buy Now</span>
+                            <Zap className="w-3.5 h-3.5 fill-current text-yellow-300" />
+                            <span>Loot Deal</span>
                           </>
                         )}
                       </button>
@@ -711,19 +730,19 @@ export const FlashSalePage = ({
           </div>
         )}
 
-        {/* Centered Red Pill Show More Option (Matching Reference Photo 2) */}
+        {/* Centered Show More Option */}
         {filteredItems.length > visibleCount ? (
           <div className="mt-8 mb-4 text-center flex flex-col items-center justify-center">
             <button
               type="button"
               onClick={() => setVisibleCount(prev => prev + 6)}
-              className="bg-[#E00028] hover:bg-[#C40024] active:scale-95 text-white font-extrabold text-sm sm:text-base px-10 sm:px-14 py-2.5 sm:py-3 rounded-full shadow-lg shadow-red-500/25 hover:shadow-red-500/40 transition-all cursor-pointer flex items-center justify-center gap-2 group"
+              className="bg-gradient-to-r from-[#D84315] to-[#E65100] hover:from-[#BF360C] hover:to-[#D84315] active:scale-95 text-white font-extrabold text-sm sm:text-base px-10 sm:px-14 py-2.5 sm:py-3 rounded-full shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 transition-all cursor-pointer flex items-center justify-center gap-2 group"
             >
-              <span>Show More</span>
+              <span>Show More Dhamaka Deals</span>
               <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5] group-hover:translate-y-0.5 transition-transform" />
             </button>
             <p className="text-slate-400 text-xs mt-2.5 font-medium">
-              Showing {displayedItems.length} of {filteredItems.length} Flash Deals
+              Showing {displayedItems.length} of {filteredItems.length} Dhamaka Deals
             </p>
           </div>
         ) : filteredItems.length > 0 ? (
