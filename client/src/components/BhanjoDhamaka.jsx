@@ -194,9 +194,9 @@ export const BhanjoDhamaka = ({ products = [], onSelectProduct, onSelectCategory
 
       </div>
 
-      {/* 3. 5 Product Cards Grid (Matching Image 1) */}
-      <div className="px-4 sm:px-5 pb-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        {allItems.slice(0, 5).map((item, index) => {
+      {/* 3. 6 Product Cards Grid */}
+      <div className="px-3 sm:px-4 pb-3.5 sm:pb-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3">
+        {allItems.slice(0, 6).map((item, index) => {
           const product = item.product || item;
           const flashPriceUSD = item.flash_price || product.samplePrice || 25;
           const originalPriceUSD = item.original_price || flashPriceUSD * 1.5;
