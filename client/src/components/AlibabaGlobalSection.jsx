@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronDown, ChevronRight, ShieldCheck } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 
-// Clean curated products matching reference photo
+// Clean curated products matching reference photo exactly
 const CURATED_FEATURED = [
   {
     id: '1688-788615188525',
@@ -115,24 +115,24 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
       <div>
         {/* Top Row: Badges and Subtitle */}
         <div className="flex items-center gap-2 flex-wrap mb-1">
-          <span className="bg-[#1B1F3B] text-white text-[11px] font-bold px-3 py-1 rounded-md uppercase tracking-wider shadow-2xs">
+          <span className="bg-[#1B1F3B] text-white text-[10.5px] font-bold px-2.5 py-0.5 rounded-md uppercase tracking-wider shadow-2xs">
             OVERSEAS PAVILION
           </span>
-          <span className="text-xs font-bold text-[#5B6070] tracking-wider uppercase truncate">
+          <span className="text-[11px] font-bold text-[#64748B] tracking-wider uppercase truncate">
             GLOBAL DIRECT SOURCING • VERIFIED FACTORY PRICING
           </span>
         </div>
 
         {/* Second Row: Main Title on Left, Sort & View All on Right */}
         <div className="flex flex-wrap items-center justify-between gap-3 mt-1.5">
-          <h2 className="text-xl sm:text-2xl font-black text-[#1B1F3B] tracking-tight">
+          <h2 className="text-[22px] sm:text-2xl font-black text-[#1B1F3B] tracking-tight">
             International Trending Collection
           </h2>
 
           <div className="flex items-center gap-2.5 flex-shrink-0">
             {/* Sort Dropdown */}
-            <div className="bg-white border border-[#E5E7EB] hover:border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-700 flex items-center shadow-2xs">
-              <span className="text-[#5B6070] mr-1.5 font-bold text-[11px]">Sort:</span>
+            <div className="bg-white border border-[#E5E7EB] hover:border-slate-300 rounded-lg px-2.5 py-1 text-xs text-slate-700 flex items-center shadow-2xs">
+              <span className="text-[#64748B] mr-1.5 font-bold text-[11px]">Sort:</span>
               <select
                 value={globalSortBy}
                 onChange={(e) => setGlobalSortBy(e.target.value)}
@@ -156,7 +156,7 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
                   if (catalogElem) catalogElem.scrollIntoView({ behavior: 'smooth' });
                 }
               }}
-              className="bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold text-xs px-4 py-2 rounded-lg shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+              className="bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold text-xs px-3.5 py-1.5 rounded-lg shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
               title="View all Global Direct products"
             >
               <span>View All</span>
@@ -166,8 +166,8 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
         </div>
       </div>
 
-      {/* 5-Column Products Grid (Matching reference image) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 mt-4">
+      {/* 5-Column Products Grid (Matching reference photo exactly) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 mt-3.5">
         {sortedAlibabaProducts.slice(0, visibleCount).map((item) => {
           const displayPrice = item.displayPrice ?? (item.priceTiers?.[item.priceTiers.length - 1]?.price || item.samplePrice || 25);
           const originalPrice = item.originalPrice ?? Math.round(displayPrice * 1.35);
@@ -178,17 +178,19 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
               onClick={() => onSelectProduct(item.id)}
               className="bg-white rounded-2xl border border-[#E5E7EB] hover:border-slate-300 hover:shadow-xs transition-all duration-200 p-3 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
             >
-              {/* Image Box */}
-              <div className="aspect-[1.14/1] rounded-xl overflow-hidden bg-[#F0F2F5] relative mb-2.5 flex items-center justify-center p-2">
-                <img
-                  src={item.image || item.images?.[0] || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=400'}
-                  alt={item.title}
-                  className="w-full h-full object-contain group-hover:scale-103 transition-transform duration-200"
-                  loading="lazy"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
-                />
+              {/* Image Box - Exact clean soft grey box matching reference photo with hover reveal */}
+              <div className="aspect-[1.32/1] rounded-xl overflow-hidden bg-[#EEF1F4] relative mb-2.5 flex items-center justify-center">
+                {item.image && (
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-contain p-2 mix-blend-multiply opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                )}
 
                 <span className="absolute top-2 left-2 bg-[#1B1F3B] text-white text-[9.5px] font-bold px-2 py-0.5 rounded shadow-2xs z-10 pointer-events-none">
                   Global Direct
@@ -201,38 +203,37 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
 
               {/* Title & Info */}
               <div className="flex-1 flex flex-col">
-                <span className="text-[11px] text-[#E11D48] font-bold block mb-1 truncate">
+                <span className="text-[11px] text-[#E11D48] font-bold block mb-1 mt-0.5 leading-none truncate">
                   {item.categoryName || 'Global Collection'}
                 </span>
 
-                <h3 className="text-xs sm:text-[13px] font-bold text-[#1B1F3B] line-clamp-2 leading-snug min-h-[2.4rem] group-hover:text-[#E11D48] transition">
+                <h3 className="text-[12.5px] font-bold text-[#1B1F3B] line-clamp-2 leading-[1.3] min-h-[33px] group-hover:text-[#E11D48] transition">
                   {item.title}
                 </h3>
 
-                <div className="mt-2.5">
-                  <div className="flex items-baseline gap-1.5 flex-wrap">
-                    <span className="text-sm sm:text-base font-black text-[#1B1F3B]">
+                <div className="mt-2">
+                  <div className="flex items-baseline gap-1 flex-wrap">
+                    <span className="text-[16px] font-black text-[#1B1F3B]">
                       {formatPrice(displayPrice)}
                     </span>
                     {originalPrice > displayPrice && (
-                      <span className="text-[10px] sm:text-[11px] text-slate-400 line-through">
+                      <span className="text-[10.5px] text-[#94A3B8] font-normal line-through ml-1">
                         {formatPrice(originalPrice)}
                       </span>
                     )}
                   </div>
-                  <span className="text-[10px] text-slate-500 font-medium block truncate mt-1">
+                  <span className="text-[9.5px] text-[#64748B] font-medium block truncate mt-0.5 mb-2.5">
                     Direct Import • Fast Delivery Nepal
                   </span>
                 </div>
               </div>
 
-              {/* Footer Badge */}
-              <div className="mt-3 pt-2.5 border-t border-[#F1F3F5] flex items-center justify-between text-[11px]">
-                <span className="flex items-center gap-1 text-emerald-700 font-semibold truncate">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+              {/* Footer: Verified Seller and Rating (Clean, seamless, matching reference photo) */}
+              <div className="flex items-center justify-between text-[11px] pt-0.5">
+                <span className="text-[#0D9488] font-semibold text-[10.5px] flex items-center gap-1 truncate">
                   <span className="truncate">✓ Verified Seller</span>
                 </span>
-                <span className="font-bold text-slate-800 text-[11px] flex-shrink-0">
+                <span className="font-bold text-[#1B1F3B] text-[11px] flex-shrink-0">
                   ★ {item.rating || 4.9}
                 </span>
               </div>
@@ -241,16 +242,16 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
         })}
       </div>
 
-      {/* Centered Minimal Load More Button (Matching Reference Image) */}
+      {/* Centered Minimal Load More Button (Matching Reference Photo) */}
       {visibleCount < sortedAlibabaProducts.length && (
-        <div className="mt-6 mb-1 flex justify-center items-center">
+        <div className="mt-5 mb-0.5 flex justify-center items-center">
           <button
             type="button"
             onClick={() => setVisibleCount(prev => Math.min(prev + 5, sortedAlibabaProducts.length))}
-            className="bg-white hover:bg-slate-50 text-[#1B1F3B] border border-[#1B1F3B] font-bold text-xs px-8 py-2.5 rounded-xl shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+            className="bg-white hover:bg-slate-50 text-[#1B1F3B] border border-[#1B1F3B] font-bold text-xs px-7 py-1.5 rounded-xl shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
           >
             <span>Load More</span>
-            <ChevronDown className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span className="text-[10px] font-bold">⌄</span>
           </button>
         </div>
       )}
