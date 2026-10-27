@@ -151,7 +151,7 @@ export const BhanjoDhamaka = ({ products = [], onSelectProduct, onSelectCategory
             Bhanjo UTSAV DHAMAKA
           </h2>
 
-          {/* Countdown Timer with 3 black boxes */}
+          {/* Countdown Timer with 4 black boxes (including milliseconds) */}
           <div className="flex items-center gap-1.5 ml-1 sm:ml-2">
             <span className="text-[11px] sm:text-xs font-bold text-[#5B6070] uppercase tracking-wide mr-1">
               ENDS IN
@@ -166,6 +166,10 @@ export const BhanjoDhamaka = ({ products = [], onSelectProduct, onSelectCategory
             <span className="text-[#1B1F3B] font-black">:</span>
             <span className="bg-[#1B1F3B] text-white font-mono font-bold text-xs sm:text-sm px-2.5 py-1 rounded-md shadow-2xs">
               {pad(timeLeft.seconds)}
+            </span>
+            <span className="text-[#1B1F3B] font-black">.</span>
+            <span className="bg-[#1B1F3B] text-white font-mono font-bold text-xs sm:text-sm px-2 py-1 rounded-md shadow-2xs">
+              {timeLeft.millis}
             </span>
           </div>
         </div>
