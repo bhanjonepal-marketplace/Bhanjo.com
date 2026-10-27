@@ -762,9 +762,9 @@ export function App() {
               />
             )}
 
-            {/* 1b. The 5 Shortcut Pillars (Dedicated Standalone Box - Laptop / Desktop) */}
+            {/* 1b. The 5 Shortcut Pillars (Dedicated Standalone Box) */}
             {selectedCategoryId === 'all' && !searchQuery && (
-              <div className="hidden lg:block">
+              <div className="block">
                 <BhanjoPillars
                   onSelectCategory={handleSelectCategory}
                   onOpenVouchers={() => {
@@ -779,17 +779,7 @@ export function App() {
               </div>
             )}
 
-            {/* 2. Top Picks (Standalone Box with Side-Scrollable Items) & Curated Trend Discovery */}
-            {selectedCategoryId === 'all' && !searchQuery && (
-              <TopPicksTrendDiscovery
-                products={allProducts}
-                onSelectProduct={handleSelectProduct}
-                onSelectCategory={handleSelectCategory}
-                onOpenTopPicksShowcase={() => setActiveView('top-picks')}
-              />
-            )}
-
-            {/* 4. Bhanjo Utsav Dhamaka Display */}
+            {/* 2. Bhanjo Utsav Dhamaka Display (Before Top Radar as per PDF) */}
             {selectedCategoryId === 'all' && !searchQuery && allProducts.length > 0 && (
               <BhanjoDhamaka
                 products={allProducts}
@@ -799,43 +789,25 @@ export function App() {
               />
             )}
 
-            {/* 4b. Categories Showcase Grid / Amazon Quad Catalog Preview */}
+            {/* 3. Bhanjo Prime Top Radar (Full-Width Clean Minimal 4-Item Grid as per PDF) */}
             {selectedCategoryId === 'all' && !searchQuery && (
-              categoryLayoutMode === 'amazon' ? (
-                <AmazonQuadCatalog
-                  onSelectCategory={handleSelectCategory}
-                  selectedCategoryId={selectedCategoryId}
-                  onSwitchToClassic={() => setCategoryLayoutMode('classic')}
-                />
-              ) : (
-                <div className="relative">
-                  <div className="flex justify-end mb-2">
-                    <button
-                      onClick={() => setCategoryLayoutMode('amazon')}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-orange-50 hover:bg-orange-100 text-[#F85606] border border-orange-200 rounded-xl transition cursor-pointer shadow-2xs"
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>Preview Amazon Quad Style</span>
-                    </button>
-                  </div>
-                  <CategoriesSection
-                    onSelectCategory={handleSelectCategory}
-                    selectedCategoryId={selectedCategoryId}
-                    onOpenMegaMenu={() => setIsMegaMenuOpen(true)}
-                  />
-                </div>
-              )
-            )}
-
-            {/* 5. Nepal Himalayan Export Pavilion */}
-            {selectedCategoryId === 'all' && !searchQuery && (
-              <NepaliPavilion
+              <TopPicksTrendDiscovery
+                products={allProducts}
                 onSelectProduct={handleSelectProduct}
-                onSelectCategory={(catId) => setSelectedCategoryId(catId)}
+                onSelectCategory={handleSelectCategory}
+                onOpenTopPicksShowcase={() => setActiveView('top-picks')}
               />
             )}
 
-            {/* 5b. Alibaba Global Factory Sourcing Section */}
+            {/* 4. Featured Hubs / Popular Departments (Amazon Quad Catalog) */}
+            {selectedCategoryId === 'all' && !searchQuery && (
+              <AmazonQuadCatalog
+                onSelectCategory={handleSelectCategory}
+                selectedCategoryId={selectedCategoryId}
+              />
+            )}
+
+            {/* 5. Overseas Pavilion / Global Factory Sourcing Section */}
             {selectedCategoryId === 'all' && !searchQuery && (
               <AlibabaGlobalSection
                 products={allProducts}
@@ -1187,7 +1159,7 @@ export function App() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-2.5 sm:gap-3">
                       {displayedProducts.map((product) => (
                         <ProductCard
                           key={product.id}

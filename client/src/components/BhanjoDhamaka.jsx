@@ -126,24 +126,24 @@ export const BhanjoDhamaka = ({ products = [], onSelectProduct, onSelectCategory
   return (
     <section 
       id="bhanjo-dhamaka-section" 
-      className="my-7 rounded-2xl overflow-hidden transition-all duration-300 border-2 border-orange-300 shadow-[0_10px_35px_rgba(249,115,22,0.14)] bg-gradient-to-b from-orange-50/50 via-white to-white ring-1 ring-orange-200/60 text-slate-900"
+      className="my-3.5 sm:my-4 rounded-2xl overflow-hidden transition-all duration-300 border border-[#E5E7EB] shadow-xs bg-white text-slate-900"
     >
       
-      {/* 1. TOP PROMOTIONAL ANNOUNCEMENT STRIP (High-Key Frosted Ticker) */}
-      <div className="bg-gradient-to-r from-orange-100/90 via-amber-50 to-orange-100/70 text-orange-950 text-[11px] sm:text-xs px-4 py-1.5 flex items-center justify-between border-b border-orange-200/80 font-bold tracking-wide shadow-2xs">
+      {/* 1. TOP PROMOTIONAL ANNOUNCEMENT STRIP (Clean Minimal Ticker) */}
+      <div className="bg-[#FAFAFB] text-[#1B1F3B] text-[11px] sm:text-xs px-4 py-1.5 flex items-center justify-between border-b border-[#E5E7EB] font-bold tracking-wide shadow-2xs">
         <div className="flex items-center gap-2">
-          <Flame className="w-3.5 h-3.5 text-[#FF5000] fill-current animate-pulse" />
-          <span className="uppercase tracking-wider font-extrabold text-[10px] sm:text-[11px] text-orange-950">
+          <Flame className="w-3.5 h-3.5 text-[#E11D48] fill-current animate-pulse" />
+          <span className="uppercase tracking-wider font-extrabold text-[10px] sm:text-[11px] text-[#1B1F3B]">
             BHANJO UTSAV DHAMAKA • CRAZY CRASH DEALS UP TO 30% OFF
           </span>
         </div>
-        <span className="text-[9.5px] font-mono uppercase tracking-widest hidden sm:inline bg-orange-200/80 text-orange-950 px-2.5 py-0.5 rounded-full font-black shadow-2xs">
+        <span className="text-[9.5px] font-mono uppercase tracking-widest hidden sm:inline bg-[#FFE7EC] text-[#E11D48] px-2.5 py-0.5 rounded-full font-black shadow-2xs">
           🇳🇵 100% NEPALI UTSAV
         </span>
       </div>
 
-      {/* 2. THEMED HEADER BANNER (Frosted Flame Luxe) */}
-      <div className="bg-gradient-to-r from-orange-50 via-white to-amber-50/70 border-b border-orange-200/80 text-slate-900 px-3 sm:px-4 py-3 sm:py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-2xs relative overflow-hidden">
+      {/* 2. THEMED HEADER BANNER */}
+      <div className="bg-white border-b border-[#E5E7EB] text-slate-900 px-3 sm:px-4 py-2.5 sm:py-3 flex flex-col md:flex-row md:items-center justify-between gap-3 relative overflow-hidden">
         
         {/* Soft Ambient Glowing Gradients */}
         <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full blur-2xl pointer-events-none bg-orange-100/80" />
