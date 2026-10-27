@@ -334,22 +334,26 @@ export const TopPicksTrendDiscovery = ({
         {/* ========================================================= */}
         <div 
           onClick={() => onOpenTopPicksShowcase && onOpenTopPicksShowcase()}
-          className="lg:col-span-5 bg-gradient-to-br from-[#FFFBF7] via-[#FFF8F0] to-[#FFF3E8] border border-[#FFDEC2] ring-1 ring-orange-200/40 rounded-2xl p-2.5 sm:p-3 shadow-xs hover:shadow-md transition-all flex flex-col justify-between cursor-pointer group/box relative overflow-hidden"
+          className="lg:col-span-5 bg-gradient-to-br from-[#FFF5F7] via-[#FAFAFB] to-[#FFFFFF] border border-[#E5E7EB] ring-1 ring-rose-100/60 rounded-2xl p-2.5 sm:p-3 shadow-xs hover:shadow-md transition-all flex flex-col justify-between cursor-pointer group/box relative overflow-hidden"
           title="Click to open Bhanjo Prime Showcase"
         >
-          
+          {/* Subtle Ambient Glow */}
+          <div className="absolute -right-8 -top-8 w-40 h-40 bg-rose-200/25 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -left-6 bottom-0 w-32 h-32 bg-amber-100/20 rounded-full blur-2xl pointer-events-none" />
+
           {/* Header Row & Products */}
-          <div>
-            <div className="flex items-center justify-between gap-1 pb-1.5 border-b border-orange-100/90">
+          <div className="relative z-10">
+            <div className="flex items-center justify-between gap-1 pb-1.5 border-b border-[#E5E7EB]">
               
               {/* Left Column: Title (Row 1) + Countdown & Controls (Row 2 on mobile, flex on laptop) */}
               <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 min-w-0 flex-1">
                 {/* Title & Badge */}
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="bg-gradient-to-r from-[#FF5000] to-[#FF7A00] text-white text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-tight shadow-xs flex-shrink-0">
-                    BHANJO PRIME
+                  <span className="bg-[#1B1F3B] text-[#FFC83D] text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tight shadow-xs flex-shrink-0 flex items-center gap-1">
+                    <span>👑</span>
+                    <span>BHANJO PRIME</span>
                   </span>
-                  <h3 className="text-[15px] sm:text-[16px] font-black text-slate-900 tracking-tight transition-colors">
+                  <h3 className="text-[15px] sm:text-[16px] font-black text-[#1B1F3B] tracking-tight transition-colors">
                     Top Radar
                   </h3>
                   <button
@@ -358,7 +362,7 @@ export const TopPicksTrendDiscovery = ({
                       e.stopPropagation();
                       if (onOpenTopPicksShowcase) onOpenTopPicksShowcase();
                     }}
-                    className="text-[11px] text-[#FF5000] font-bold flex items-center transition cursor-pointer"
+                    className="text-[11px] text-[#E11D48] hover:text-[#BE123C] font-bold flex items-center transition cursor-pointer"
                     title="Explore Bhanjo Prime Showcase"
                   >
                     <span>Curated</span>
@@ -366,7 +370,7 @@ export const TopPicksTrendDiscovery = ({
                   </button>
                 </div>
 
-                {/* Prime Deals & Live Countdown */}
+                {/* Prime Deals & Live Countdown (Gold badge with Midnight Navy text as per theme chart) */}
                 <div className="flex items-center gap-1.5">
                   <button
                     type="button"
@@ -374,13 +378,13 @@ export const TopPicksTrendDiscovery = ({
                       e.stopPropagation();
                       if (onOpenTopPicksShowcase) onOpenTopPicksShowcase();
                     }}
-                    className="flex items-center gap-1 bg-white hover:bg-orange-50 border border-orange-200 text-[#FF5000] px-2 py-0.5 rounded-full transition cursor-pointer shadow-2xs"
+                    className="flex items-center gap-1 bg-[#FFC83D] hover:bg-[#F6BE2F] border border-[#F0B820] text-[#1B1F3B] px-2.5 py-0.5 rounded-full transition cursor-pointer shadow-xs"
                     title="Open Prime Deals"
                   >
-                    <span className="text-[11px] sm:text-xs font-black text-[#FF5000]">
+                    <span className="text-[11px] sm:text-xs font-black text-[#1B1F3B]">
                       Prime Deals
                     </span>
-                    <span className="text-[11px] sm:text-xs font-black text-[#FF5000] font-mono flex items-center">
+                    <span className="text-[11px] sm:text-xs font-black text-[#1B1F3B] font-mono flex items-center">
                       <span>{pad(timeLeft.hours)}:{pad(timeLeft.minutes)}:{pad(timeLeft.seconds)}</span>
                     </span>
                   </button>
@@ -393,7 +397,7 @@ export const TopPicksTrendDiscovery = ({
                         e.stopPropagation();
                         scrollLeft();
                       }}
-                      className="w-4.5 h-4.5 rounded bg-white border border-orange-200 text-orange-700 hover:bg-orange-50 shadow-2xs flex items-center justify-center transition cursor-pointer active:scale-95"
+                      className="w-4.5 h-4.5 rounded bg-white border border-[#E5E7EB] text-slate-700 hover:text-[#E11D48] hover:bg-rose-50/60 shadow-2xs flex items-center justify-center transition cursor-pointer active:scale-95"
                       title="Scroll left"
                     >
                       <ChevronLeft className="w-2.5 h-2.5 stroke-[2.5]" />
@@ -404,7 +408,7 @@ export const TopPicksTrendDiscovery = ({
                         e.stopPropagation();
                         scrollRight();
                       }}
-                      className="w-4.5 h-4.5 rounded bg-white border border-orange-200 text-orange-700 hover:bg-orange-50 shadow-2xs flex items-center justify-center transition cursor-pointer active:scale-95"
+                      className="w-4.5 h-4.5 rounded bg-white border border-[#E5E7EB] text-slate-700 hover:text-[#E11D48] hover:bg-rose-50/60 shadow-2xs flex items-center justify-center transition cursor-pointer active:scale-95"
                       title="Scroll right"
                     >
                       <ChevronRight className="w-2.5 h-2.5 stroke-[2.5]" />
@@ -413,19 +417,19 @@ export const TopPicksTrendDiscovery = ({
                 </div>
               </div>
 
-              {/* Right Column: 3D Mascot Header Icon (Compact on mobile, enlarged and adjusted on laptop) */}
+              {/* Right Column: 3D Mascot Header Icon */}
               <div className="flex-shrink-0 self-center lg:self-end flex items-center justify-end pl-1 sm:pl-2 lg:-mb-2.5">
                 <img
                   src="/mascot/bhanjo_mascot_3d_clean.png?v=3"
                   alt="Bhanjo Prime Mascot"
-                  className="w-[46px] h-[52px] sm:w-[50px] sm:h-[56px] lg:w-[72px] lg:h-[80px] max-w-[46px] sm:max-w-[50px] lg:max-w-[72px] max-h-[52px] sm:max-h-[56px] lg:max-h-[80px] object-contain drop-shadow-sm -my-2 lg:-my-1 flex-shrink-0 hover:scale-105 active:rotate-3 transition-transform cursor-pointer"
+                  className="w-[46px] h-[52px] sm:w-[50px] sm:h-[56px] lg:w-[72px] lg:h-[80px] max-w-[46px] sm:max-w-[50px] lg:max-w-[72px] max-h-[52px] sm:max-h-[56px] lg:max-h-[80px] object-contain drop-shadow-[0_8px_16px_rgba(27,31,59,0.14)] -my-2 lg:-my-1 flex-shrink-0 hover:scale-105 active:rotate-3 transition-transform cursor-pointer"
                   title="Bhanjo Prime Mascot"
                 />
               </div>
 
             </div>
 
-            {/* Side-Scrollable Products Row with Larger Photos (shifted downward on laptop screens) */}
+            {/* Side-Scrollable Products Row */}
             <div 
               ref={scrollRef}
               className="flex items-start gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth snap-x snap-mandatory py-2 px-0.5 lg:mt-3.5 lg:pt-1"
@@ -440,8 +444,8 @@ export const TopPicksTrendDiscovery = ({
                   className="w-[108px] sm:w-[116px] md:w-[124px] flex-shrink-0 snap-start group flex flex-col cursor-pointer select-none"
                   title={item.title}
                 >
-                  {/* Square Image Box (Larger size matching retro modern fit section scale) */}
-                  <div className="aspect-square w-full rounded-xl overflow-hidden bg-white border border-orange-100 group-hover:border-[#FF5000] shadow-2xs relative flex items-center justify-center p-2 transition-all">
+                  {/* Square Image Box */}
+                  <div className="aspect-square w-full rounded-xl overflow-hidden bg-white border border-[#E5E7EB] group-hover:border-[#E11D48] shadow-2xs relative flex items-center justify-center p-2 transition-all">
                     <img
                       src={item.image}
                       alt={item.title}
@@ -449,17 +453,17 @@ export const TopPicksTrendDiscovery = ({
                       className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-300 bg-white"
                     />
 
-                    {/* Tag Badge on Bottom of Image */}
+                    {/* Tag Badge on Bottom of Image (Midnight Navy with clean white text) */}
                     <div className="absolute bottom-1 left-1 right-1">
-                      <div className="bg-gradient-to-r from-[#FF5000] to-[#FF6E2E] text-white text-[8.5px] sm:text-[9px] font-black py-0.5 px-1 rounded-xs text-center shadow-xs leading-none truncate">
+                      <div className="bg-[#1B1F3B] text-white text-[8.5px] sm:text-[9px] font-black py-0.5 px-1 rounded-xs text-center shadow-xs leading-none truncate">
                         <span>{item.badge}</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Price Tag underneath */}
+                  {/* Price Tag underneath (Crimson) */}
                   <div className="mt-1.5 text-center">
-                    <span className="text-[12.5px] sm:text-[13px] font-black text-[#FF5000] tracking-tight">
+                    <span className="text-[12.5px] sm:text-[13px] font-black text-[#E11D48] tracking-tight">
                       {formatPrice(item.price)}
                     </span>
                   </div>
@@ -474,13 +478,13 @@ export const TopPicksTrendDiscovery = ({
               e.stopPropagation();
               if (onOpenTopPicksShowcase) onOpenTopPicksShowcase();
             }}
-            className="mt-1.5 pt-1.5 border-t border-orange-100 flex items-center justify-between text-[10.5px] font-bold text-orange-950 transition-colors"
+            className="mt-1.5 pt-1.5 border-t border-[#E5E7EB] flex items-center justify-between text-[10.5px] font-bold text-slate-700 transition-colors relative z-10"
           >
-            <span className="flex items-center gap-1 font-black">
-              <Sparkles className="w-3 h-3 text-[#FF5000]" />
-              <span>✨ Bhanjo Prime Showcase</span>
+            <span className="flex items-center gap-1 font-black text-[#1B1F3B]">
+              <Sparkles className="w-3 h-3 text-[#E11D48]" />
+              <span>Bhanjo Prime Showcase</span>
             </span>
-            <span className="flex items-center gap-0.5 bg-[#FF5000] hover:bg-[#e04500] text-white px-2.5 py-0.5 rounded-full text-[9.5px] font-black shadow-xs transition-colors">
+            <span className="flex items-center gap-0.5 bg-[#E11D48] hover:bg-[#BE123C] text-white px-2.5 py-0.5 rounded-full text-[9.5px] font-black shadow-xs transition-colors">
               <span>Open Deals</span>
               <ChevronRight className="w-2.5 h-2.5 stroke-[2.5]" />
             </span>

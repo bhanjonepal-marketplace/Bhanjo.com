@@ -536,7 +536,7 @@ export const Navbar = ({
               <button
                 onClick={() => setLanguage('en')}
                 className={`px-1.5 sm:px-2 py-0.5 rounded transition ${language === 'en'
-                    ? 'bg-[#F85606] text-white shadow-2xs font-black'
+                    ? 'bg-[#E11D48] text-white shadow-2xs font-black'
                     : 'text-slate-600 hover:text-slate-900'
                   }`}
                 title="Switch interface to English"
@@ -546,7 +546,7 @@ export const Navbar = ({
               <button
                 onClick={() => setLanguage('ne')}
                 className={`px-1.5 sm:px-2 py-0.5 rounded transition ${language === 'ne'
-                    ? 'bg-[#F85606] text-white shadow-2xs font-black'
+                    ? 'bg-[#E11D48] text-white shadow-2xs font-black'
                     : 'text-slate-600 hover:text-slate-900'
                   }`}
                 title="नेपाली भाषामा बदल्नुहोस्"
@@ -562,9 +562,9 @@ export const Navbar = ({
               {user ? (
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-1 sm:gap-1.5 font-bold text-slate-800 hover:text-[#F85606] transition"
+                  className="flex items-center gap-1 sm:gap-1.5 font-bold text-slate-800 hover:text-[#E11D48] transition"
                 >
-                  <div className="w-5 h-5 rounded-full overflow-hidden bg-[#F85606] text-white text-[10px] flex items-center justify-center font-black flex-shrink-0 shadow-xs border border-orange-200">
+                  <div className="w-5 h-5 rounded-full overflow-hidden bg-[#E11D48] text-white text-[10px] flex items-center justify-center font-black flex-shrink-0 shadow-xs border border-[#FFE7EC]">
                     {user.avatar ? (
                       <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
                     ) : (
@@ -577,7 +577,7 @@ export const Navbar = ({
               ) : (
                 <button
                   onClick={() => onOpenAuthModal()}
-                  className="font-bold text-[#F85606] hover:underline flex items-center gap-1 text-[11px]"
+                  className="font-bold text-[#E11D48] hover:underline flex items-center gap-1 text-[11px]"
                 >
                   <User className="w-3.5 h-3.5" />
                   <span>{t('loginSignup')}</span>
@@ -622,7 +622,7 @@ export const Navbar = ({
                 >
                   <img
                     src="/bhanjo-logo-horizontal.png"
-                    alt="भान्जो Bhanjo"
+                    alt="Bhanjo Marketplace"
                     className="h-7 w-auto object-contain"
                   />
                 </div>
@@ -672,13 +672,13 @@ export const Navbar = ({
                       onOpenCart();
                     }
                   }}
-                  className="relative p-1.5 text-slate-700 hover:text-[#F85606] transition flex items-center gap-1"
+                  className="relative p-1.5 text-slate-700 hover:text-[#E11D48] transition flex items-center gap-1"
                   title="Shopping Cart"
                 >
                   <div className="relative">
                     <ShoppingCart className="w-5 h-5" />
                     {user && cartCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-[#F85606] text-white font-black text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center">
+                      <span className="absolute -top-1 -right-1 bg-[#E11D48] text-white font-black text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center">
                         {cartCount}
                       </span>
                     )}
@@ -705,7 +705,7 @@ export const Navbar = ({
                 >
                   <img
                     src="/bhanjo-logo-horizontal.png"
-                    alt="भान्जो Bhanjo"
+                    alt="Bhanjo Marketplace"
                     className={`w-auto object-contain transition-all duration-300 group-hover:scale-[1.04] ${
                       isScrolled ? 'h-8 sm:h-9' : 'h-10 sm:h-11 md:h-[48px]'
                     }`}
@@ -719,14 +719,14 @@ export const Navbar = ({
               <div ref={searchContainerRef} className="flex-1 relative">
                 <form
                   onSubmit={handleSearchSubmit}
-                  className="w-full flex items-center bg-white rounded-2xl overflow-hidden border-2 border-[#FF5000] focus-within:border-[#F85606] transition-all duration-200 shadow-xs p-0.5"
+                  className="w-full flex items-center bg-white rounded-2xl overflow-hidden border-2 border-[#E11D48] focus-within:border-[#BE123C] transition-all duration-200 shadow-xs p-0.5"
                 >
                   {/* Category Scope Dropdown (Taobao-style e.g. Baby ⌄, All ⌄) */}
                   <div className="relative flex-shrink-0" ref={scopeRef}>
                     <button
                       type="button"
                       onClick={() => setIsScopeDropdownOpen(!isScopeDropdownOpen)}
-                      className="flex items-center gap-1 pl-3 pr-2 py-1.5 text-xs font-bold text-slate-700 hover:text-[#FF5000] transition cursor-pointer select-none"
+                      className="flex items-center gap-1 pl-3 pr-2 py-1.5 text-xs font-bold text-slate-700 hover:text-[#E11D48] transition cursor-pointer select-none"
                     >
                       <span>{searchScope}</span>
                       <ChevronDown className="w-3 h-3 text-slate-400" />
@@ -813,16 +813,16 @@ export const Navbar = ({
                     onMouseEnter={handleCameraMouseEnter}
                     onMouseLeave={handleCameraMouseLeave}
                     title="Search by image or find similar items"
-                    className="p-1 sm:p-1.5 text-[#FF5000] hover:bg-orange-50 rounded-xl transition-all active:scale-95 flex items-center justify-center mr-1.5 cursor-pointer group"
+                    className="p-1 sm:p-1.5 text-[#E11D48] hover:bg-rose-50 rounded-xl transition-all active:scale-95 flex items-center justify-center mr-1.5 cursor-pointer group"
                     aria-label="Search by image"
                   >
-                    <Camera className="w-5.5 h-5.5 sm:w-6 sm:h-6 text-[#FF5000] group-hover:scale-110 transition-transform stroke-[2.2]" />
+                    <Camera className="w-5.5 h-5.5 sm:w-6 sm:h-6 text-[#E11D48] group-hover:scale-110 transition-transform stroke-[2.2]" />
                   </button>
 
-                  {/* Solid Orange Primary Search Button (Taobao Style) */}
+                  {/* Crimson Primary Search Button */}
                   <button
                     type="submit"
-                    className="bg-gradient-to-r from-[#FF7A00] to-[#FF5000] hover:from-[#f06e00] hover:to-[#e04500] text-white rounded-xl text-xs sm:text-sm font-black flex items-center justify-center transition-all duration-200 px-4 sm:px-6 py-2 cursor-pointer shadow-xs active:scale-95 flex-shrink-0"
+                    className="bg-[#E11D48] hover:bg-[#BE123C] text-white rounded-xl text-xs sm:text-sm font-black flex items-center justify-center transition-all duration-200 px-4 sm:px-6 py-2 cursor-pointer shadow-xs active:scale-95 flex-shrink-0"
                   >
                     <span>{t('searchBtn') || 'Search'}</span>
                   </button>

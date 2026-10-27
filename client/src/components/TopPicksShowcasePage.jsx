@@ -21,6 +21,8 @@ export const TopPicksShowcasePage = ({
   const [claimedVouchers, setClaimedVouchers] = useState(new Set());
   const [searchFilter, setSearchFilter] = useState('');
   const [justAddedId, setJustAddedId] = useState(null);
+  // Apple Minimal Sky Blue theme by default (with instant toggle)
+  const [theme, setTheme] = useState('sky'); // 'sky' | 'warm'
 
   // Live countdown timer (refreshes live)
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 59, seconds: 14 });
@@ -323,21 +325,21 @@ export const TopPicksShowcasePage = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF9F2] pb-16 font-sans">
+    <div className="min-h-screen pb-16 font-sans bg-[#FAFAFB] text-slate-900 transition-colors duration-300">
       
       {/* ========================================================= */}
-      {/* TOP HEADER: Frosted Warm Glass Navigation + Super Deals   */}
+      {/* TOP HEADER: Clean Navigation + Live Deals               */}
       {/* ========================================================= */}
-      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-orange-200/80 shadow-xs text-slate-900 transition-all">
+      <div className="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-[#E5E7EB] shadow-xs text-slate-900 transition-all">
         <div className="max-w-[1560px] mx-auto px-3 sm:px-5 py-2 flex items-center justify-between gap-2.5 flex-wrap">
           
           {/* Back to Home Button */}
           <button
             type="button"
             onClick={onBack}
-            className="flex items-center gap-2 bg-orange-50 hover:bg-orange-100 active:scale-95 text-orange-950 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold border border-orange-200/90 shadow-2xs transition-all cursor-pointer"
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-white hover:bg-slate-50 text-[#1B1F3B] border border-[#E5E7EB] hover:border-slate-300 shadow-2xs transition-all cursor-pointer active:scale-95"
           >
-            <ArrowLeft className="w-4 h-4 text-[#FF5000] stroke-[2.5]" />
+            <ArrowLeft className="w-4 h-4 stroke-[2.5] text-[#1B1F3B]" />
             <span>{language === 'ne' ? '← पसलमा फर्कनुहोस्' : '← Back to Marketplace'}</span>
           </button>
 
@@ -348,119 +350,129 @@ export const TopPicksShowcasePage = ({
               alt="Bhanjo Prime Mascot"
               className="w-7 h-7 sm:w-8 sm:h-8 object-contain drop-shadow-sm flex-shrink-0 -my-1"
             />
-            <span className="bg-gradient-to-r from-[#FF5000] to-[#FF7A00] text-white text-[10px] sm:text-xs font-black px-2.5 py-0.5 rounded-full uppercase tracking-tight shadow-xs">
-              BHANJO PRIME • TOP RADAR
+            <span className="bg-[#1B1F3B] text-[#FFC83D] text-[10px] sm:text-xs font-black px-2.5 py-0.5 rounded-full uppercase tracking-tight shadow-xs flex items-center gap-1">
+              <span>👑</span>
+              <span>BHANJO PRIME • TOP RADAR</span>
             </span>
             <div className="flex items-center gap-1.5 text-xs sm:text-sm font-black font-mono">
-              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FF5000] stroke-[2.5]" />
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5] text-[#E11D48]" />
               <span className="hidden xs:inline text-slate-700">{language === 'ne' ? 'अफर बाँकी समय:' : 'Radar Deals:'}</span>
-              <span className="bg-orange-100/90 border border-orange-200 text-[#FF5000] px-2 py-0.5 rounded-md font-black">
+              <span className="bg-[#FFC83D] border border-[#F0B820] text-[#1B1F3B] px-2 py-0.5 rounded-md font-black shadow-2xs">
                 {pad(timeLeft.hours)}:{pad(timeLeft.minutes)}:{pad(timeLeft.seconds)}
               </span>
             </div>
           </div>
 
-          {/* Quick Search inside Super Deals */}
-          <div className="relative w-full sm:w-64">
-            <input
-              type="text"
-              value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
-              placeholder={language === 'ne' ? 'अफर खोज्नुहोस्...' : 'Search Prime Deals...'}
-              className="w-full bg-orange-50/60 hover:bg-white text-slate-800 text-xs font-medium pl-8 pr-3 py-1.5 rounded-full border border-orange-200/90 focus:border-[#FF5000] focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-200 shadow-2xs transition-colors"
-            />
-            <Search className="w-3.5 h-3.5 text-[#FF5000] absolute left-2.5 top-1/2 -translate-y-1/2" />
+          {/* Right Action Bar: Verified Badge + Quick Search */}
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            {/* Verified Direct Sourcing Pill */}
+            <div className="hidden md:flex items-center gap-1 bg-[#FFE7EC] text-[#E11D48] border border-[#FECDD3] px-3 py-1 rounded-full text-[11px] font-bold shadow-2xs">
+              <Sparkles className="w-3 h-3 text-[#E11D48]" />
+              <span>Verified Top Deals</span>
+            </div>
+
+            {/* Quick Search inside Super Deals */}
+            <div className="relative flex-1 sm:w-56">
+              <input
+                type="text"
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                placeholder={language === 'ne' ? 'अफर खोज्नुहोस्...' : 'Search Prime Deals...'}
+                className="w-full text-slate-800 text-xs font-medium pl-8 pr-3 py-1.5 rounded-full border border-[#E5E7EB] bg-white shadow-2xs transition-colors focus:bg-white focus:outline-none focus:ring-2 focus:border-[#E11D48] focus:ring-rose-100"
+              />
+              <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-[#E11D48]" />
+            </div>
           </div>
         </div>
       </div>
 
       {/* ========================================================= */}
-      {/* HERO BANNER: High-Key Frosted Warm Luxe Theme             */}
+      {/* HERO BANNER: Clean Luxury Header with Subtle Blush Glow   */}
       {/* ========================================================= */}
-      <div className="bg-gradient-to-b from-[#FFF7ED] via-[#FFFDF9] to-[#FFF8F0] border-b border-orange-200/70 pt-5 pb-7 sm:pb-9 shadow-xs relative overflow-hidden">
+      <div className="border-b border-[#E5E7EB] pt-3 sm:pt-4 pb-3.5 sm:pb-4 shadow-xs relative overflow-hidden bg-gradient-to-b from-[#FFF5F7] via-[#FAFAFB] to-[#FFFFFF]">
         {/* Soft Ambient Glow Orbs */}
-        <div className="absolute -right-12 -top-12 w-96 h-96 bg-orange-200/40 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute left-1/4 -bottom-10 w-80 h-80 bg-amber-100/60 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -left-10 top-1/3 w-64 h-64 bg-orange-100/40 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -right-12 -top-12 w-80 h-80 rounded-full blur-3xl pointer-events-none bg-rose-200/25" />
+        <div className="absolute left-1/4 -bottom-10 w-72 h-72 rounded-full blur-3xl pointer-events-none bg-amber-100/20" />
+        <div className="absolute -left-10 top-1/3 w-56 h-56 rounded-full blur-2xl pointer-events-none bg-rose-100/20" />
 
         <div className="max-w-[1560px] mx-auto px-3 sm:px-5 relative z-10">
           
-          {/* Main Headline Layout: Text on Left, 3D Cutout Mascot on Right */}
-          <div className="flex items-center justify-between gap-2 sm:gap-6 mb-4 min-h-[140px] xs:min-h-[160px] sm:min-h-[190px]">
+          {/* Main Headline Layout: Text on Left, 3D Cutout Mascot on Right (Compact & Clean) */}
+          <div className="flex items-center justify-between gap-3 sm:gap-6 mb-2.5 sm:mb-3">
             
             {/* Left Content Column */}
-            <div className="text-left flex-1 min-w-0 pr-1 xs:pr-2">
-              <div className="inline-flex items-center gap-1.5 bg-orange-100/90 text-orange-900 border border-orange-200/90 px-3 py-1 rounded-full text-[11px] sm:text-xs font-black mb-2 shadow-2xs">
-                <Sparkles className="w-3.5 h-3.5 text-[#FF5000]" />
+            <div className="text-left flex-1 min-w-0 pr-1">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold mb-1 shadow-2xs border border-[#E5E7EB] bg-white/90 text-[#1B1F3B] backdrop-blur-md">
+                <Sparkles className="w-3 h-3 text-[#E11D48]" />
                 <span className="truncate">Bhanjo Prime Radar • Direct Factory Subsidies Live</span>
               </div>
-              <h1 className="text-xl xs:text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-slate-950 drop-shadow-2xs">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF5000] via-[#FF6A1A] to-[#E04500]">
+              <h1 className="text-lg xs:text-xl sm:text-2xl lg:text-[28px] font-black tracking-tight leading-snug text-slate-950 drop-shadow-2xs">
+                <span className="text-[#1B1F3B]">
                   Bhanjo Prime Radar
                 </span>{' '}
-                • Nepal's Verified Top Deals
+                • <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E11D48] to-[#BE123C]">Nepal's Verified Top Deals</span>
               </h1>
-              <p className="text-slate-600 text-[11.5px] xs:text-xs sm:text-sm font-semibold mt-1.5 line-clamp-2 sm:line-clamp-none">
+              <p className="text-[11px] xs:text-[11.5px] sm:text-xs mt-0.5 text-[#5B6070] font-medium line-clamp-1 sm:line-clamp-none">
                 {language === 'ne' 
                   ? 'कारखानाबाट सिधै काठमाडौं हब • भन्सार तथा डेलिभरी ग्यारेन्टी सहित' 
                   : 'Direct Factory Sourcing • Stackable Official Subsidies • Zero Middleman Markup'}
               </p>
             </div>
 
-            {/* Right Side: Transparent 3D Cutout Panda with vibrant depth */}
-            <div className="relative flex-shrink-0 self-end flex items-end justify-center w-28 xs:w-36 sm:w-48 md:w-56 lg:w-64">
+            {/* Right Side: Compact Proportionate Mascot */}
+            <div className="relative flex-shrink-0 flex items-center justify-end w-20 xs:w-24 sm:w-28 md:w-32">
               <img
                 src="/mascot/bhanjo_mascot_3d_clean.png?v=3"
                 alt="Bhanjo Prime Mascot"
-                className="h-36 xs:h-44 sm:h-56 md:h-64 lg:h-72 w-auto max-w-none object-contain drop-shadow-[0_16px_28px_rgba(255,80,0,0.18)] animate-in zoom-in-95 duration-300 hover:scale-105 transition-transform select-none pointer-events-none -mb-6 sm:-mb-8"
+                className="h-20 xs:h-24 sm:h-28 md:h-32 w-auto max-w-none object-contain animate-in zoom-in-95 duration-300 hover:scale-105 transition-transform select-none pointer-events-none drop-shadow-[0_12px_20px_rgba(27,31,59,0.12)]"
               />
             </div>
 
           </div>
 
           {/* ========================================================= */}
-          {/* SECTION 1: PLATFORM SUBSIDY VOUCHERS (Frosted Pavilion)   */}
+          {/* SECTION 1: PLATFORM SUBSIDY VOUCHERS                      */}
           {/* ========================================================= */}
-          <div className="bg-white/90 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-orange-200/90 shadow-[0_8px_30px_rgba(255,106,26,0.08)] ring-1 ring-orange-200/50">
-            <div className="flex items-center justify-between mb-2.5 pb-2 border-b border-orange-100">
+          <div className="backdrop-blur-xl rounded-2xl p-2.5 sm:p-3 border border-[#E5E7EB] shadow-xs bg-white/95">
+            <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-[#E5E7EB]">
               <div className="flex items-center gap-2">
-                <span className="text-sm sm:text-base font-black tracking-tight text-slate-950 flex items-center gap-1.5">
-                  <Gift className="w-4 h-4 text-[#FF5000]" />
+                <span className="text-xs sm:text-sm font-black tracking-tight text-[#1B1F3B] flex items-center gap-1.5">
+                  <Gift className="w-3.5 h-3.5 text-[#E11D48]" />
                   <span>Platform Subsidy Vouchers</span>
                 </span>
-                <span className="text-[10px] bg-gradient-to-r from-[#FF5000] to-[#FF7A00] text-white font-black px-2 py-0.5 rounded-full shadow-2xs">
+                <span className="text-[9.5px] font-bold px-2 py-0.5 rounded-full shadow-2xs bg-[#FFE7EC] text-[#E11D48] border border-[#FECDD3]">
                   Stackable Coupons
                 </span>
               </div>
-              <span className="text-[11px] text-orange-950/70 font-bold hidden sm:inline">
+              <span className="text-[10.5px] font-semibold hidden sm:inline text-[#5B6070]">
                 Claim up to Rs. 322 in combined subsidies today
               </span>
-              <span className="text-[10px] text-[#FF5000] font-bold sm:hidden flex items-center gap-0.5">
+              <span className="text-[9.5px] font-bold sm:hidden flex items-center gap-0.5 text-[#E11D48]">
                 <span>Swipe →</span>
               </span>
             </div>
 
             {/* 5 Vouchers in Sideable Scroll way on Mobile, Grid on Laptop */}
-            <div className="flex sm:grid sm:grid-cols-5 gap-2 sm:gap-2.5 overflow-x-auto no-scrollbar [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-1 snap-x snap-mandatory">
+            <div className="flex sm:grid sm:grid-cols-5 gap-2 sm:gap-2.5 overflow-x-auto no-scrollbar [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-0.5 snap-x snap-mandatory">
               {subsidyVouchers.map((v) => {
                 const isClaimed = claimedVouchers.has(v.id);
                 return (
                   <div 
                     key={v.id}
-                    className="w-[138px] xs:w-[150px] sm:w-auto flex-shrink-0 snap-start bg-gradient-to-b from-orange-50/40 via-white to-white rounded-xl p-2.5 flex flex-col justify-between text-slate-800 shadow-2xs relative overflow-hidden group border border-orange-200/90 hover:border-[#FF5000] hover:shadow-md transition-all"
+                    className="w-[130px] xs:w-[140px] sm:w-auto flex-shrink-0 snap-start rounded-xl p-2 sm:p-2.5 flex flex-col justify-between text-slate-800 shadow-2xs relative overflow-hidden group border border-[#E5E7EB] hover:border-[#FECDD3] bg-gradient-to-b from-[#FFF5F7] via-white to-white hover:shadow-md transition-all"
                   >
                     <div>
-                      <div className="flex items-center justify-between text-[11px] font-bold text-slate-600">
+                      <div className="flex items-center justify-between text-[10.5px] font-bold text-slate-600">
                         <span className="truncate">{v.title}</span>
                         <span className="text-sm">{v.icon}</span>
                       </div>
-                      <div className="mt-1 flex items-baseline gap-1">
-                        <span className="text-lg sm:text-xl font-black text-[#FF5000] tracking-tight">
+                      <div className="mt-0.5 flex items-baseline gap-1">
+                        <span className="text-base sm:text-lg font-black tracking-tight text-[#E11D48]">
                           {v.amount}
                         </span>
-                        <span className="text-[9px] text-slate-400 font-bold">OFF</span>
+                        <span className="text-[8.5px] text-slate-400 font-bold">OFF</span>
                       </div>
-                      <div className="text-[9.5px] text-slate-500 font-medium">
+                      <div className="text-[9px] text-[#5B6070] font-medium">
                         {v.minSpend}
                       </div>
                     </div>
@@ -469,10 +481,10 @@ export const TopPicksShowcasePage = ({
                       type="button"
                       onClick={() => handleClaimVoucher(v)}
                       disabled={isClaimed}
-                      className={`mt-2 w-full py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer select-none active:scale-95 ${
+                      className={`mt-1.5 w-full py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer select-none active:scale-95 shadow-xs ${
                         isClaimed
-                          ? 'bg-emerald-500 text-white cursor-default shadow-xs'
-                          : 'bg-gradient-to-r from-[#FF5000] to-[#FF7A00] hover:from-[#E04500] hover:to-[#F85606] text-white shadow-xs'
+                          ? 'bg-[#15803D] text-white cursor-default'
+                          : 'bg-[#E11D48] hover:bg-[#BE123C] text-white'
                       }`}
                     >
                       {isClaimed ? v.claimedText : (language === 'ne' ? 'लिनुहोस्' : 'Claim Voucher')}
@@ -484,7 +496,7 @@ export const TopPicksShowcasePage = ({
           </div>
 
           {/* ========================================================= */}
-          {/* SECTION 2: QUICK PILL SHORTCUTS                          */}
+          {/* SECTION 2: QUICK PILL SHORTCUTS                           */}
           {/* ========================================================= */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mt-3">
             {quickPills.map((pill) => (
@@ -495,16 +507,16 @@ export const TopPicksShowcasePage = ({
                   const elem = document.getElementById('super-showcase-grid');
                   if (elem) elem.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="bg-white hover:bg-orange-50/60 text-slate-800 p-2 sm:p-2.5 rounded-xl flex items-center gap-2 transition-all shadow-2xs hover:shadow-md cursor-pointer border border-orange-200/80 hover:border-orange-300 text-left group"
+                className="p-2 sm:p-2.5 rounded-xl flex items-center gap-2 transition-all shadow-2xs hover:shadow-sm cursor-pointer border border-[#E5E7EB] hover:border-[#FECDD3] bg-white hover:bg-rose-50/40 text-left group"
               >
-                <div className="w-8 h-8 rounded-lg bg-orange-100/70 border border-orange-200/60 flex items-center justify-center text-lg flex-shrink-0 group-hover:scale-110 transition-transform">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-lg flex-shrink-0 group-hover:scale-110 transition-transform border border-[#E5E7EB] bg-[#FAFAFB] text-[#1B1F3B]">
                   {pill.icon}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-[11px] font-black truncate text-slate-900 leading-tight">
+                  <div className="text-[11px] font-bold truncate text-[#1B1F3B] leading-tight">
                     {pill.title}
                   </div>
-                  <div className="text-[9px] text-[#FF5000] font-extrabold truncate">
+                  <div className="text-[9px] font-black truncate text-[#E11D48]">
                     {pill.badge}
                   </div>
                 </div>
@@ -516,9 +528,9 @@ export const TopPicksShowcasePage = ({
       </div>
 
       {/* ========================================================= */}
-      {/* SECTION 3: STICKY CATEGORY TABS STRIP (White Strip)       */}
+      {/* SECTION 3: STICKY CATEGORY TABS STRIP                     */}
       {/* ========================================================= */}
-      <div className="sticky top-[47px] z-40 bg-white border-y border-orange-200/80 shadow-xs">
+      <div className="sticky top-[47px] z-40 bg-white/95 backdrop-blur-md border-y border-[#E5E7EB] shadow-xs transition-colors">
         <div className="max-w-[1560px] mx-auto px-3 sm:px-5 flex items-center gap-2 overflow-x-auto scrollbar-none py-2">
           {categoryTabs.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -527,10 +539,10 @@ export const TopPicksShowcasePage = ({
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-black transition-all cursor-pointer select-none flex items-center gap-1.5 ${
+                className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer select-none flex items-center gap-1.5 ${
                   isActive
-                    ? 'bg-gradient-to-r from-[#FF5000] to-[#FF7A00] text-white shadow-sm scale-105'
-                    : 'bg-orange-50/70 hover:bg-orange-100/80 text-slate-700 hover:text-[#FF5000]'
+                    ? 'bg-[#1B1F3B] text-white shadow-sm scale-105'
+                    : 'bg-slate-100/80 hover:bg-rose-50 text-slate-700 hover:text-[#E11D48]'
                 }`}
               >
                 <span>{tab.label}</span>
@@ -543,26 +555,26 @@ export const TopPicksShowcasePage = ({
       {/* ========================================================= */}
       {/* SECTION 4: CURATED SUPER SHOWCASE PRODUCTS GRID           */}
       {/* ========================================================= */}
-      <div className="max-w-[1560px] mx-auto px-3 sm:px-5 pt-5" id="super-showcase-grid">
+      <div className="max-w-[1560px] mx-auto px-3 sm:px-5 pt-3 sm:pt-4" id="super-showcase-grid">
         
         {/* Results counter & active state */}
-        <div className="flex items-center justify-between mb-3 text-xs text-slate-600 font-semibold">
+        <div className="flex items-center justify-between mb-2 text-[11px] sm:text-xs text-slate-600 font-semibold">
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#FF5000] animate-pulse" />
-            <span>Showing {filteredItems.length} Verified Prime Deals</span>
+            <span className="w-2 h-2 rounded-full animate-pulse bg-[#E11D48]" />
+            <span className="text-[#1B1F3B] font-bold">Showing {filteredItems.length} Verified Prime Deals</span>
           </div>
-          <span className="text-slate-400 font-normal">100% Guaranteed Lowest Nepal Pricing</span>
+          <span className="text-[#5B6070] font-normal">100% Guaranteed Lowest Nepal Pricing</span>
         </div>
 
-        {/* 6-Column Grid matching Photo 1 format exactly */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3">
+        {/* 6-Column Grid in Compact Aspect Ratio */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-2.5">
           {filteredItems.map((item, index) => {
             const discountPercent = item.originalPrice ? Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100) : 35;
             const savings = item.originalPrice ? item.originalPrice - item.price : 0;
             const soldPercent = item.soldPercent || (37 + (index * 8) % 43);
             const itemsLeft = 32 - ((index * 3) % 22);
 
-            // Live millisecond countdown like Photo 1
+            // Live millisecond countdown
             const itemMins = (timeLeft.minutes + index * 2) % 60;
             const itemSecs = (timeLeft.seconds + index * 5) % 60;
             const itemMillis = (index * 3) % 10;
@@ -571,102 +583,100 @@ export const TopPicksShowcasePage = ({
               <div
                 key={item.id}
                 onClick={() => handleCardClick(item)}
-                className="bg-white rounded-xl border border-orange-100 hover:border-[#FF5000] hover:shadow-xl hover:shadow-orange-500/15 transition-all duration-200 flex flex-col justify-between cursor-pointer group overflow-hidden"
+                className="bg-white rounded-xl border border-[#E5E7EB] hover:border-[#E11D48] hover:shadow-lg transition-all duration-200 flex flex-col justify-between cursor-pointer group overflow-hidden"
               >
-                {/* Product Image Tile with Badges & Live Countdown Banner (Pure White Background) */}
-                <div className="relative aspect-square overflow-hidden bg-white">
+                {/* Compact Product Image Tile */}
+                <div className="relative aspect-[4/3.1] overflow-hidden bg-slate-50/50 flex items-center justify-center">
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-full h-full object-contain p-1.5 group-hover:scale-105 transition-transform duration-300 bg-white"
+                    className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
                   />
                   
-                  {/* Red Discount Tag */}
-                  <span className="absolute top-1.5 left-1.5 bg-[#FF5000] text-white text-[10px] font-black px-1.5 py-0.5 rounded shadow-sm z-10">
+                  {/* Discount Tag (Gold deal badge with Navy text) */}
+                  <span className="absolute top-1 left-1 bg-[#FFC83D] text-[#1B1F3B] text-[9px] font-black px-1.5 py-0.5 rounded shadow-xs z-10">
                     -{discountPercent}%
                   </span>
 
                   {/* Official Mall Badge */}
-                  <span className="absolute top-1.5 right-1.5 bg-slate-900/85 text-amber-300 text-[8px] font-bold px-1.5 py-0.5 rounded shadow-xs z-10">
+                  <span className="absolute top-1 right-1 bg-[#1B1F3B] text-[#FFC83D] text-[7.5px] font-black px-1.5 py-0.5 rounded shadow-xs z-10">
                     PRIME
                   </span>
 
-                  {/* Bottom Yellow Flash Deal Live Timer Banner matching Photo 1 */}
-                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400 text-slate-950 font-black text-[9px] py-0.5 px-1.5 flex items-center justify-between shadow-md z-10 font-mono">
-                    <span className="flex items-center gap-0.5 uppercase">
-                      <Zap className="w-2.5 h-2.5 fill-current text-red-600" />
+                  {/* Bottom Flash Deal Live Timer Banner */}
+                  <div className="absolute bottom-0 inset-x-0 bg-[#1B1F3B] text-white font-black text-[8px] py-0.5 px-1 flex items-center justify-between shadow-xs z-10 font-mono">
+                    <span className="flex items-center gap-0.5 uppercase text-[#FFC83D]">
+                      <Zap className="w-2.5 h-2.5 fill-current text-[#FFC83D]" />
                       <span>Flash Deal</span>
                     </span>
-                    <span>{pad(itemMins)}:{pad(itemSecs)}.{itemMillis} Left</span>
+                    <span className="text-white/90">{pad(itemMins)}:{pad(itemSecs)}.{itemMillis} Left</span>
                   </div>
                 </div>
 
-                {/* Product Info & Pricing (matching Photo 1 size format) */}
-                <div className="p-2 sm:p-2.5 flex-1 flex flex-col justify-between">
+                {/* Compact Product Info & Pricing */}
+                <div className="p-1.5 sm:p-2 flex-1 flex flex-col justify-between">
                   <div>
-                    {/* Compact Title */}
+                    {/* 1-Line Compact Title */}
                     <h3 
-                      className="text-xs font-semibold text-slate-800 line-clamp-2 group-hover:text-[#FF5000] transition leading-tight min-h-[28px]"
+                      className="text-[11px] sm:text-xs font-semibold text-slate-800 line-clamp-1 transition leading-tight group-hover:text-[#E11D48]"
                       title={item.title}
                     >
                       {item.title}
                     </h3>
 
-                    {/* Sold status & progress bar matching Photo 1 */}
-                    <div className="mt-1.5">
-                      <div className="flex items-center justify-between text-[9px] font-bold text-orange-600 mb-0.5">
+                    {/* Sold status & micro progress bar */}
+                    <div className="mt-0.5">
+                      <div className="flex items-center justify-between text-[8px] sm:text-[8.5px] font-bold text-[#E11D48] mb-0.5">
                         <span className="flex items-center gap-0.5">
-                          <Flame className="w-2.5 h-2.5 text-orange-500 fill-current" />
+                          <Flame className="w-2.5 h-2.5 text-[#E11D48] fill-current" />
                           <span>Sold {soldPercent}%</span>
                         </span>
-                        <span className="text-slate-400 font-normal">{itemsLeft} left</span>
+                        <span className="text-[#5B6070] font-normal">{itemsLeft} left</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-1 overflow-hidden">
                         <div 
-                          className="bg-gradient-to-r from-orange-500 to-amber-400 h-full rounded-full" 
+                          className="bg-gradient-to-r from-[#E11D48] to-[#FFC83D] h-full rounded-full" 
                           style={{ width: `${soldPercent}%` }}
                         />
                       </div>
                     </div>
 
-                    {/* Savings Tag matching Photo 1 */}
+                    {/* Savings Tag */}
                     {savings > 0 && (
-                      <div className="mt-1">
-                        <span className="bg-amber-50 border border-amber-200 text-amber-800 text-[8.5px] font-black px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+                      <div className="mt-0.5">
+                        <span className="bg-[#FFE7EC] border border-[#FECDD3] text-[#E11D48] text-[8px] font-bold px-1 py-0.5 rounded inline-flex items-center gap-0.5">
                           <span>⚡</span>
                           <span>Save {formatPrice(savings)}</span>
                         </span>
                       </div>
                     )}
 
-                    {/* Prices matching Photo 1 */}
-                    <div className="mt-1">
-                      <div className="flex items-center gap-1 flex-wrap">
-                        <span className="text-sm sm:text-base font-black text-[#FF5000] leading-tight">
-                          {formatPrice(item.price)}
-                        </span>
-                      </div>
+                    {/* Prices */}
+                    <div className="mt-0.5 flex items-baseline gap-1 flex-wrap">
+                      <span className="text-xs sm:text-sm font-black leading-tight text-[#E11D48]">
+                        {formatPrice(item.price)}
+                      </span>
                       {item.originalPrice && (
-                        <div className="text-[10px] text-slate-400 line-through leading-none mt-0.5">
+                        <span className="text-[9px] text-slate-400 line-through leading-none">
                           {formatPrice(item.originalPrice)}
-                        </div>
+                        </span>
                       )}
                     </div>
                   </div>
 
-                  {/* Red Buy Now Button matching Photo 1 */}
+                  {/* Compact Buy Now Button */}
                   <button
                     type="button"
                     onClick={(e) => handleAddToCart(e, item)}
-                    className={`w-full mt-2 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer select-none active:scale-95 shadow-xs flex items-center justify-center gap-1.5 ${
+                    className={`w-full mt-1.5 py-1 rounded-lg text-[10.5px] sm:text-[11px] font-bold transition-all cursor-pointer select-none active:scale-95 shadow-xs flex items-center justify-center gap-1 ${
                       justAddedId === item.id
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-gradient-to-r from-[#FF5000] to-[#FF7A00] hover:from-[#E04500] hover:to-[#F85606] text-white shadow-orange-500/20'
+                        ? 'bg-[#15803D] text-white'
+                        : 'bg-[#E11D48] hover:bg-[#BE123C] text-white'
                     }`}
                     title="Buy Deal"
                   >
-                    <ShoppingBag className="w-3.5 h-3.5" />
+                    <ShoppingBag className="w-3 h-3" />
                     <span>{justAddedId === item.id ? 'Added ✓' : 'Buy Now'}</span>
                   </button>
                 </div>

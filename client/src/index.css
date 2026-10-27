@@ -9,7 +9,6 @@
 
   html {
     overflow-x: clip;
-    max-width: 100vw;
     width: 100%;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
@@ -17,28 +16,25 @@
 
   body {
     overflow-x: clip;
-    max-width: 100vw;
     width: 100%;
     position: relative;
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
-    background-color: #F5F5F5;
-    color: #212121;
-    font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background-color: #FAFAFB;
+    color: #1B1F3B;
+    font-family: 'Plus Jakarta Sans', Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
+  h1, h2, h3, h4, h5, h6 {
+    color: #1B1F3B;
+  }
+
   #root {
-    max-width: 100vw;
     width: 100%;
     min-height: 100vh;
   }
 
-  @media (min-width: 1024px) {
-    body {
-      zoom: 1.15;
-    }
-  }
 }
 
 /* Hide scrollbar for smooth native mobile horizontal carousels and filter pills */
@@ -52,20 +48,106 @@
 
 /* Bhanjo Specific Tokens */
 :root {
-  --bhanjo-orange: #F85606;
-  --bhanjo-orange-hover: #E04E05;
-  --bhanjo-bg: #F5F5F5;
-  --bhanjo-text: #212121;
-  --bhanjo-muted: #757575;
-  --bhanjo-border: #E0E0E0;
+  /* 1. Primary (buttons, links, highlights) */
+  --bhanjo-primary: #E11D48;
+  --bhanjo-crimson: #E11D48;
 
-  /* Aliases for backwards-compatibility */
+  /* 2. Button hover */
+  --bhanjo-primary-hover: #BE123C;
+  --bhanjo-crimson-hover: #BE123C;
+
+  /* 3. Headings and main text */
+  --bhanjo-navy: #1B1F3B;
+  --bhanjo-midnight: #1B1F3B;
+  --bhanjo-text: #1B1F3B;
+
+  /* 4. Deals and discount badges */
+  --bhanjo-gold: #FFC83D;
+
+  /* 5. Soft backgrounds and sections */
+  --bhanjo-blush: #FFE7EC;
+
+  /* 6. Secondary text */
+  --bhanjo-slate: #5B6070;
+  --bhanjo-muted: #5B6070;
+
+  /* 7. Borders */
+  --bhanjo-border: #E5E7EB;
+
+  /* 8. Page background */
+  --bhanjo-bg: #FAFAFB;
+
+  /* 9. In stock, success */
+  --bhanjo-success: #15803D;
+
+  /* 10. Errors only */
+  --bhanjo-error: #B42318;
+
+  /* 11. White */
+  --bhanjo-white: #FFFFFF;
+
+  /* Backward compatibility aliases */
+  --bhanjo-orange: #E11D48;
+  --bhanjo-orange-hover: #BE123C;
   --daraz-orange: var(--bhanjo-orange);
   --daraz-orange-hover: var(--bhanjo-orange-hover);
   --daraz-bg: var(--bhanjo-bg);
   --daraz-text: var(--bhanjo-text);
   --daraz-muted: var(--bhanjo-muted);
   --daraz-border: var(--bhanjo-border);
+}
+
+/* Color Harmonizers: Map remaining orange legacy elements directly to the Crimson & Blush Palette */
+.text-\[\#F85606\],
+.text-\[\#FF5000\],
+.text-\[\#FF6A00\],
+.text-\[\#E65100\],
+.text-\[\#D84315\] {
+  color: #E11D48 !important;
+}
+
+.hover\:text-\[\#F85606\]:hover,
+.hover\:text-\[\#FF5000\]:hover,
+.hover\:text-\[\#E65100\]:hover {
+  color: #BE123C !important;
+}
+
+.bg-\[\#F85606\],
+.bg-\[\#FF5000\],
+.bg-\[\#FF6A00\],
+.bg-\[\#E65100\],
+.bg-\[\#D84315\] {
+  background-color: #E11D48 !important;
+}
+
+.hover\:bg-\[\#F85606\]:hover,
+.hover\:bg-\[\#e04e05\]:hover,
+.hover\:bg-\[\#E04E05\]:hover,
+.hover\:bg-\[\#E04500\]:hover,
+.hover\:bg-\[\#BF360C\]:hover {
+  background-color: #BE123C !important;
+}
+
+.border-\[\#F85606\],
+.border-\[\#FF5000\],
+.focus\:border-\[\#F85606\]:focus,
+.focus-within\:border-\[\#F85606\]:focus-within {
+  border-color: #E11D48 !important;
+}
+
+.bg-orange-50,
+.bg-orange-100\/80,
+.bg-orange-100\/90,
+.bg-orange-100 {
+  background-color: #FFE7EC !important;
+}
+
+.border-orange-200,
+.border-orange-200\/80,
+.border-orange-200\/70,
+.border-orange-200\/90,
+.border-orange-300 {
+  border-color: #E5E7EB !important;
 }
 
 /* Custom Clean Scrollbar */
@@ -98,4 +180,5 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
 }
+
 

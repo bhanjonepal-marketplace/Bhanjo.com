@@ -10,8 +10,8 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
   const { addToCart } = useCart();
   const [justAdded, setJustAdded] = useState(false);
 
-  const retailPrice = product.samplePrice;
-  const originalPrice = product.samplePrice * 1.4;
+  const retailPrice = product.price || product.samplePrice || 99;
+  const originalPrice = product.originalPrice || Math.round(retailPrice * 1.35);
   const discountPercent = 30;
   const isFavorite = isInWishlist(product.id);
 
@@ -35,7 +35,7 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
     <div 
       id={`product-card-${product.id}`}
       onClick={() => onSelectProduct(product.id)}
-      className="bg-white rounded-xl border border-slate-200 hover:border-orange-400 hover:shadow-md transition-all duration-150 flex flex-col justify-between overflow-hidden cursor-pointer group relative"
+      className="bg-white rounded-xl border border-[#E5E7EB] hover:border-[#E11D48] hover:shadow-md transition-all duration-150 flex flex-col justify-between overflow-hidden cursor-pointer group relative"
     >
       {/* Product Image */}
       <div className="relative aspect-square bg-slate-100 overflow-hidden">
@@ -71,7 +71,7 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
           </span>
         )}
 
-        <span className="absolute bottom-2 left-2 bg-[#F85606] text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-xs z-10">
+        <span className="absolute bottom-2 left-2 bg-[#FFC83D] text-[#1B1F3B] text-[9.5px] font-black px-1.5 py-0.5 rounded shadow-xs z-10 tracking-tight">
           -{discountPercent}%
         </span>
 
@@ -130,8 +130,8 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
           onClick={handleQuickAddToCart}
           className={`absolute bottom-2 right-2 p-2 rounded-full shadow-md transition-all duration-200 z-10 flex items-center justify-center ${
             justAdded 
-              ? 'bg-emerald-600 text-white scale-105' 
-              : 'bg-[#F85606] text-white opacity-90 group-hover:opacity-100 group-hover:scale-110 hover:bg-[#e04e05]'
+              ? 'bg-[#15803D] text-white scale-105' 
+              : 'bg-[#E11D48] text-white opacity-95 group-hover:opacity-100 group-hover:scale-110 hover:bg-[#BE123C]'
           }`}
           title="Quick Add to Cart"
         >
@@ -149,21 +149,21 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
         <div>
           {/* Title */}
           <h3 
-            className="text-xs font-medium text-slate-800 group-hover:text-[#F85606] transition line-clamp-2 leading-tight min-h-[30px]"
+            className="text-xs font-semibold text-[#1B1F3B] group-hover:text-[#E11D48] transition line-clamp-2 leading-tight min-h-[30px]"
             title={product.title}
           >
             {product.title}
           </h3>
 
-          {/* Pricing (Bhanjo & Multi-Currency Style: Nepali + Yen) */}
+          {/* Pricing (Bhanjo Theme: Crimson #E11D48 + Slate #5B6070) */}
           <div className="mt-1">
             <div className="flex items-center justify-between gap-1 flex-wrap">
               <div className="flex items-baseline gap-1.5 flex-wrap">
-                <span className="text-sm font-extrabold text-[#F85606]">
-                  {formatPrice(retailPrice)}
+                <span className="text-sm font-extrabold text-[#E11D48]">
+                  {formatPrice(retailPrice, product)}
                 </span>
-                <span className="text-[10px] text-slate-400 line-through">
-                  {formatPrice(originalPrice)}
+                <span className="text-[10px] text-[#5B6070] line-through">
+                  {formatPrice(originalPrice, product)}
                 </span>
               </div>
               {onEditProduct && (

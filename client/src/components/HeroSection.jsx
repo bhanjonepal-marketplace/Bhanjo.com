@@ -31,8 +31,8 @@ const PROMO_SLIDES = [
     subtitle: 'Verified brands & instant cash vouchers',
     nepaliSubtitle: 'भरपर्दो ब्रान्डहरू र तुरुन्त क्यासब्याक भउचर',
     image: '/banners/bhanjo_festive_gift.jpg',
-    bgColor: 'from-[#ff5000] via-[#ff651a] to-[#ff7d33]',
-    bgGradient: 'linear-gradient(135deg, #ff5000 0%, #ff651a 50%, #ff7d33 100%)',
+    bgColor: 'from-[#E11D48] via-[#e82a55] to-[#BE123C]',
+    bgGradient: 'linear-gradient(135deg, #E11D48 0%, #e82a55 50%, #BE123C 100%)',
     linkCategory: 'home-kitchen'
   },
   {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,35 +14,67 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;800&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #090d16; }
-    .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #090d16;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
     /* Custom scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0b1120; }
-    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #334155; }
-    .glass-card { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(51, 65, 85, 0.4); }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0b1120;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(51, 65, 85, 0.4);
+    }
   </style>
 </head>
+
 <body class="text-slate-100 min-h-screen antialiased flex flex-col selection:bg-orange-500 selection:text-white">
 
   <!-- ========================================== -->
   <!-- 1. LOGIN & DUAL-2FA GATEWAY (When Logged Out) -->
   <!-- ========================================== -->
   <div id="login-container" class="min-h-screen flex items-center justify-center p-4">
-    <div class="glass-card max-w-md w-full rounded-2xl shadow-2xl p-6 sm:p-8 border border-slate-700/60 relative overflow-hidden">
+    <div
+      class="glass-card max-w-md w-full rounded-2xl shadow-2xl p-6 sm:p-8 border border-slate-700/60 relative overflow-hidden">
       <!-- Glow Accent -->
-      <div class="absolute -top-24 -right-24 w-48 h-48 bg-orange-500/15 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -top-24 -right-24 w-48 h-48 bg-orange-500/15 rounded-full blur-3xl pointer-events-none">
+      </div>
+      <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none">
+      </div>
 
       <!-- Header -->
       <div class="text-center mb-6 relative">
-        <div class="w-14 h-14 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-orange-500/30 mb-3 border border-orange-400/40">
+        <div
+          class="w-14 h-14 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-orange-500/30 mb-3 border border-orange-400/40">
           <i data-lucide="shield-check" class="w-7 h-7 text-white"></i>
         </div>
         <h1 class="text-2xl font-black tracking-tight text-white">BHANJO<span class="text-orange-500">.COM</span></h1>
         <p class="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Master Admin Command Center</p>
-        <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">
+        <div
+          class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
           <span>4-Layer Hardware Shield Active</span>
         </div>
@@ -56,7 +89,7 @@
           <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Admin Email</label>
           <div class="relative">
             <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-            <input type="email" id="login-email" required placeholder="admin@bhanjo.com"
+            <input type="email" id="login-email" required placeholder="prashannaghim@gmail.com"
               class="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition">
           </div>
         </div>
@@ -65,7 +98,7 @@
           <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Master Password</label>
           <div class="relative">
             <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-            <input type="password" id="login-password" required placeholder="••••••••••••"
+            <input type="password" id="login-password" required placeholder="Enter password (e.g. bhanjo)"
               class="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition">
           </div>
         </div>
@@ -74,36 +107,42 @@
           <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Registered Admin Phone</label>
           <div class="relative">
             <i data-lucide="smartphone" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-            <input type="tel" id="login-phone" required placeholder="98XXXXXXXX"
+            <input type="tel" id="login-phone" required placeholder="9705435590"
               class="w-full bg-slate-900/90 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition">
           </div>
         </div>
 
         <button type="submit" id="step1-btn"
           class="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-orange-500/25 transition duration-200 flex items-center justify-center gap-2 cursor-pointer mt-2">
-          <span>Authenticate & Dispatch 2FA</span>
+          <span>Authenticate & Send Email OTP</span>
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
       </form>
 
       <!-- STEP 2: Dual 2FA Verification Form -->
       <form id="step2-form" onsubmit="handleVerify2FA(event)" class="space-y-4 hidden">
-        <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 text-xs text-amber-300 leading-relaxed flex items-start gap-2">
-          <i data-lucide="alert-triangle" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+        <div id="email-sent-banner"
+          class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 text-xs text-blue-200 leading-relaxed flex items-start gap-2.5">
+          <i data-lucide="mail-check" class="w-5 h-5 flex-shrink-0 text-blue-400 mt-0.5"></i>
           <div>
-            <strong>Dual-Factor Verification Required:</strong> Enter the 6-digit code dispatched to your Email. For SMS, demo code <strong class="text-emerald-400 font-mono">123456</strong> is active until Sparrow SMS gateway is connected.
+            <strong class="text-white block font-bold text-xs mb-0.5">Real Email OTP Dispatched!</strong>
+            <span>We sent a 6-digit code to <strong id="target-email-display" class="text-amber-300 font-mono">your email</strong>. Please check your Gmail inbox (or spam folder) and type the code below.</span>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1 flex items-center justify-between">
+            <label
+              class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1 flex items-center justify-between">
               <span>📱 SMS Code (<span id="masked-phone">...</span>)</span>
-              <span class="text-emerald-400 font-mono text-[9px] lowercase bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/30">demo: 123456</span>
+              <span
+                class="text-emerald-400 font-mono text-[9px] lowercase bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/30">demo:
+                123456</span>
             </label>
             <input type="text" id="sms-code" maxlength="6" required placeholder="123456" value="123456"
               class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-center font-mono font-bold text-lg text-amber-400 tracking-widest focus:outline-none focus:border-orange-500">
-            <p class="text-[10px] text-slate-400 mt-1">Demo SMS code: <strong class="text-emerald-400 font-mono">123456</strong></p>
+            <p class="text-[10px] text-slate-400 mt-1">Demo SMS code: <strong
+                class="text-emerald-400 font-mono">123456</strong></p>
           </div>
 
           <div>
@@ -118,7 +157,8 @@
 
         <div class="flex items-center justify-between text-xs text-slate-400 px-1">
           <span>Code valid for: <strong id="countdown-timer" class="text-amber-400 font-mono">05:00</strong></span>
-          <button type="button" onclick="resetToStep1()" class="text-slate-400 hover:text-white underline">Change info</button>
+          <button type="button" onclick="resetToStep1()" class="text-slate-400 hover:text-white underline">Change
+            info</button>
         </div>
 
         <button type="submit" id="step2-btn"
@@ -139,17 +179,22 @@
   <!-- 2. MASTER COMMAND CENTER (When Logged In) -->
   <!-- ========================================== -->
   <div id="dashboard-container" class="min-h-screen flex flex-col hidden">
-    
+
     <!-- Top Bar -->
-    <header class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md px-4 sm:px-8 py-3 flex items-center justify-between">
+    <header
+      class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md px-4 sm:px-8 py-3 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center shadow-md shadow-orange-500/20">
+        <div
+          class="w-9 h-9 bg-gradient-to-tr from-orange-500 to-amber-500 rounded-xl flex items-center justify-center shadow-md shadow-orange-500/20">
           <i data-lucide="shield-check" class="w-5 h-5 text-white"></i>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="font-black text-lg text-white tracking-tight">BHANJO<span class="text-orange-500">.COM</span></span>
-            <span class="bg-orange-500/20 text-orange-400 border border-orange-500/30 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Command Center</span>
+            <span class="font-black text-lg text-white tracking-tight">BHANJO<span
+                class="text-orange-500">.COM</span></span>
+            <span
+              class="bg-orange-500/20 text-orange-400 border border-orange-500/30 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Command
+              Center</span>
           </div>
           <p class="text-[11px] text-slate-400 hidden sm:block">Hardware-Shielded Backend Administration Portal</p>
         </div>
@@ -280,7 +325,8 @@
       <!-- TAB 1: ORDERS & FULFILLMENT -->
       <!-- ===================================== -->
       <div id="tab-orders" class="tab-content space-y-4">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
           <div>
             <h2 class="text-lg font-bold text-white">Marketplace Orders</h2>
             <p class="text-xs text-slate-400">Manage real-time customer shipments and status updates</p>
@@ -327,10 +373,12 @@
       <!-- TAB 2: CATALOG & INVENTORY -->
       <!-- ===================================== -->
       <div id="tab-inventory" class="tab-content space-y-4 hidden">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
           <div>
             <h2 class="text-lg font-bold text-white">Catalog & Inventory Management</h2>
-            <p class="text-xs text-slate-400">Search, edit pricing, manage stock, and delete items with persistent SQLite sync</p>
+            <p class="text-xs text-slate-400">Search, edit pricing, manage stock, and delete items with persistent
+              SQLite sync</p>
           </div>
           <div class="flex items-center gap-2 flex-wrap">
             <input type="text" id="inventory-search" oninput="renderInventory()" placeholder="Search title or SKU..."
@@ -352,18 +400,22 @@
         <div class="bg-slate-900/60 p-3 sm:p-4 rounded-2xl border border-slate-800 space-y-2.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2">
-              <div class="w-6 h-6 rounded-lg bg-orange-500/10 border border-orange-500/30 flex items-center justify-center">
+              <div
+                class="w-6 h-6 rounded-lg bg-orange-500/10 border border-orange-500/30 flex items-center justify-center">
                 <i data-lucide="layers" class="w-3.5 h-3.5 text-orange-400"></i>
               </div>
               <span class="text-xs font-bold text-white uppercase tracking-wider">Product Categories</span>
             </div>
-            <span id="category-filter-count" class="text-[11px] text-slate-400 font-mono bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700/60">
+            <span id="category-filter-count"
+              class="text-[11px] text-slate-400 font-mono bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700/60">
               Showing: All Products
             </span>
           </div>
 
           <!-- Horizontal Category Filter Pills -->
-          <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent" id="catalog-category-tabs">
+          <div
+            class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent"
+            id="catalog-category-tabs">
             <!-- Dynamically populated category buttons -->
           </div>
         </div>
@@ -399,19 +451,23 @@
       <!-- TAB 3: FLASH SALE DEALS -->
       <!-- ===================================== -->
       <div id="tab-flash-sale" class="tab-content space-y-6 hidden">
-        
+
         <!-- Header Banner -->
-        <div class="bg-gradient-to-r from-amber-500/10 via-red-500/10 to-purple-500/10 p-5 rounded-2xl border border-amber-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div
+          class="bg-gradient-to-r from-amber-500/10 via-red-500/10 to-purple-500/10 p-5 rounded-2xl border border-amber-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div class="flex items-center gap-2">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">Master Campaign Control</span>
+              <span
+                class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">Master
+                Campaign Control</span>
               <span class="text-xs text-slate-400">Admin Only</span>
             </div>
             <h2 class="text-xl font-black text-white flex items-center gap-2 mt-1">
               <i data-lucide="zap" class="w-5 h-5 text-amber-400"></i>
               <span>Flash Sale, Timers, Upcoming Events & Vouchers</span>
             </h2>
-            <p class="text-xs text-slate-300 mt-0.5">Control live countdown timers, marketing text, upcoming rounds, and gift vouchers shown on Bhanjo.com</p>
+            <p class="text-xs text-slate-300 mt-0.5">Control live countdown timers, marketing text, upcoming rounds, and
+              gift vouchers shown on Bhanjo.com</p>
           </div>
           <div class="flex items-center gap-2">
             <button onclick="saveCampaignSettings()" id="btn-save-campaign-top"
@@ -427,7 +483,7 @@
 
         <!-- 2-Column Grid: Section 1 & Section 2 -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          
+
           <!-- 1. LIVE COUNTDOWN & TIMER CONTROLS -->
           <div class="bg-slate-900/70 p-5 rounded-2xl border border-slate-800 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
@@ -457,13 +513,24 @@
             </div>
 
             <div>
-              <label class="block text-[11px] font-bold text-slate-300 mb-1">Quick Reset / Extend Session Presets</label>
+              <label class="block text-[11px] font-bold text-slate-300 mb-1">Quick Reset / Extend Session
+                Presets</label>
               <div class="flex items-center gap-2 flex-wrap">
-                <button type="button" onclick="setTimerPreset(1, 0)" class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+1 Hour</button>
-                <button type="button" onclick="setTimerPreset(2, 0)" class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+2 Hours</button>
-                <button type="button" onclick="setTimerPreset(4, 0)" class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+4 Hours (Standard)</button>
-                <button type="button" onclick="setTimerPreset(12, 0)" class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+12 Hours</button>
-                <button type="button" onclick="setTimerPreset(24, 0)" class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+24 Hours (Mega Drop)</button>
+                <button type="button" onclick="setTimerPreset(1, 0)"
+                  class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+1
+                  Hour</button>
+                <button type="button" onclick="setTimerPreset(2, 0)"
+                  class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+2
+                  Hours</button>
+                <button type="button" onclick="setTimerPreset(4, 0)"
+                  class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+4
+                  Hours (Standard)</button>
+                <button type="button" onclick="setTimerPreset(12, 0)"
+                  class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+12
+                  Hours</button>
+                <button type="button" onclick="setTimerPreset(24, 0)"
+                  class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition border border-slate-700 cursor-pointer">+24
+                  Hours (Mega Drop)</button>
               </div>
             </div>
 
@@ -526,7 +593,8 @@
                 <i data-lucide="calendar" class="w-4 h-4 text-sky-400"></i>
                 <span>Upcoming Event Time Slots (Customer Session Tabs)</span>
               </h3>
-              <p class="text-[11px] text-slate-400">These rounds appear as clickable upcoming tabs on the customer flash sale page</p>
+              <p class="text-[11px] text-slate-400">These rounds appear as clickable upcoming tabs on the customer flash
+                sale page</p>
             </div>
           </div>
 
@@ -536,15 +604,18 @@
               <span class="text-[10px] font-black text-amber-400 uppercase tracking-wider block">Upcoming Round 1</span>
               <div>
                 <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Time Label</label>
-                <input type="text" id="fs-slot-1-time" value="16:00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <input type="text" id="fs-slot-1-time" value="16:00"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
               </div>
               <div>
                 <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Title</label>
-                <input type="text" id="fs-slot-1-title" value="16:00 Coming Up" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <input type="text" id="fs-slot-1-title" value="16:00 Coming Up"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
               </div>
               <div>
                 <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Badge/Tag</label>
-                <input type="text" id="fs-slot-1-tag" value="Soon" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <input type="text" id="fs-slot-1-tag" value="Soon"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
               </div>
             </div>
 
@@ -553,32 +624,39 @@
               <span class="text-[10px] font-black text-sky-400 uppercase tracking-wider block">Upcoming Round 2</span>
               <div>
                 <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Time Label</label>
-                <input type="text" id="fs-slot-2-time" value="20:00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <input type="text" id="fs-slot-2-time" value="20:00"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
               </div>
               <div>
                 <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Title</label>
-                <input type="text" id="fs-slot-2-title" value="20:00 Night Drop" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <input type="text" id="fs-slot-2-title" value="20:00 Night Drop"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
               </div>
               <div>
                 <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Badge/Tag</label>
-                <input type="text" id="fs-slot-2-tag" value="Popular" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <input type="text" id="fs-slot-2-tag" value="Popular"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
               </div>
             </div>
 
             <!-- Slot 3 -->
             <div class="p-3.5 bg-slate-800/80 rounded-xl border border-slate-700/80 space-y-2">
-              <span class="text-[10px] font-black text-purple-400 uppercase tracking-wider block">Upcoming Round 3</span>
+              <span class="text-[10px] font-black text-purple-400 uppercase tracking-wider block">Upcoming Round
+                3</span>
               <div>
                 <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Time Label</label>
-                <input type="text" id="fs-slot-3-time" value="Tomorrow 10:00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <input type="text" id="fs-slot-3-time" value="Tomorrow 10:00"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
               </div>
               <div>
                 <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Title</label>
-                <input type="text" id="fs-slot-3-title" value="Tomorrow 10:00 Mega Drop" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <input type="text" id="fs-slot-3-title" value="Tomorrow 10:00 Mega Drop"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
               </div>
               <div>
                 <label class="block text-[10px] text-slate-400 font-bold mb-0.5">Badge/Tag</label>
-                <input type="text" id="fs-slot-3-tag" value="Huge Deals" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                <input type="text" id="fs-slot-3-tag" value="Huge Deals"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
               </div>
             </div>
           </div>
@@ -586,13 +664,15 @@
 
         <!-- 4. GIFT VOUCHERS & HOURLY DROPS MANAGER -->
         <div class="bg-slate-900/70 p-5 rounded-2xl border border-slate-800 space-y-4">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+          <div
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
             <div>
               <h3 class="font-bold text-sm text-white flex items-center gap-2">
                 <i data-lucide="gift" class="w-4 h-4 text-emerald-400"></i>
                 <span>Claimable Gift Vouchers & Hourly Drops (Account Required)</span>
               </h3>
-              <p class="text-[11px] text-slate-400">Guests must create/login to an account to claim these vouchers. Edit amounts, tags, and codes below.</p>
+              <p class="text-[11px] text-slate-400">Guests must create/login to an account to claim these vouchers. Edit
+                amounts, tags, and codes below.</p>
             </div>
             <button onclick="addNewAdminVoucherRow()"
               class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
@@ -640,14 +720,83 @@
       <!-- ===================================== -->
       <!-- TAB 4: ALIBABA & 1688 IMPORTER -->
       <!-- ===================================== -->
-      <div id="tab-importer" class="tab-content space-y-4 hidden">
+      <div id="tab-importer" class="tab-content space-y-5 hidden">
+
+        <!-- 🚀 LIVE 1688 DIRECT SEARCH & 1-CLICK IMPORTER (POWERED BY RAPIDAPI) -->
+        <div
+          class="bg-gradient-to-br from-orange-950/30 via-slate-900 to-slate-900/90 p-5 sm:p-6 rounded-2xl border-2 border-orange-500/40 shadow-2xl space-y-4 relative overflow-hidden">
+          <div class="absolute -right-16 -top-16 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl pointer-events-none">
+          </div>
+
+          <div class="flex items-center justify-between flex-wrap gap-2 relative">
+            <div>
+              <div
+                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-black uppercase tracking-wider mb-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>1688 Live API Active • 500M+ Products Accessible</span>
+              </div>
+              <h2 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                <i data-lucide="zap" class="w-5 h-5 text-orange-400"></i>
+                <span>Search Any 1688 Product & 1-Click Import</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">
+                Search anything from 1688 factories in real-time. Automatically converts to NPR with your 3x profit
+                rule, translates Chinese titles to English, strips Chinese supplier names, and lets you import straight
+                to <strong>Flash Sales</strong> or <strong>Categories</strong> with 1 click!
+              </p>
+            </div>
+          </div>
+
+          <!-- Search Input Bar -->
+          <div class="flex flex-col sm:flex-row gap-2 relative">
+            <div class="relative flex-1">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+              <input type="text" id="live1688-query-input"
+                placeholder="Type anything (e.g. smart watch, hoodie, drone, winter shoes, kitchen gadgets, bag, jewelry...)"
+                onkeydown="if(event.key === 'Enter') handle1688LiveSearch()"
+                class="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-orange-500 transition shadow-inner">
+            </div>
+            <button onclick="handle1688LiveSearch()" id="live1688-search-btn"
+              class="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20 cursor-pointer flex-shrink-0">
+              <i data-lucide="search" class="w-4 h-4"></i>
+              <span>Search 1688</span>
+            </button>
+          </div>
+
+          <!-- Quick Suggestion Tags -->
+          <div class="flex items-center gap-1.5 flex-wrap text-[11px] text-slate-400 pt-1">
+            <span class="text-slate-500 font-semibold">Try Searching:</span>
+            <button onclick="quickSearch1688('smart watch')"
+              class="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Smart
+              Watch</button>
+            <button onclick="quickSearch1688('hoodie men')"
+              class="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Hoodie</button>
+            <button onclick="quickSearch1688('wireless earbuds')"
+              class="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Wireless
+              Earbuds</button>
+            <button onclick="quickSearch1688('sneakers')"
+              class="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Sneakers</button>
+            <button onclick="quickSearch1688('kitchen tools')"
+              class="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Kitchen
+              Tools</button>
+            <button onclick="quickSearch1688('women handbag')"
+              class="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Handbags</button>
+          </div>
+
+          <!-- Loading & Status Message -->
+          <div id="live1688-status-box" class="hidden text-xs p-3 rounded-xl"></div>
+
+          <!-- Results Grid Container -->
+          <div id="live1688-results-container" class="space-y-3 pt-2"></div>
+        </div>
+
         <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-800 space-y-4">
           <div>
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-              <i data-lucide="globe" class="w-5 h-5 text-orange-400"></i>
-              <span>1688 & Alibaba Factory Importer Engine</span>
+            <h2 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="link" class="w-4 h-4 text-orange-400"></i>
+              <span>Or Import by Specific 1688 Store URL / Offer Link</span>
             </h2>
-            <p class="text-xs text-slate-400">Direct factory crawler: auto-translates Chinese specs, converts RMB to NPR with 3.0x markup, and verifies stock</p>
+            <p class="text-xs text-slate-400">Paste exact 1688 product offer URLs or whole store link to crawl</p>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
@@ -656,7 +805,8 @@
                 <span>1688 Store URL or Product Offer Link(s)</span>
                 <span class="text-[10px] text-slate-500 font-normal">Paste 1 or multiple URLs</span>
               </label>
-              <textarea id="importer-url-input" rows="2" placeholder="Paste 1688 Store URL OR Product Links (e.g. https://detail.1688.com/offer/797402749257.html - one per line)"
+              <textarea id="importer-url-input" rows="2"
+                placeholder="Paste 1688 Store URL OR Product Links (e.g. https://detail.1688.com/offer/797402749257.html - one per line)"
                 oninput="onImporterUrlChanged()"
                 class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-orange-500 resize-none font-mono"></textarea>
             </div>
@@ -684,9 +834,11 @@
               <i data-lucide="cookie" class="w-4 h-4 text-yellow-400"></i>
               1688 Session Cookie Manager
             </h3>
-            <div id="cookie-status-badge" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-700 text-slate-400">Checking...</div>
+            <div id="cookie-status-badge"
+              class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-700 text-slate-400">Checking...</div>
           </div>
-          <p class="text-[11px] text-slate-400">Paste your fresh 1688.com browser cookie here. Required for live factory crawling. Get it from DevTools → Application → Cookies → 1688.com → copy all values.</p>
+          <p class="text-[11px] text-slate-400">Paste your fresh 1688.com browser cookie here. Required for live factory
+            crawling. Get it from DevTools → Application → Cookies → 1688.com → copy all values.</p>
 
           <textarea id="cookie-input" rows="3"
             placeholder="Paste full cookie string here... (e.g. cna=xxx; _tb_token_=xxx; lid=xxx; ...)"
@@ -717,15 +869,19 @@
                 <div class="font-bold text-white">南通市爱珊居纺织品有限公司</div>
                 <div class="text-[11px] text-slate-400">ID: shop2373u576y9y76 • Bedding, Quilts & Home Textiles</div>
               </div>
-              <button onclick="prefillStore('https://shop2373u576y9y76.1688.com/page/offerlist.htm?offerId=824006606516')" class="text-xs text-orange-400 font-bold hover:underline ml-2">Select</button>
+              <button
+                onclick="prefillStore('https://shop2373u576y9y76.1688.com/page/offerlist.htm?offerId=824006606516')"
+                class="text-xs text-orange-400 font-bold hover:underline ml-2">Select</button>
             </div>
 
             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 flex items-center justify-between">
               <div>
                 <div class="font-bold text-white">义乌祥祥日用品有限公司</div>
-                <div class="text-[11px] text-slate-400">ID: shop7588427f62jd1 • 645+ Tumblers, Ice Cups & Daily Essentials</div>
+                <div class="text-[11px] text-slate-400">ID: shop7588427f62jd1 • 645+ Tumblers, Ice Cups & Daily
+                  Essentials</div>
               </div>
-              <button onclick="prefillStore('https://shop7588427f62jd1.1688.com/?offerId=894447674850')" class="text-xs text-orange-400 font-bold hover:underline ml-2">Select</button>
+              <button onclick="prefillStore('https://shop7588427f62jd1.1688.com/?offerId=894447674850')"
+                class="text-xs text-orange-400 font-bold hover:underline ml-2">Select</button>
             </div>
 
             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 flex items-center justify-between">
@@ -733,7 +889,8 @@
                 <div class="font-bold text-white">白沟新城侨诺箱包厂 (Qiaonuo Handbag Factory)</div>
                 <div class="text-[11px] text-slate-400">ID: shop22z822h65h113 • 11,000+ Handbags</div>
               </div>
-              <button onclick="prefillStore('shop22z822h65h113')" class="text-xs text-orange-400 font-bold hover:underline ml-2">Select</button>
+              <button onclick="prefillStore('shop22z822h65h113')"
+                class="text-xs text-orange-400 font-bold hover:underline ml-2">Select</button>
             </div>
 
             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 flex items-center justify-between">
@@ -741,7 +898,8 @@
                 <div class="font-bold text-white">高碑店市震宇箱包厂 (Zhenyu Luggage Factory)</div>
                 <div class="text-[11px] text-slate-400">ID: shop6009271911772 • 28,000+ Totes & Backpacks</div>
               </div>
-              <button onclick="prefillStore('shop6009271911772')" class="text-xs text-orange-400 font-bold hover:underline ml-2">Select</button>
+              <button onclick="prefillStore('shop6009271911772')"
+                class="text-xs text-orange-400 font-bold hover:underline ml-2">Select</button>
             </div>
           </div>
         </div>
@@ -754,30 +912,39 @@
                 <h3 class="text-sm font-bold text-white flex items-center gap-2">
                   <i data-lucide="package" class="w-4 h-4 text-orange-400"></i>
                   <span>1688 Distributor Staging</span>
-                  <span id="imported-count-badge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 ml-1">0</span>
+                  <span id="imported-count-badge"
+                    class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 ml-1">0</span>
                 </h3>
                 <div id="imported-shop-scope" class="hidden"></div>
               </div>
-              <p class="text-[11px] text-slate-400 mt-0.5">Showing products strictly from the active shop/URL. Previously pushed products and other stores are kept separate.</p>
+              <p class="text-[11px] text-slate-400 mt-0.5">Showing products strictly from the active shop/URL.
+                Previously pushed products and other stores are kept separate.</p>
             </div>
 
             <!-- Filter Status Tabs -->
             <div class="flex items-center gap-1 bg-slate-800/90 p-1 rounded-xl border border-slate-700">
-              <button onclick="setImportFilter('all')" id="filter-all-btn" class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-orange-500 text-white transition cursor-pointer">
+              <button onclick="setImportFilter('all')" id="filter-all-btn"
+                class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-orange-500 text-white transition cursor-pointer">
                 Active Staged Link (<span id="all-badge">0</span>)
               </button>
-              <button onclick="setImportFilter('unpushed')" id="filter-unpushed-btn" class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer">
+              <button onclick="setImportFilter('unpushed')" id="filter-unpushed-btn"
+                class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer">
                 Ready to Push (<span id="unpushed-badge">0</span>)
               </button>
-              <button onclick="setImportFilter('published')" id="filter-published-btn" class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer">
+              <button onclick="setImportFilter('published')" id="filter-published-btn"
+                class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer">
                 Already Pushed (<span id="published-badge">0</span>)
               </button>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
-              <button onclick="selectAllImported(true)" class="bg-slate-700 hover:bg-slate-600 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg transition cursor-pointer">☑ Select All</button>
-              <button onclick="selectAllImported(false)" class="bg-slate-700 hover:bg-slate-600 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg transition cursor-pointer">☐ Deselect All</button>
-              
+              <button onclick="selectAllImported(true)"
+                class="bg-slate-700 hover:bg-slate-600 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg transition cursor-pointer">☑
+                Select All</button>
+              <button onclick="selectAllImported(false)"
+                class="bg-slate-700 hover:bg-slate-600 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg transition cursor-pointer">☐
+                Deselect All</button>
+
               <!-- Delete Selected Button -->
               <button onclick="deleteSelectedImported()" id="delete-selected-btn"
                 class="bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white border border-red-500/40 text-[11px] font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer shadow-sm">
@@ -799,13 +966,16 @@
                 <span>Push All (Ready to Push)</span>
               </button>
 
-              <button onclick="loadImportedProducts()" class="bg-slate-700 hover:bg-slate-600 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg transition cursor-pointer">
+              <button onclick="loadImportedProducts()"
+                class="bg-slate-700 hover:bg-slate-600 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg transition cursor-pointer">
                 <i data-lucide="refresh-cw" class="w-3 h-3 inline mr-1"></i>Refresh
               </button>
             </div>
           </div>
-          <div id="imported-products-grid" class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-h-[600px] overflow-y-auto">
-            <div class="col-span-full text-center text-slate-500 text-xs py-8">No imported products yet. Paste a 1688 store URL above and click Crawl &amp; Import SKUs.</div>
+          <div id="imported-products-grid"
+            class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-h-[600px] overflow-y-auto">
+            <div class="col-span-full text-center text-slate-500 text-xs py-8">No imported products yet. Paste a 1688
+              store URL above and click Crawl &amp; Import SKUs.</div>
           </div>
           <div id="publish-result" class="hidden p-3 text-xs"></div>
         </div>
@@ -814,16 +984,25 @@
       <!-- ========================================== -->
       <!-- TOUCHABLE / CLICKABLE PRODUCT PREVIEW MODAL -->
       <!-- ========================================== -->
-      <div id="imported-product-preview-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6" onclick="if(event.target===this) closeImportedProductModal()">
-        <div class="glass-card bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl relative">
+      <div id="imported-product-preview-modal"
+        class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6"
+        onclick="if(event.target===this) closeImportedProductModal()">
+        <div
+          class="glass-card bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl relative">
           <!-- Modal Header -->
-          <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60 flex-shrink-0">
+          <div
+            class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950/60 flex-shrink-0">
             <div class="flex items-center gap-2.5 min-w-0 pr-4">
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30 flex-shrink-0">1688 Verified</span>
-              <span id="modal-category-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700 truncate">Category</span>
-              <span id="modal-product-id-badge" class="text-[10px] text-slate-500 font-mono hidden sm:inline truncate">ID</span>
+              <span
+                class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30 flex-shrink-0">1688
+                Verified</span>
+              <span id="modal-category-badge"
+                class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700 truncate">Category</span>
+              <span id="modal-product-id-badge"
+                class="text-[10px] text-slate-500 font-mono hidden sm:inline truncate">ID</span>
             </div>
-            <button onclick="closeImportedProductModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition flex-shrink-0">
+            <button onclick="closeImportedProductModal()"
+              class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition flex-shrink-0">
               <i data-lucide="x" class="w-4 h-4"></i>
             </button>
           </div>
@@ -832,16 +1011,24 @@
           <div class="p-5 overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Left Column: Media Gallery & Video -->
             <div class="space-y-3">
-              <div class="aspect-square bg-slate-950 rounded-xl overflow-hidden border border-slate-800 relative flex items-center justify-center">
+              <div
+                class="aspect-square bg-slate-950 rounded-xl overflow-hidden border border-slate-800 relative flex items-center justify-center">
                 <img id="modal-active-image" src="" alt="Product Photo" class="w-full h-full object-contain">
-                <video id="modal-video-player" src="" controls class="w-full h-full object-contain bg-black hidden"></video>
-                <div id="modal-video-badge" class="absolute top-2 right-2 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow hidden">▶ 1688 Video Available</div>
+                <video id="modal-video-player" src="" controls
+                  class="w-full h-full object-contain bg-black hidden"></video>
+                <div id="modal-video-badge"
+                  class="absolute top-2 right-2 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow hidden">
+                  ▶ 1688 Video Available</div>
               </div>
 
               <!-- Video / Photo Toggle Tabs -->
               <div id="modal-media-tabs" class="flex gap-2 hidden">
-                <button id="modal-tab-photos" onclick="switchModalMedia('photos')" class="flex-1 py-1 px-2 text-xs font-bold rounded-lg bg-orange-500 text-white text-center">Photos Gallery</button>
-                <button id="modal-tab-video" onclick="switchModalMedia('video')" class="flex-1 py-1 px-2 text-xs font-bold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-center">▶ Play Factory Video</button>
+                <button id="modal-tab-photos" onclick="switchModalMedia('photos')"
+                  class="flex-1 py-1 px-2 text-xs font-bold rounded-lg bg-orange-500 text-white text-center">Photos
+                  Gallery</button>
+                <button id="modal-tab-video" onclick="switchModalMedia('video')"
+                  class="flex-1 py-1 px-2 text-xs font-bold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-center">▶
+                  Play Factory Video</button>
               </div>
 
               <!-- Thumbnail Strip -->
@@ -855,7 +1042,8 @@
 
               <!-- SKU Colors Gallery -->
               <div id="modal-sku-section" class="hidden">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">SKU Color Variants</div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">SKU Color Variants
+                </div>
                 <div id="modal-sku-grid" class="flex flex-wrap gap-2"></div>
               </div>
             </div>
@@ -868,14 +1056,17 @@
               </div>
 
               <!-- Price Box -->
-              <div class="bg-gradient-to-br from-slate-800/80 to-slate-900 p-3.5 rounded-xl border border-slate-700/60 space-y-2">
+              <div
+                class="bg-gradient-to-br from-slate-800/80 to-slate-900 p-3.5 rounded-xl border border-slate-700/60 space-y-2">
                 <div class="flex items-baseline justify-between flex-wrap gap-2">
                   <div>
-                    <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Bhanjo Storefront Price</div>
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Bhanjo Storefront Price
+                    </div>
                     <div id="modal-price-npr" class="text-2xl font-black text-orange-400">Rs. 0</div>
                   </div>
                   <div class="text-right">
-                    <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">1688 Factory Wholesale</div>
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">1688 Factory Wholesale
+                    </div>
                     <div class="text-sm font-bold text-slate-300">
                       <span id="modal-price-rmb">¥0.00</span>
                       <span class="text-slate-500 text-xs">/</span>
@@ -883,7 +1074,8 @@
                     </div>
                   </div>
                 </div>
-                <div class="text-[10px] text-slate-400 border-t border-slate-700/60 pt-2 flex items-center justify-between">
+                <div
+                  class="text-[10px] text-slate-400 border-t border-slate-700/60 pt-2 flex items-center justify-between">
                   <span>Markup: <strong class="text-emerald-400">3.0x landed</strong></span>
                   <span>MOQ: <strong id="modal-moq" class="text-white">1 piece</strong></span>
                   <span>Lead time: <strong id="modal-leadtime" class="text-white">7-12 days</strong></span>
@@ -892,7 +1084,8 @@
 
               <!-- Quantity Tiers -->
               <div id="modal-tiers-container" class="space-y-1">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Wholesale Quantity Tiers</div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Wholesale Quantity Tiers
+                </div>
                 <div id="modal-tiers-list" class="grid grid-cols-3 gap-1.5 text-center text-xs"></div>
               </div>
 
@@ -910,19 +1103,24 @@
               <!-- Specifications Table -->
               <div class="space-y-1.5">
                 <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Factory Specifications</div>
-                <div id="modal-specs-table" class="bg-slate-950/60 rounded-xl border border-slate-800 text-xs max-h-44 overflow-y-auto divide-y divide-slate-800/60"></div>
+                <div id="modal-specs-table"
+                  class="bg-slate-950/60 rounded-xl border border-slate-800 text-xs max-h-44 overflow-y-auto divide-y divide-slate-800/60">
+                </div>
               </div>
 
               <!-- Description -->
               <div class="space-y-1">
                 <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Full Description</div>
-                <div id="modal-description" class="text-xs text-slate-300 leading-relaxed max-h-32 overflow-y-auto bg-slate-950/40 p-3 rounded-xl border border-slate-800 whitespace-pre-wrap"></div>
+                <div id="modal-description"
+                  class="text-xs text-slate-300 leading-relaxed max-h-32 overflow-y-auto bg-slate-950/40 p-3 rounded-xl border border-slate-800 whitespace-pre-wrap">
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Modal Footer Actions -->
-          <div class="px-5 py-3 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between flex-wrap gap-2 flex-shrink-0">
+          <div
+            class="px-5 py-3 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between flex-wrap gap-2 flex-shrink-0">
             <a id="modal-source-link" href="#" target="_blank" rel="noopener noreferrer"
               class="text-xs text-orange-400 hover:text-orange-300 hover:underline flex items-center gap-1">
               <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
@@ -956,7 +1154,8 @@
               <i data-lucide="calculator" class="w-5 h-5 text-emerald-400"></i>
               <span>Landed Cost & Profit Margin Calculator</span>
             </h2>
-            <p class="text-xs text-slate-400">Calculate customs, Nepal freight, and gross profit on China direct wholesale</p>
+            <p class="text-xs text-slate-400">Calculate customs, Nepal freight, and gross profit on China direct
+              wholesale</p>
           </div>
 
           <div class="grid grid-cols-2 gap-4 text-xs">
@@ -1072,7 +1271,8 @@
   <!-- ========================================== -->
   <!-- MODAL: ADD PRODUCT -->
   <!-- ========================================== -->
-  <div id="add-product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="add-product-modal"
+    class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="glass-card max-w-lg w-full rounded-2xl border border-slate-700 p-6 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-base font-bold text-white">Add New Catalog Product</h3>
@@ -1081,20 +1281,24 @@
       <form onsubmit="handleCreateProduct(event)" class="space-y-3 text-xs">
         <div>
           <label class="block font-bold text-slate-300 mb-1">Product Title (English)</label>
-          <input type="text" id="add-title" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
+          <input type="text" id="add-title" required
+            class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
         </div>
         <div>
           <label class="block font-bold text-slate-300 mb-1">Product Title (Nepali)</label>
-          <input type="text" id="add-nepali-title" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
+          <input type="text" id="add-nepali-title"
+            class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-bold text-slate-300 mb-1">Price (NPR)</label>
-            <input type="number" id="add-price" required value="2500" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
+            <input type="number" id="add-price" required value="2500"
+              class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
           </div>
           <div>
             <label class="block font-bold text-slate-300 mb-1">Initial Stock</label>
-            <input type="number" id="add-stock" required value="50" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
+            <input type="number" id="add-stock" required value="50"
+              class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
           </div>
         </div>
         <div>
@@ -1112,12 +1316,15 @@
         </div>
         <div>
           <label class="block font-bold text-slate-300 mb-1">Image URL</label>
-          <input type="url" id="add-image" required value="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80"
+          <input type="url" id="add-image" required
+            value="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80"
             class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-white">
         </div>
         <div class="pt-3 flex justify-end gap-2">
-          <button type="button" onclick="closeAddProductModal()" class="px-4 py-2 rounded-xl text-slate-400 hover:text-white">Cancel</button>
-          <button type="submit" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl">Save Product</button>
+          <button type="button" onclick="closeAddProductModal()"
+            class="px-4 py-2 rounded-xl text-slate-400 hover:text-white">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl">Save
+            Product</button>
         </div>
       </form>
     </div>
@@ -1126,17 +1333,21 @@
   <!-- ========================================== -->
   <!-- MODAL: ORDER DETAILS & CHINA 1688 SOURCING -->
   <!-- ========================================== -->
-  <div id="order-details-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="glass-card max-w-3xl w-full max-h-[92vh] overflow-y-auto rounded-3xl border border-slate-700/80 p-6 space-y-6 shadow-2xl">
+  <div id="order-details-modal"
+    class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div
+      class="glass-card max-w-3xl w-full max-h-[92vh] overflow-y-auto rounded-3xl border border-slate-700/80 p-6 space-y-6 shadow-2xl">
       <div class="flex items-center justify-between border-b border-slate-800 pb-4">
         <div>
           <div class="flex items-center gap-2">
             <h3 class="text-lg font-black text-white" id="modal-order-id">Order Details</h3>
-            <span id="modal-order-tracking" class="bg-slate-800 text-amber-400 font-mono text-[11px] font-bold px-2 py-0.5 rounded border border-slate-700"></span>
+            <span id="modal-order-tracking"
+              class="bg-slate-800 text-amber-400 font-mono text-[11px] font-bold px-2 py-0.5 rounded border border-slate-700"></span>
           </div>
           <p class="text-xs text-slate-400 mt-0.5" id="modal-order-datetime"></p>
         </div>
-        <button onclick="closeOrderDetailsModal()" class="text-slate-400 hover:text-white text-2xl font-bold transition">&times;</button>
+        <button onclick="closeOrderDetailsModal()"
+          class="text-slate-400 hover:text-white text-2xl font-bold transition">&times;</button>
       </div>
 
       <!-- Customer & Shipping Summary Grid -->
@@ -1145,8 +1356,12 @@
           <div class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Customer & Contact</div>
           <div class="font-bold text-white text-sm" id="modal-customer-name"></div>
           <div class="flex items-center gap-2">
-            <a id="modal-customer-phone" href="#" class="text-amber-400 font-mono font-bold text-xs hover:underline flex items-center gap-1"></a>
-            <button onclick="copyToClipboard(document.getElementById('modal-customer-phone').innerText.replace(/\D/g, ''), this)" class="bg-slate-800 hover:bg-slate-700 text-[10px] text-slate-300 px-2 py-0.5 rounded border border-slate-700 transition">📋 Copy</button>
+            <a id="modal-customer-phone" href="#"
+              class="text-amber-400 font-mono font-bold text-xs hover:underline flex items-center gap-1"></a>
+            <button
+              onclick="copyToClipboard(document.getElementById('modal-customer-phone').innerText.replace(/\D/g, ''), this)"
+              class="bg-slate-800 hover:bg-slate-700 text-[10px] text-slate-300 px-2 py-0.5 rounded border border-slate-700 transition">📋
+              Copy</button>
           </div>
           <div class="text-xs text-slate-300" id="modal-customer-address"></div>
         </div>
@@ -1159,7 +1374,9 @@
           </div>
           <div class="flex items-center justify-between">
             <span class="text-xs text-slate-400">Payment:</span>
-            <span class="text-xs font-bold text-slate-200 uppercase bg-slate-800 px-2 py-0.5 rounded border border-slate-700" id="modal-payment-method"></span>
+            <span
+              class="text-xs font-bold text-slate-200 uppercase bg-slate-800 px-2 py-0.5 rounded border border-slate-700"
+              id="modal-payment-method"></span>
           </div>
           <div class="flex items-center justify-between">
             <span class="text-xs text-slate-400">Fulfillment Status:</span>
@@ -1173,14 +1390,17 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-base">🇨🇳</span>
-            <h4 class="text-sm font-black text-white uppercase tracking-wider">China Factory 1688 Wholesale Sourcing</h4>
+            <h4 class="text-sm font-black text-white uppercase tracking-wider">China Factory 1688 Wholesale Sourcing
+            </h4>
           </div>
-          <span class="text-[11px] text-orange-400 font-bold bg-orange-500/10 border border-orange-500/20 px-2.5 py-0.5 rounded-full">
+          <span
+            class="text-[11px] text-orange-400 font-bold bg-orange-500/10 border border-orange-500/20 px-2.5 py-0.5 rounded-full">
             Private Admin Sourcing Hub
           </span>
         </div>
         <p class="text-xs text-slate-400">
-          Click the direct 1688 link below to order the exact item from the Chinese factory supplier. Then consolidate and import to your customer in Nepal.
+          Click the direct 1688 link below to order the exact item from the Chinese factory supplier. Then consolidate
+          and import to your customer in Nepal.
         </p>
 
         <div id="modal-items-container" class="space-y-3">
@@ -1191,22 +1411,26 @@
       <div class="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <label class="text-xs text-slate-400 font-bold">Update Status:</label>
-          <select id="modal-status-select" class="bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold rounded-xl px-3 py-2 focus:outline-none">
+          <select id="modal-status-select"
+            class="bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold rounded-xl px-3 py-2 focus:outline-none">
             <option value="pending">Pending</option>
             <option value="processing">Processing</option>
             <option value="shipped">Shipped</option>
             <option value="delivered">Delivered</option>
             <option value="cancelled">Cancelled</option>
           </select>
-          <button id="modal-btn-update-status" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition">
+          <button id="modal-btn-update-status"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition">
             Save Status
           </button>
         </div>
         <div class="flex items-center gap-2">
-          <button id="modal-btn-print" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3.5 py-2 rounded-xl border border-slate-700 transition flex items-center gap-1.5">
+          <button id="modal-btn-print"
+            class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3.5 py-2 rounded-xl border border-slate-700 transition flex items-center gap-1.5">
             🖨️ Print Slip
           </button>
-          <button onclick="closeOrderDetailsModal()" class="px-4 py-2 rounded-xl text-slate-400 hover:text-white text-xs font-bold">
+          <button onclick="closeOrderDetailsModal()"
+            class="px-4 py-2 rounded-xl text-slate-400 hover:text-white text-xs font-bold">
             Close
           </button>
         </div>
@@ -1217,22 +1441,27 @@
   <!-- ========================================== -->
   <!-- MODAL: 30-MINUTE IDLE WARNING -->
   <!-- ========================================== -->
-  <div id="idle-warning-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+  <div id="idle-warning-modal"
+    class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
     <div class="glass-card max-w-sm w-full rounded-2xl border border-amber-500/50 p-6 text-center space-y-4 shadow-2xl">
-      <div class="w-12 h-12 bg-amber-500/20 text-amber-400 rounded-full mx-auto flex items-center justify-center border border-amber-500/40">
+      <div
+        class="w-12 h-12 bg-amber-500/20 text-amber-400 rounded-full mx-auto flex items-center justify-center border border-amber-500/40">
         <i data-lucide="clock" class="w-6 h-6 animate-pulse"></i>
       </div>
       <div>
         <h3 class="text-base font-bold text-white">Inactivity Security Warning</h3>
         <p class="text-xs text-slate-300 mt-1 leading-relaxed">
-          You have been idle for almost 30 minutes. To protect your store data, your session will automatically lock in <strong id="idle-countdown-sec" class="text-amber-400 font-mono">120</strong> seconds.
+          You have been idle for almost 30 minutes. To protect your store data, your session will automatically lock in
+          <strong id="idle-countdown-sec" class="text-amber-400 font-mono">120</strong> seconds.
         </p>
       </div>
       <div class="pt-2 flex flex-col gap-2">
-        <button onclick="resetIdleTimer()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-2.5 rounded-xl text-xs shadow-lg transition cursor-pointer">
+        <button onclick="resetIdleTimer()"
+          class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-2.5 rounded-xl text-xs shadow-lg transition cursor-pointer">
           I'm Still Here (Stay Logged In)
         </button>
-        <button onclick="handleLogout('🔒 Logged out manually.')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs py-2 rounded-xl transition cursor-pointer">
+        <button onclick="handleLogout('🔒 Logged out manually.')"
+          class="w-full bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs py-2 rounded-xl transition cursor-pointer">
           Lock & Logout Now
         </button>
       </div>
@@ -1420,16 +1649,30 @@
         document.getElementById('step2-form').classList.remove('hidden');
         startCountdown(300);
 
-        // Pre-fill demo SMS code if no live carrier gateway is connected yet
+        // Pre-fill demo SMS code (123456)
         const demoCode = data.demoSmsCode || (data.devCodes && data.devCodes.smsCode) || '123456';
         document.getElementById('sms-code').value = demoCode;
+
+        // Leave email code EMPTY so the user types the real code from their Gmail inbox!
+        const emailCodeInput = document.getElementById('email-code');
+        emailCodeInput.value = '';
+        emailCodeInput.placeholder = 'e.g. 123456';
+
+        const targetEmailEl = document.getElementById('target-email-display');
+        if (targetEmailEl) {
+          targetEmailEl.innerText = data.targetEmail || email;
+        }
+
+        setTimeout(() => {
+          emailCodeInput.focus();
+        }, 150);
 
       } catch (err) {
         alertBox.innerText = '⚠️ ' + err.message;
         alertBox.className = 'mb-4 p-3 rounded-xl text-xs font-semibold bg-red-500/10 border border-red-500/30 text-red-400 block';
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<span>Authenticate & Dispatch 2FA</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>';
+        submitBtn.innerHTML = '<span>Authenticate & Send Email OTP</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>';
         lucide.createIcons();
       }
     }
@@ -1560,7 +1803,7 @@
           ordersData = data.orders || [];
           document.getElementById('badge-orders').innerText = ordersData.length;
           document.getElementById('kpi-orders-count').innerText = ordersData.length;
-          
+
           const pending = ordersData.filter(o => o.status === 'pending').length;
           document.getElementById('kpi-pending-orders').innerText = `${pending} Pending Fulfillment`;
 
@@ -1604,8 +1847,8 @@
 
     function renderOrders() {
       const filter = document.getElementById('order-filter-status').value;
-      const filtered = filter === 'all' 
-        ? ordersData 
+      const filtered = filter === 'all'
+        ? ordersData
         : ordersData.filter(o => (o.status === filter || (o.order_status && o.order_status.toLowerCase() === filter.toLowerCase())));
       const tbody = document.getElementById('orders-table-body');
 
@@ -1631,7 +1874,7 @@
         const currentStatus = (order.status || order.order_status || 'Pending').toLowerCase();
 
         // 1. Items List Column
-        const itemsHtml = items.length === 0 
+        const itemsHtml = items.length === 0
           ? `<div class="text-slate-500 italic text-[11px]">No items data</div>`
           : items.map(item => {
             const unitPrice = item.unitPriceNPR || item.priceNPR || Math.round((item.unitPriceUSD || item.price || 15) * 135);
@@ -1827,7 +2070,7 @@
       const totalNpr = order.total || order.total_amount || 0;
       document.getElementById('modal-order-total').innerText = `Rs. ${totalNpr.toLocaleString()} NPR`;
       document.getElementById('modal-payment-method').innerText = `${order.paymentMethod || order.payment_method || 'COD'}`;
-      
+
       const statusBadge = document.getElementById('modal-order-status-badge');
       const curStatus = (order.status || order.order_status || 'Pending');
       statusBadge.innerText = curStatus.toUpperCase();
@@ -2019,9 +2262,9 @@
             </thead>
             <tbody>
               ${(order.items || []).map(i => {
-                const uPrice = i.unitPriceNPR || i.priceNPR || Math.round((i.unitPriceUSD || i.price || 15) * 135);
-                const q = i.quantity || 1;
-                return `
+        const uPrice = i.unitPriceNPR || i.priceNPR || Math.round((i.unitPriceUSD || i.price || 15) * 135);
+        const q = i.quantity || 1;
+        return `
                   <tr>
                     <td><strong>${i.title}</strong> ${i.variant ? `<br/><small style="color:#64748b;">Variant: ${i.variant}</small>` : ''}</td>
                     <td style="color:#475569; font-size:12px;">${i.distributorName || '1688 Verified Factory'}</td>
@@ -2030,7 +2273,7 @@
                     <td><strong>Rs. ${(uPrice * q).toLocaleString()}</strong></td>
                   </tr>
                 `;
-              }).join('')}
+      }).join('')}
             </tbody>
           </table>
 
@@ -2197,7 +2440,7 @@
         const count = counts[cat.id] || 0;
         const activeClasses = 'bg-orange-500 text-white font-bold shadow-md shadow-orange-500/25 border-orange-400';
         const inactiveClasses = 'bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border-slate-700/60';
-        
+
         return `
           <button type="button" onclick="setCatalogCategory('${cat.id}')"
             class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs whitespace-nowrap transition cursor-pointer border ${isActive ? activeClasses : inactiveClasses}">
@@ -2246,8 +2489,8 @@
       }
 
       if (q) {
-        filtered = filtered.filter(p => 
-          (p.title || '').toLowerCase().includes(q) || 
+        filtered = filtered.filter(p =>
+          (p.title || '').toLowerCase().includes(q) ||
           (p.id || '').toLowerCase().includes(q) ||
           (p.category || '').toLowerCase().includes(q) ||
           (p.categoryName || '').toLowerCase().includes(q)
@@ -2782,16 +3025,16 @@
           durationHours: 4
         })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert('Product added to live Flash Sale!');
-          fetchFlashSale();
-        } else {
-          alert('Error: ' + (data.error || 'Could not add to flash sale'));
-        }
-      })
-      .catch(e => alert('Error: ' + e.message));
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert('Product added to live Flash Sale!');
+            fetchFlashSale();
+          } else {
+            alert('Error: ' + (data.error || 'Could not add to flash sale'));
+          }
+        })
+        .catch(e => alert('Error: ' + e.message));
     }
 
     // 1688 Cookie Manager
@@ -2874,8 +3117,8 @@
       el.classList.remove('hidden');
       const styles = {
         success: 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400',
-        error:   'bg-red-500/10 border border-red-500/30 text-red-400',
-        info:    'bg-blue-500/10 border border-blue-500/30 text-blue-400'
+        error: 'bg-red-500/10 border border-red-500/30 text-red-400',
+        info: 'bg-blue-500/10 border border-blue-500/30 text-blue-400'
       };
       el.className = `text-xs p-2.5 rounded-lg ${styles[type] || styles.info}`;
       el.textContent = text;
@@ -3007,16 +3250,16 @@
               <!-- Badges: Video & Published Status -->
               <div class="absolute top-2 right-2 z-20 flex flex-col gap-1 items-end">
                 ${isPushed
-                  ? '<span class="bg-emerald-500/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow">✓ PUSHED LIVE</span>'
-                  : '<span class="bg-amber-500/90 text-black text-[9px] font-black px-1.5 py-0.5 rounded shadow">READY TO PUSH</span>'}
+              ? '<span class="bg-emerald-500/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow">✓ PUSHED LIVE</span>'
+              : '<span class="bg-amber-500/90 text-black text-[9px] font-black px-1.5 py-0.5 rounded shadow">READY TO PUSH</span>'}
                 ${p.hasVideo && p.videoUrl ? '<span class="bg-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow">▶ VIDEO</span>' : ''}
               </div>
 
               <!-- Image with hover zoom & no-referrer -->
               <div class="aspect-square bg-slate-900 overflow-hidden relative">
                 ${img
-                  ? `<img src="${img}" alt="${safeTitleAttr}" referrerpolicy="no-referrer" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=200';">`
-                  : '<div class="w-full h-full flex items-center justify-center text-slate-600 text-[10px]">No Image</div>'}
+              ? `<img src="${img}" alt="${safeTitleAttr}" referrerpolicy="no-referrer" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=200';">`
+              : '<div class="w-full h-full flex items-center justify-center text-slate-600 text-[10px]">No Image</div>'}
 
                 <!-- Hover Touch Hint -->
                 <div class="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center pointer-events-none">
@@ -3034,8 +3277,8 @@
                   ${rmb ? `<div class="text-[9px] text-slate-400 font-mono">${rmb} cost</div>` : ''}
                 </div>
                 ${p.skuColors && p.skuColors.length > 0
-                  ? `<div class="flex gap-0.5 flex-wrap pt-0.5">${p.skuColors.slice(0,5).map(c => `<img src="${c.img||''}" referrerpolicy="no-referrer" class="w-3.5 h-3.5 rounded-full object-cover border border-slate-600" title="${c.nameEn||c.nameZh||''}" onerror="this.style.display='none'">`).join('')}</div>`
-                  : ''}
+              ? `<div class="flex gap-0.5 flex-wrap pt-0.5">${p.skuColors.slice(0, 5).map(c => `<img src="${c.img || ''}" referrerpolicy="no-referrer" class="w-3.5 h-3.5 rounded-full object-cover border border-slate-600" title="${c.nameEn || c.nameZh || ''}" onerror="this.style.display='none'">`).join('')}</div>`
+              : ''}
               </div>
             </div>`;
         }).join('');
@@ -3399,42 +3642,229 @@
       }
     }
 
-    async function handleExecuteImport() {
-      const val = document.getElementById('importer-url-input').value.trim();
-      const maxCount = parseInt(document.getElementById('importer-max-input')?.value, 10) || 20;
-      const statusBox = document.getElementById('importer-status-box');
-      const btn = document.getElementById('importer-submit-btn');
+    // ========================================================
+    // 🚀 REAL-TIME 1688 API SEARCH & 1-CLICK IMPORT HANDLERS
+    // ========================================================
+      let current1688LiveProducts = [];
 
-      if (!val) { alert('Please enter a 1688 store URL'); return; }
-
-      btn.disabled = true;
-      btn.innerHTML = '<span>Starting Import...</span>';
-      statusBox.className = 'p-3 rounded-xl text-xs bg-blue-500/10 border border-blue-500/30 text-blue-400 block space-y-2';
-      statusBox.innerHTML = `🔍 Connecting to 1688 and collecting ${maxCount} products...`;
-
-      let jobId = null;
-      let pollInterval = null;
-
-      try {
-        const res = await fetch('/api/1688/bulk-store-import', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-          body: JSON.stringify({ storeUrl: val, maxCount })
-        });
-        const data = await res.json();
-        if (!data.success || !data.jobId) throw new Error(data.error || 'Failed to start import');
-        jobId = data.jobId;
-      } catch (e) {
-        statusBox.className = 'p-3 rounded-xl text-xs bg-red-500/10 border border-red-500/30 text-red-400 block';
-        statusBox.innerText = '⚠️ ' + e.message;
-        btn.disabled = false;
-        btn.innerHTML = '<i data-lucide="download-cloud" class="w-4 h-4"></i> <span>Crawl & Import SKUs</span>';
-        lucide.createIcons();
-        return;
+      function quickSearch1688(term) {
+        document.getElementById('live1688-query-input').value = term;
+        handle1688LiveSearch();
       }
 
-      // Add stop button
-      statusBox.innerHTML = `
+      async function handle1688LiveSearch() {
+        const input = document.getElementById('live1688-query-input');
+        const q = (input ? input.value : '').trim();
+        if (!q) {
+          alert('Please type something to search (e.g. smart watch, hoodie, sneakers)');
+          return;
+        }
+
+        const btn = document.getElementById('live1688-search-btn');
+        const statusBox = document.getElementById('live1688-status-box');
+        const container = document.getElementById('live1688-results-container');
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="inline-block animate-spin mr-1">↻</span> Searching 1688...';
+        statusBox.className = 'p-3 rounded-xl text-xs bg-orange-500/10 border border-orange-500/30 text-orange-300 block flex items-center justify-between';
+        statusBox.innerHTML = `<span>🚀 Connecting to 1688 API for "<strong>${q}</strong>"...</span>`;
+        container.innerHTML = '';
+
+        try {
+          const res = await fetch(`/api/1688/live-search?q=${encodeURIComponent(q)}&pageSize=24`);
+          const data = await res.json();
+
+          if (!data.success || !Array.isArray(data.products)) {
+            throw new Error(data.error || 'No products returned from 1688');
+          }
+
+          current1688LiveProducts = data.products;
+
+          statusBox.className = 'p-3 rounded-xl text-xs bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 block flex items-center justify-between flex-wrap gap-2';
+          statusBox.innerHTML = `
+          <span>✓ Found <strong>${data.products.length} live products</strong> from 1688 in <strong>${data.responseTimeMs || 600}ms</strong>! Wholesale tiers hidden, 3x NPR rule applied.</span>
+          <span class="text-[10px] text-slate-400">All prices calculated in Nepali Rupees (NPR)</span>
+        `;
+
+          render1688LiveGrid(data.products);
+        } catch (err) {
+          statusBox.className = 'p-3 rounded-xl text-xs bg-red-500/10 border border-red-500/30 text-red-400 block';
+          statusBox.innerText = '⚠️ Search error: ' + err.message;
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i data-lucide="search" class="w-4 h-4"></i> <span>Search 1688</span>';
+          lucide.createIcons();
+        }
+      }
+
+      function render1688LiveGrid(products) {
+        const container = document.getElementById('live1688-results-container');
+        if (!products || products.length === 0) {
+          container.innerHTML = '<div class="text-xs text-slate-400 p-4 text-center">No products found for this keyword. Try another search!</div>';
+          return;
+        }
+
+        const CATEGORY_OPTIONS = [
+          { id: 'consumer-electronics', name: 'Consumer Electronics & Gadgets' },
+          { id: 'apparel-accessories', name: 'Clothing & Apparel' },
+          { id: 'shoes-accessories', name: 'Shoes & Footwear' },
+          { id: 'luggage-bags-cases', name: 'Bags & Luggage' },
+          { id: 'jewelry-eyewear-watches', name: 'Watches & Jewelry' },
+          { id: 'home-garden', name: 'Home & Kitchen' },
+          { id: 'beauty', name: 'Beauty & Personal Care' },
+          { id: 'sports-entertainment', name: 'Sports & Outdoors' },
+          { id: 'parents-kids-toys', name: 'Toys & Kids' },
+          { id: 'vehicles-transportation', name: 'Automotive & Bike' },
+          { id: 'tools-hardware', name: 'Tools & Hardware' }
+        ];
+
+        let html = `<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">`;
+
+        products.forEach((prod, index) => {
+          const pId = prod.id;
+          const optionsHtml = CATEGORY_OPTIONS.map(c =>
+            `<option value="${c.id}" ${c.id === 'consumer-electronics' ? 'selected' : ''}>${c.name}</option>`
+          ).join('');
+
+          html += `
+          <div class="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-3.5 flex flex-col justify-between hover:border-orange-500/60 transition shadow-lg relative group">
+            <div>
+              <div class="w-full h-44 rounded-xl overflow-hidden bg-slate-800 relative mb-2.5">
+                <img src="${prod.image}" alt="${prod.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600'">
+                <div class="absolute top-2 left-2 bg-slate-950/80 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs">
+                  Factory: ¥${prod.factoryCostRMB} RMB
+                </div>
+                <div class="absolute top-2 right-2 bg-orange-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow">
+                  3.0x Markup
+                </div>
+              </div>
+
+              <h4 class="text-xs font-bold text-white line-clamp-2 leading-relaxed mb-1" title="${prod.title}">
+                ${prod.title}
+              </h4>
+              <p class="text-[11px] text-slate-400 mb-2">Sold by: <span class="text-orange-400 font-semibold">Bhanjo Global Direct</span></p>
+
+              <div class="flex items-baseline gap-2 mb-3">
+                <span class="text-base font-black text-orange-400">Rs. ${Number(prod.price).toLocaleString()}</span>
+                <span class="text-xs text-slate-500 line-through">Rs. ${Number(prod.originalPrice).toLocaleString()}</span>
+              </div>
+
+              <!-- Quick Customizer Controls -->
+              <div class="space-y-2 border-t border-slate-800 pt-2.5 text-[11px]">
+                <div>
+                  <label class="block text-slate-400 font-semibold mb-1">Assign Category:</label>
+                  <select id="cat-select-${index}" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-200 text-xs focus:outline-none focus:border-orange-500">
+                    ${optionsHtml}
+                  </select>
+                </div>
+
+                <div class="flex items-center justify-between gap-2 pt-0.5">
+                  <label class="flex items-center gap-1.5 cursor-pointer text-slate-300 font-bold">
+                    <input type="checkbox" id="flash-check-${index}" class="rounded border-slate-700 text-orange-500 focus:ring-0">
+                    <span>⚡ Add to Flash Sale</span>
+                  </label>
+                  <select id="flash-discount-${index}" class="bg-slate-800 border border-slate-700 rounded px-1.5 py-0.5 text-orange-400 font-bold text-[10px]">
+                    <option value="30">30% OFF</option>
+                    <option value="40" selected>40% OFF</option>
+                    <option value="50">50% OFF</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-800/80 mt-2">
+              <button onclick="executeImportSingle1688(${index})" id="import-btn-${index}"
+                class="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold text-xs py-2 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md shadow-orange-500/20 cursor-pointer">
+                <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                <span>1-Click Import to Bhanjo</span>
+              </button>
+            </div>
+          </div>
+        `;
+        });
+
+        html += `</div>`;
+        container.innerHTML = html;
+        lucide.createIcons();
+      }
+
+      async function executeImportSingle1688(index) {
+        const prod = current1688LiveProducts[index];
+        if (!prod) return;
+
+        const btn = document.getElementById(`import-btn-${index}`);
+        const catSelect = document.getElementById(`cat-select-${index}`);
+        const flashCheck = document.getElementById(`flash-check-${index}`);
+        const flashDiscount = document.getElementById(`flash-discount-${index}`);
+
+        const categoryId = catSelect ? catSelect.value : 'consumer-electronics';
+        const isFlashSale = flashCheck ? flashCheck.checked : false;
+        const discount = flashDiscount ? parseInt(flashDiscount.value) : 30;
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="inline-block animate-spin mr-1">↻</span> Saving...';
+
+        try {
+          const res = await fetch('/api/1688/import-to-catalog', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              product: prod,
+              categoryId,
+              isFlashSale,
+              flashDiscount: discount
+            })
+          });
+
+          const data = await res.json();
+          if (!data.success) throw new Error(data.error || 'Failed to save');
+
+          btn.className = 'w-full bg-emerald-600 text-white font-bold text-xs py-2 rounded-xl flex items-center justify-center gap-1.5';
+          btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5"></i> <span>✓ Live in ${isFlashSale ? 'Flash Sales!' : 'Catalog!'}</span>`;
+          lucide.createIcons();
+        } catch (err) {
+          alert('Import error: ' + err.message);
+          btn.disabled = false;
+          btn.innerHTML = '<span>Retry Import</span>';
+        }
+      }
+
+      async function handleExecuteImport() {
+        const val = document.getElementById('importer-url-input').value.trim();
+        const maxCount = parseInt(document.getElementById('importer-max-input')?.value, 10) || 20;
+        const statusBox = document.getElementById('importer-status-box');
+        const btn = document.getElementById('importer-submit-btn');
+
+        if (!val) { alert('Please enter a 1688 store URL'); return; }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span>Starting Import...</span>';
+        statusBox.className = 'p-3 rounded-xl text-xs bg-blue-500/10 border border-blue-500/30 text-blue-400 block space-y-2';
+        statusBox.innerHTML = `🔍 Connecting to 1688 and collecting ${maxCount} products...`;
+
+        let jobId = null;
+        let pollInterval = null;
+
+        try {
+          const res = await fetch('/api/1688/bulk-store-import', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+            body: JSON.stringify({ storeUrl: val, maxCount })
+          });
+          const data = await res.json();
+          if (!data.success || !data.jobId) throw new Error(data.error || 'Failed to start import');
+          jobId = data.jobId;
+        } catch (e) {
+          statusBox.className = 'p-3 rounded-xl text-xs bg-red-500/10 border border-red-500/30 text-red-400 block';
+          statusBox.innerText = '⚠️ ' + e.message;
+          btn.disabled = false;
+          btn.innerHTML = '<i data-lucide="download-cloud" class="w-4 h-4"></i> <span>Crawl & Import SKUs</span>';
+          lucide.createIcons();
+          return;
+        }
+
+        // Add stop button
+        statusBox.innerHTML = `
         <div class="flex items-center justify-between">
           <span id="import-phase-text" class="text-blue-300">🔍 Scanning shop pages...</span>
           <button onclick="stopImportJob('${jobId}')" class="text-red-400 text-[10px] font-bold hover:underline ml-2">⏹ Stop</button>
@@ -3451,106 +3881,106 @@
         <div id="import-recent" class="text-[10px] text-slate-400 mt-1 italic"></div>
       `;
 
-      // Poll for progress
-      pollInterval = setInterval(async () => {
+        // Poll for progress
+        pollInterval = setInterval(async () => {
+          try {
+            const r = await fetch(`/api/1688/full-import/status/${jobId}`, {
+              headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            const d = await r.json();
+            if (!d.success) return;
+            const j = d.job;
+
+            document.getElementById('import-phase-text').textContent = j.phase || '';
+            document.getElementById('import-total').textContent = j.totalOfferIds;
+            document.getElementById('import-crawled').textContent = j.crawled;
+            document.getElementById('import-saved').textContent = j.saved;
+            document.getElementById('import-failed').textContent = j.failed;
+            document.getElementById('import-progress-bar').style.width = (j.progressPercent || 0) + '%';
+            if (j.recentTitles?.length) {
+              document.getElementById('import-recent').textContent = 'Latest: ' + j.recentTitles[0];
+            }
+
+            if (j.status === 'completed') {
+              clearInterval(pollInterval);
+              statusBox.className = 'p-3 rounded-xl text-xs bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 block space-y-2';
+              document.getElementById('import-phase-text').textContent = `🎉 Done! Imported ${j.saved} products from ${j.totalOfferIds} listings.`;
+              document.getElementById('import-progress-bar').style.width = '100%';
+              document.getElementById('import-progress-bar').className = 'bg-emerald-500 h-2 rounded-full transition-all';
+              fetchProducts();
+              loadImportedProducts();
+              btn.disabled = false;
+              btn.innerHTML = '<i data-lucide="download-cloud" class="w-4 h-4"></i> <span>Crawl & Import SKUs</span>';
+              lucide.createIcons();
+            } else if (j.status === 'stopped') {
+              clearInterval(pollInterval);
+              statusBox.className = 'p-3 rounded-xl text-xs bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 block space-y-2';
+              document.getElementById('import-phase-text').textContent = `⏹ Stopped. ${j.saved} products saved.`;
+              fetchProducts();
+              loadImportedProducts();
+              btn.disabled = false;
+              btn.innerHTML = '<i data-lucide="download-cloud" class="w-4 h-4"></i> <span>Crawl & Import SKUs</span>';
+              lucide.createIcons();
+            } else if (j.status === 'error') {
+              clearInterval(pollInterval);
+              statusBox.className = 'p-3 rounded-xl text-xs bg-red-500/10 border border-red-500/30 text-red-400 block';
+              statusBox.innerText = '⚠️ Error: ' + (j.error || 'Unknown error');
+              btn.disabled = false;
+              btn.innerHTML = '<i data-lucide="download-cloud" class="w-4 h-4"></i> <span>Crawl & Import SKUs</span>';
+              lucide.createIcons();
+            }
+          } catch (_) { }
+        }, 2000); // poll every 2s
+      }
+
+      async function stopImportJob(jobId) {
+        await fetch(`/api/1688/full-import/stop/${jobId}`, {
+          method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+      }
+
+      // Landed Cost Calculator
+      function calculateMargin() {
+        const rmb = parseFloat(document.getElementById('calc-rmb')?.value || 15);
+        const fx = parseFloat(document.getElementById('calc-fx')?.value || 19.20);
+        const freight = parseFloat(document.getElementById('calc-freight')?.value || 250);
+        const taxPercent = parseFloat(document.getElementById('calc-tax')?.value || 15);
+        const retail = parseFloat(document.getElementById('calc-retail')?.value || 1250);
+
+        const baseNpr = rmb * fx;
+        const customs = (baseNpr + freight) * (taxPercent / 100);
+        const landed = baseNpr + freight + customs;
+        const profit = retail - landed;
+        const margin = (profit / retail) * 100;
+
+        document.getElementById('res-landed').innerText = `Rs. ${Math.round(landed).toLocaleString()}`;
+        document.getElementById('res-profit').innerText = `Rs. ${Math.round(profit).toLocaleString()}`;
+        document.getElementById('res-margin').innerText = `${margin.toFixed(1)}%`;
+      }
+
+      // Sellers
+      async function fetchSellers() {
         try {
-          const r = await fetch(`/api/1688/full-import/status/${jobId}`, {
+          const res = await fetch('/api/sellers', {
             headers: { 'Authorization': `Bearer ${authToken}` }
           });
-          const d = await r.json();
-          if (!d.success) return;
-          const j = d.job;
-
-          document.getElementById('import-phase-text').textContent = j.phase || '';
-          document.getElementById('import-total').textContent = j.totalOfferIds;
-          document.getElementById('import-crawled').textContent = j.crawled;
-          document.getElementById('import-saved').textContent = j.saved;
-          document.getElementById('import-failed').textContent = j.failed;
-          document.getElementById('import-progress-bar').style.width = (j.progressPercent || 0) + '%';
-          if (j.recentTitles?.length) {
-            document.getElementById('import-recent').textContent = 'Latest: ' + j.recentTitles[0];
+          const data = await res.json();
+          if (data.success) {
+            sellersData = data.sellers || [];
+            renderSellers();
           }
-
-          if (j.status === 'completed') {
-            clearInterval(pollInterval);
-            statusBox.className = 'p-3 rounded-xl text-xs bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 block space-y-2';
-            document.getElementById('import-phase-text').textContent = `🎉 Done! Imported ${j.saved} products from ${j.totalOfferIds} listings.`;
-            document.getElementById('import-progress-bar').style.width = '100%';
-            document.getElementById('import-progress-bar').className = 'bg-emerald-500 h-2 rounded-full transition-all';
-            fetchProducts();
-            loadImportedProducts();
-            btn.disabled = false;
-            btn.innerHTML = '<i data-lucide="download-cloud" class="w-4 h-4"></i> <span>Crawl & Import SKUs</span>';
-            lucide.createIcons();
-          } else if (j.status === 'stopped') {
-            clearInterval(pollInterval);
-            statusBox.className = 'p-3 rounded-xl text-xs bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 block space-y-2';
-            document.getElementById('import-phase-text').textContent = `⏹ Stopped. ${j.saved} products saved.`;
-            fetchProducts();
-            loadImportedProducts();
-            btn.disabled = false;
-            btn.innerHTML = '<i data-lucide="download-cloud" class="w-4 h-4"></i> <span>Crawl & Import SKUs</span>';
-            lucide.createIcons();
-          } else if (j.status === 'error') {
-            clearInterval(pollInterval);
-            statusBox.className = 'p-3 rounded-xl text-xs bg-red-500/10 border border-red-500/30 text-red-400 block';
-            statusBox.innerText = '⚠️ Error: ' + (j.error || 'Unknown error');
-            btn.disabled = false;
-            btn.innerHTML = '<i data-lucide="download-cloud" class="w-4 h-4"></i> <span>Crawl & Import SKUs</span>';
-            lucide.createIcons();
-          }
-        } catch (_) {}
-      }, 2000); // poll every 2s
-    }
-
-    async function stopImportJob(jobId) {
-      await fetch(`/api/1688/full-import/stop/${jobId}`, {
-        method: 'POST', headers: { 'Authorization': `Bearer ${authToken}` }
-      });
-    }
-
-    // Landed Cost Calculator
-    function calculateMargin() {
-      const rmb = parseFloat(document.getElementById('calc-rmb')?.value || 15);
-      const fx = parseFloat(document.getElementById('calc-fx')?.value || 19.20);
-      const freight = parseFloat(document.getElementById('calc-freight')?.value || 250);
-      const taxPercent = parseFloat(document.getElementById('calc-tax')?.value || 15);
-      const retail = parseFloat(document.getElementById('calc-retail')?.value || 1250);
-
-      const baseNpr = rmb * fx;
-      const customs = (baseNpr + freight) * (taxPercent / 100);
-      const landed = baseNpr + freight + customs;
-      const profit = retail - landed;
-      const margin = (profit / retail) * 100;
-
-      document.getElementById('res-landed').innerText = `Rs. ${Math.round(landed).toLocaleString()}`;
-      document.getElementById('res-profit').innerText = `Rs. ${Math.round(profit).toLocaleString()}`;
-      document.getElementById('res-margin').innerText = `${margin.toFixed(1)}%`;
-    }
-
-    // Sellers
-    async function fetchSellers() {
-      try {
-        const res = await fetch('/api/sellers', {
-          headers: { 'Authorization': `Bearer ${authToken}` }
-        });
-        const data = await res.json();
-        if (data.success) {
-          sellersData = data.sellers || [];
-          renderSellers();
+        } catch (e) {
+          console.error('Fetch sellers error:', e);
         }
-      } catch (e) {
-        console.error('Fetch sellers error:', e);
       }
-    }
 
-    function renderSellers() {
-      const tbody = document.getElementById('sellers-table-body');
-      if (sellersData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No sellers registered yet.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = sellersData.map(s => `
+      function renderSellers() {
+        const tbody = document.getElementById('sellers-table-body');
+        if (sellersData.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-500">No sellers registered yet.</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = sellersData.map(s => `
         <tr class="hover:bg-slate-800/40 transition">
           <td class="p-3.5 font-bold text-white">${s.storeName || s.business_name}</td>
           <td class="p-3.5 text-slate-300">${s.ownerName || ''} (${s.phone || ''})</td>
@@ -3568,48 +3998,48 @@
           </td>
         </tr>
       `).join('');
-    }
-
-    async function toggleSellerStatus(sellerId, status) {
-      try {
-        const res = await fetch(`/api/sellers/${sellerId}/status`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`
-          },
-          body: JSON.stringify({ status })
-        });
-        const data = await res.json();
-        if (data.success) fetchSellers();
-      } catch (e) {
-        alert('Seller update error: ' + e.message);
       }
-    }
 
-    // Inquiries
-    async function fetchInquiries() {
-      try {
-        const res = await fetch('/api/inquiries', {
-          headers: { 'Authorization': `Bearer ${authToken}` }
-        });
-        const data = await res.json();
-        if (data.success) {
-          inquiriesData = data.inquiries || [];
-          renderInquiries();
+      async function toggleSellerStatus(sellerId, status) {
+        try {
+          const res = await fetch(`/api/sellers/${sellerId}/status`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ status })
+          });
+          const data = await res.json();
+          if (data.success) fetchSellers();
+        } catch (e) {
+          alert('Seller update error: ' + e.message);
         }
-      } catch (e) {
-        console.error('Fetch inquiries error:', e);
       }
-    }
 
-    function renderInquiries() {
-      const tbody = document.getElementById('inquiries-table-body');
-      if (inquiriesData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-500">No customer inquiries.</td></tr>`;
-        return;
+      // Inquiries
+      async function fetchInquiries() {
+        try {
+          const res = await fetch('/api/inquiries', {
+            headers: { 'Authorization': `Bearer ${authToken}` }
+          });
+          const data = await res.json();
+          if (data.success) {
+            inquiriesData = data.inquiries || [];
+            renderInquiries();
+          }
+        } catch (e) {
+          console.error('Fetch inquiries error:', e);
+        }
       }
-      tbody.innerHTML = inquiriesData.map(i => `
+
+      function renderInquiries() {
+        const tbody = document.getElementById('inquiries-table-body');
+        if (inquiriesData.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-500">No customer inquiries.</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = inquiriesData.map(i => `
         <tr class="hover:bg-slate-800/40 transition">
           <td class="p-3.5 font-bold text-white">${i.name || 'Shopper'}</td>
           <td class="p-3.5 text-slate-400">${i.email || ''} ${i.phone ? '• ' + i.phone : ''}</td>
@@ -3617,7 +4047,8 @@
           <td class="p-3.5 text-slate-500 text-[10px]">${new Date(i.createdAt || Date.now()).toLocaleDateString()}</td>
         </tr>
       `).join('');
-    }
+      }
   </script>
 </body>
+
 </html>

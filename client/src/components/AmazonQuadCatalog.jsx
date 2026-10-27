@@ -518,38 +518,37 @@ export const AmazonQuadCatalog = ({
 
   return (
     <section 
-      className="my-3 sm:my-5 rounded-2xl border-2 border-emerald-300 shadow-[0_10px_35px_rgba(16,185,129,0.14)] overflow-hidden bg-gradient-to-b from-emerald-50/40 via-white to-white transition-all duration-200 ring-1 ring-emerald-200/60" 
+      className="my-3.5 sm:my-5 rounded-2xl border border-[#E5E7EB] shadow-xs overflow-hidden bg-gradient-to-b from-[#FFE7EC]/20 via-white to-white transition-all duration-200" 
       id="amazon-quad-catalog"
     >
-      {/* UNIFIED MODERN EMERALD HEADER BANNER */}
-      <div className="bg-gradient-to-r from-emerald-50 via-white to-emerald-50/70 border-b border-emerald-200/80 px-3 sm:px-5 py-2 sm:py-3 text-slate-900 flex items-center justify-between gap-2.5 sm:gap-3 shadow-2xs relative overflow-hidden">
-        {/* Subtle decorative glow */}
-        <div className="absolute -right-8 -top-8 w-44 h-44 bg-emerald-100/60 rounded-full blur-2xl pointer-events-none" />
-        <div className="absolute left-1/4 -bottom-8 w-36 h-36 bg-emerald-200/40 rounded-full blur-xl pointer-events-none" />
+      {/* BALANCED & CUTE HEADER BANNER */}
+      <div className="bg-[#FAFAFB] border-b border-[#E5E7EB] px-4 sm:px-6 py-2.5 sm:py-3.5 text-[#1B1F3B] flex items-center justify-between gap-3 shadow-2xs relative overflow-hidden">
+        {/* Subtle decorative soft glow */}
+        <div className="absolute -right-8 -top-8 w-40 h-40 bg-emerald-100/40 rounded-full blur-2xl pointer-events-none" />
 
         {/* Left Side: Icon + Titles & Badges */}
-        <div className="flex items-center gap-2.5 sm:gap-3 relative z-10 min-w-0">
-          <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 text-white shadow-md shadow-emerald-500/20 flex items-center justify-center flex-shrink-0 border border-emerald-400/30">
-            <LayoutGrid className="w-4 h-4 sm:w-5.5 sm:h-5.5 stroke-[2.4]" />
+        <div className="flex items-center gap-2.5 sm:gap-3.5 relative z-10 min-w-0">
+          <div className="w-8.5 h-8.5 sm:w-10 sm:h-10 rounded-xl bg-emerald-600 text-white shadow-xs flex items-center justify-center flex-shrink-0">
+            <LayoutGrid className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.4]" />
           </div>
 
           <div className="min-w-0">
             {/* Top Row: Badges & Announcement */}
             <div className="flex items-center gap-2 flex-wrap mb-0.5">
-              <span className="bg-emerald-600 text-white text-[8.5px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded-full uppercase tracking-wider shadow-2xs leading-none">
+              <span className="bg-emerald-600 text-white text-[8.5px] sm:text-[9.5px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider leading-none shadow-2xs">
                 FEATURED HUBS
               </span>
-              <span className="text-[10.5px] sm:text-[11px] font-black text-emerald-800 tracking-wide uppercase truncate hidden sm:inline">
+              <span className="text-[10px] sm:text-[11px] font-black text-emerald-800 tracking-wide uppercase truncate hidden sm:inline">
                 🌱 {language === 'ne' ? 'प्रमुख क्याटागोरी विभागहरू' : 'CURATED LIFESTYLE DEPARTMENTS'}
               </span>
             </div>
 
             {/* Bottom Row: Main Heading + Count */}
             <div className="flex items-baseline gap-2">
-              <h2 className="text-[15px] sm:text-[19px] font-black text-slate-950 tracking-tight leading-tight">
+              <h2 className="text-[14px] sm:text-[17px] font-black text-[#1B1F3B] tracking-tight leading-tight">
                 {language === 'ne' ? 'प्रमुख विभागहरू' : 'Popular Departments'}
               </h2>
-              <span className="text-[11px] sm:text-xs font-black text-emerald-800/90 hidden sm:inline">
+              <span className="text-[11px] sm:text-[11.5px] font-bold text-[#5B6070] hidden sm:inline">
                 • 🌿 {language === 'ne' ? '१० क्युरेटेड सेट' : '10 Curated Sets'}
               </span>
             </div>
@@ -557,46 +556,46 @@ export const AmazonQuadCatalog = ({
         </div>
 
         {/* Right Side: Chevrons */}
-        <div className="flex items-center gap-1 sm:gap-1.5 relative z-10 flex-shrink-0">
+        <div className="flex items-center gap-1.5 relative z-10 flex-shrink-0">
           <button
             onClick={() => handleSideScroll('left')}
             disabled={!canScrollLeft}
             aria-label="Scroll left"
-            className={`w-7.5 h-7.5 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl border flex items-center justify-center transition-all shadow-2xs ${
+            className={`w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-lg sm:rounded-xl border flex items-center justify-center transition-all shadow-2xs ${
               canScrollLeft
-                ? 'bg-white text-emerald-800 border-emerald-300 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 cursor-pointer active:scale-95'
-                : 'bg-white/60 text-slate-300 border-slate-200 cursor-not-allowed opacity-50'
+                ? 'bg-white text-[#1B1F3B] border-[#E5E7EB] hover:bg-[#FFE7EC] hover:text-[#E11D48] hover:border-[#E11D48] cursor-pointer active:scale-95'
+                : 'bg-white/60 text-slate-300 border-slate-200 cursor-not-allowed opacity-40'
             }`}
           >
-            <ChevronLeft className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.5]" />
+            <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
           </button>
           <button
             onClick={() => handleSideScroll('right')}
             disabled={!canScrollRight}
             aria-label="Scroll right"
-            className={`w-7.5 h-7.5 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl border flex items-center justify-center transition-all shadow-2xs ${
+            className={`w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-lg sm:rounded-xl border flex items-center justify-center transition-all shadow-2xs ${
               canScrollRight
-                ? 'bg-white text-emerald-800 border-emerald-300 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 cursor-pointer active:scale-95'
-                : 'bg-white/60 text-slate-300 border-slate-200 cursor-not-allowed opacity-50'
+                ? 'bg-white text-[#1B1F3B] border-[#E5E7EB] hover:bg-[#FFE7EC] hover:text-[#E11D48] hover:border-[#E11D48] cursor-pointer active:scale-95'
+                : 'bg-white/60 text-slate-300 border-slate-200 cursor-not-allowed opacity-40'
             }`}
           >
-            <ChevronRight className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.5]" />
+            <ChevronRight className="w-4 h-4 stroke-[2.5]" />
           </button>
         </div>
       </div>
 
-      {/* Main Carousel Wrapper with Floating Side Navigation Buttons (Desktop only to never obscure photos on mobile) */}
+      {/* Main Carousel Wrapper with Balanced Floating Side Buttons */}
       <div className="p-3 sm:p-4 relative group/carousel">
         {/* Left Floating Side Button (desktop only) */}
         <button
           onClick={() => handleSideScroll('left')}
           disabled={!canScrollLeft}
           aria-label="Previous categories"
-          className={`hidden sm:flex absolute left-2 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/95 backdrop-blur-xs text-slate-800 border border-emerald-300/80 shadow-[0_4px_16px_rgba(0,0,0,0.18)] items-center justify-center hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer ${
+          className={`hidden sm:flex absolute left-2 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-white/95 backdrop-blur-xs text-[#1B1F3B] border border-[#E5E7EB] shadow-md items-center justify-center hover:bg-[#FFE7EC] hover:text-[#E11D48] hover:border-[#E11D48] transition-all hover:scale-105 active:scale-95 cursor-pointer ${
             canScrollLeft ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-75 pointer-events-none'
           }`}
         >
-          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
+          <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
         </button>
 
         {/* Right Floating Side Button (desktop only) */}
@@ -604,17 +603,17 @@ export const AmazonQuadCatalog = ({
           onClick={() => handleSideScroll('right')}
           disabled={!canScrollRight}
           aria-label="Next categories"
-          className={`hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/95 backdrop-blur-xs text-slate-800 border border-emerald-300/80 shadow-[0_4px_16px_rgba(0,0,0,0.18)] items-center justify-center hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer ${
+          className={`hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-white/95 backdrop-blur-xs text-[#1B1F3B] border border-[#E5E7EB] shadow-md items-center justify-center hover:bg-[#FFE7EC] hover:text-[#E11D48] hover:border-[#E11D48] transition-all hover:scale-105 active:scale-95 cursor-pointer ${
             canScrollRight ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-75 pointer-events-none'
           }`}
         >
-          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
+          <ChevronRight className="w-5 h-5 stroke-[2.5]" />
         </button>
 
-        {/* Horizontally Scrollable Quad Department Cards Container */}
+        {/* Horizontally Scrollable Comfortable Quad Department Cards */}
         <div
           ref={scrollContainerRef}
-          className="flex gap-3 sm:gap-4 lg:gap-5 overflow-x-auto scroll-smooth no-scrollbar py-1 px-1 -mx-1 snap-x snap-mandatory"
+          className="flex gap-3.5 sm:gap-4 overflow-x-auto scroll-smooth no-scrollbar py-0.5 px-0.5 snap-x snap-mandatory"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {FEATURED_QUAD_CARDS.map((card) => {
@@ -623,22 +622,22 @@ export const AmazonQuadCatalog = ({
             return (
               <div
                 key={card.id}
-                className="w-[280px] sm:w-[305px] md:w-[calc(33.333%-12px)] lg:w-[calc(25%-15px)] flex-shrink-0 snap-start bg-white rounded-[18px] sm:rounded-[20px] border border-slate-200/90 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.12)] transition-all duration-300 p-2.5 sm:p-3 pb-2 sm:pb-2.5 flex flex-col"
+                className="w-[265px] sm:w-[280px] md:w-[290px] lg:w-[300px] flex-shrink-0 snap-start bg-white rounded-2xl border border-[#E5E7EB] shadow-xs hover:border-[#E11D48] hover:shadow-md transition-all duration-200 p-3 sm:p-3.5 flex flex-col"
               >
-                {/* Card Header (Bold title with chevron > link) */}
+                {/* Card Header (Clean title with link) */}
                 <div
                   onClick={() => handleCardHeaderClick(card)}
-                  className="flex items-center justify-between gap-1.5 group/header cursor-pointer mb-1.5 sm:mb-2 select-none"
+                  className="flex items-center justify-between gap-1 group/header cursor-pointer mb-2 select-none"
                   title={`Explore all ${cardTitle}`}
                 >
-                  <h3 className="text-[14.5px] sm:text-[15.5px] font-black text-slate-900 tracking-tight leading-tight group-hover/header:text-[#F85606] transition-colors line-clamp-2 min-h-[34px] flex items-center">
+                  <h3 className="text-[13.5px] sm:text-[14.5px] font-black text-[#1B1F3B] tracking-tight leading-tight group-hover/header:text-[#E11D48] transition-colors truncate">
                     {cardTitle}
                   </h3>
-                  <ChevronRight className="w-4 h-4 text-slate-800 flex-shrink-0 group-hover/header:translate-x-1 group-hover/header:text-[#F85606] transition-all stroke-[2.5]" />
+                  <ChevronRight className="w-3.5 h-3.5 text-[#5B6070] flex-shrink-0 group-hover/header:translate-x-0.5 group-hover/header:text-[#E11D48] transition-all stroke-[2.5]" />
                 </div>
 
                 {/* 2x2 Quadrant Grid */}
-                <div className="grid grid-cols-2 gap-x-2 gap-y-1 sm:gap-x-2.5 sm:gap-y-1.5">
+                <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
                   {card.quadrants.map((quad) => {
                     const quadLabel = language === 'ne' ? quad.nepaliLabel : quad.label;
 
@@ -651,13 +650,13 @@ export const AmazonQuadCatalog = ({
                       >
                         {/* Thumbnail Container */}
                         <div
-                          className="aspect-square w-full rounded-[12px] sm:rounded-[14px] overflow-hidden relative bg-white border border-slate-100/90 shadow-2xs group-hover/item:shadow-md transition-all duration-300 flex items-center justify-center p-1 sm:p-1.5"
+                          className="aspect-square w-full rounded-xl overflow-hidden relative bg-[#FAFAFB] border border-[#E5E7EB]/90 shadow-2xs group-hover/item:border-[#E11D48]/40 group-hover/item:shadow-sm transition-all duration-200 flex items-center justify-center p-2"
                         >
                           <img
                             src={quad.image}
                             alt={quad.alt || quadLabel}
                             loading="lazy"
-                            className="w-full h-full object-contain scale-100 group-hover/item:scale-108 transition-transform duration-500 ease-out bg-white"
+                            className="w-full h-full object-contain scale-98 group-hover/item:scale-105 transition-transform duration-300 ease-out"
                             onError={(e) => {
                               e.target.src = 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80';
                             }}
@@ -666,7 +665,7 @@ export const AmazonQuadCatalog = ({
 
                         {/* Item Caption Underneath */}
                         <span
-                          className="mt-0.5 text-[10.5px] sm:text-[11px] font-medium text-slate-800 leading-tight line-clamp-1 group-hover/item:text-[#F85606] transition-colors"
+                          className="mt-1 text-[10.5px] sm:text-[11px] font-semibold text-[#5B6070] text-center leading-tight line-clamp-1 group-hover/item:text-[#E11D48] transition-colors"
                           title={quadLabel}
                         >
                           {quadLabel}

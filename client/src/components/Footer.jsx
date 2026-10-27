@@ -76,7 +76,7 @@ export const Footer = ({ onSelectCategory, onOpenAdminUnlock }) => {
 
           <div>
             <div className="mb-3">
-              <img src="/bhanjo-logo-horizontal.png" alt="भान्जो Bhanjo" className="h-7 w-auto object-contain" />
+              <img src="/bhanjo-logo-horizontal.png" alt="Bhanjo Marketplace" className="h-8 sm:h-9 w-auto object-contain" />
             </div>
             <p className="text-slate-500 text-[11px] leading-relaxed mb-3">
               Nepal's premier online shopping platform connecting Nepali consumers with authentic Himalayan products, trending electronics, fashion, and daily essentials.

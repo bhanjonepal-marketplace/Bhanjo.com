@@ -30,17 +30,30 @@ export const CurrencyProvider = ({ children }) => {
   };
 
   // Format price strictly in Nepali Rupees (NPR)
-  const formatPrice = (amountInUSD) => {
-    if (amountInUSD === undefined || amountInUSD === null) return '';
-    const converted = amountInUSD * 133.5;
-    return `Rs. ${converted.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+  // Direct conversion: 1688 wholesale items are already in direct NPR without 133.5x markup!
+  const formatPrice = (amount, prodOrCurrency = null) => {
+    if (amount === undefined || amount === null || isNaN(Number(amount))) return '';
+    const num = Number(amount);
+
+    if (typeof prodOrCurrency === 'string') {
+      if (prodOrCurrency.toUpperCase() === 'NPR') return `Rs. ${Math.round(num).toLocaleString('en-IN')}`;
+      if (prodOrCurrency.toUpperCase() === 'USD') return `Rs. ${Math.round(num * 133.5).toLocaleString('en-IN')}`;
+    } else if (prodOrCurrency && typeof prodOrCurrency === 'object') {
+      if (prodOrCurrency.currency === 'NPR' || prodOrCurrency.is1688Live || prodOrCurrency.id?.startsWith('1688-') || prodOrCurrency.is1688Import) {
+        return `Rs. ${Math.round(num).toLocaleString('en-IN')}`;
+      }
+      if (prodOrCurrency.currency === 'USD' || prodOrCurrency.id?.startsWith('ali-')) {
+        return `Rs. ${Math.round(num * 133.5).toLocaleString('en-IN')}`;
+      }
+    }
+
+    // Default: All 1688 and store items are in NPR directly. Never multiply them by 133.5!
+    return `Rs. ${Math.round(num).toLocaleString('en-IN')}`;
   };
 
   // Helper to format in Nepali Rupees (NPR)
-  const formatNPR = (amountInUSD) => {
-    if (amountInUSD === undefined || amountInUSD === null) return '';
-    const converted = amountInUSD * 133.5;
-    return `Rs. ${converted.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+  const formatNPR = (amount) => {
+    return formatPrice(amount);
   };
 
   // JPY / Other currencies disabled as requested

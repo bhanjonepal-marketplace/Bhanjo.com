@@ -54,6 +54,5 @@ server/1688_session.json
 /test_*
 server/debug_*
 client/public/test_cache/
-
-
-
+*.patch
+theme_backup_stash_id.txt

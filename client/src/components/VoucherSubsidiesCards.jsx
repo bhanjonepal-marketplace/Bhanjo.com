@@ -31,30 +31,31 @@ const BOTTOM_CARDS = [
     ]
   },
   {
-    type: 'single',
-    id: 'national-subsidies',
-    title: 'National subsidies',
-    nepaliTitle: 'राष्ट्रिय अनुदान',
-    productTitle: 'Medical Sleep CPAP Care',
-    nepaliProductTitle: 'मेडिकल CPAP केयर',
-    iconType: 'leaf',
-    isGreenTitle: true,
-    priceUSD: 3000,
-    badge: 'Gov Subsidy',
-    image: '/deals/cpap_device.jpg',
-    categoryId: 'consumer-electronics'
-  },
-  {
-    type: 'single',
-    id: 'flash-sale',
-    title: 'Bhanjo flash sale',
-    nepaliTitle: 'भान्जो फ्ल्यास सेल',
-    productTitle: 'Nordic Foldable Sofa Bed',
-    nepaliProductTitle: 'फोल्डेबल सोफा बेड',
-    priceUSD: 47,
-    badge: 'Flash Deal',
-    image: '/deals/sofa_bed.jpg',
-    categoryId: 'home-kitchen'
+    type: 'bhanjo-sale',
+    id: 'bhanjo-sale',
+    title: 'Bhanjo Sale',
+    nepaliTitle: 'भान्जो सेल',
+    subtitle: 'Tihar Dhamaka',
+    nepaliSubtitle: 'तिहार धमाका',
+    categoryId: 'home-kitchen',
+    items: [
+      {
+        id: 'bs-cpap',
+        title: 'Medical Sleep CPAP Care',
+        nepaliTitle: 'मेडिकल CPAP केयर',
+        priceUSD: 3000,
+        image: '/deals/cpap_device.jpg',
+        categoryId: 'consumer-electronics'
+      },
+      {
+        id: 'bs-sofa',
+        title: 'Nordic Foldable Sofa Bed',
+        nepaliTitle: 'फोल्डेबल सोफा बेड',
+        priceUSD: 47,
+        image: '/deals/sofa_bed.jpg',
+        categoryId: 'home-kitchen'
+      }
+    ]
   },
   {
     type: 'quad',
@@ -268,22 +269,28 @@ export const VoucherSubsidiesCards = ({ onSelectCategory, onSelectProduct, produ
             );
           }
 
-          // RENDER DUAL ITEM CARD (Voucher Collection with Phone + Shoes side-by-side)
-          if (card.type === 'dual') {
+          // RENDER BHANJO SALE CARD (Wide Tihar Dhamaka 2-item Showcase, replaces the 2 separate cards without shrinking)
+          if (card.type === 'bhanjo-sale') {
             return (
               <div
                 key={card.id}
-                className="w-[230px] sm:w-[250px] xl:w-[268px] flex-shrink-0 snap-start bg-white rounded-2xl border border-slate-200 p-2.5 flex flex-col justify-between shadow-2xs hover:shadow-md transition-shadow"
+                className="w-[420px] sm:w-[460px] xl:w-[495px] flex-shrink-0 snap-start bg-white rounded-2xl border border-slate-200 p-2.5 sm:p-3 flex flex-col justify-between shadow-2xs hover:shadow-md transition-shadow"
               >
                 {/* Header */}
                 <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-1 font-extrabold text-[13px] sm:text-sm text-slate-900 truncate">
+                  <div className="flex items-center gap-1.5 font-black text-sm sm:text-[15px] text-slate-900 truncate">
                     <span>{language === 'ne' ? card.nepaliTitle : card.title}</span>
                   </div>
+                  {(card.subtitle || card.nepaliSubtitle) && (
+                    <span className="text-[10.5px] sm:text-[11.5px] font-black text-[#E11D48] bg-[#FFE7EC] border border-[#FECDD3] px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
+                      <span>🪔</span>
+                      <span>{language === 'ne' ? (card.nepaliSubtitle || card.subtitle) : card.subtitle}</span>
+                    </span>
+                  )}
                 </div>
 
-                {/* 2 Items Side-by-Side (Phone + Shoes) */}
-                <div className="grid grid-cols-2 gap-2 flex-1 items-stretch py-0.5">
+                {/* 2 Wide Items Side-by-Side (Medical Sleep CPAP Care + Foldable Sofa Bed) */}
+                <div className="grid grid-cols-2 gap-3 flex-1 items-stretch py-0.5">
                   {card.items.map((item) => (
                     <div
                       key={item.id}
@@ -295,21 +302,21 @@ export const VoucherSubsidiesCards = ({ onSelectCategory, onSelectProduct, produ
                           onSelectCategory(item.categoryId);
                         }
                       }}
-                      className="group/item flex flex-col justify-between items-center hover:opacity-95 transition-all cursor-pointer py-0.5"
+                      className="group/item flex flex-col justify-between items-center bg-slate-50/70 hover:bg-rose-50/50 rounded-xl p-2 border border-slate-100 hover:border-rose-200/80 transition-all cursor-pointer"
                     >
-                      {/* Product Cutout (Noticeably Larger & Clearer) */}
-                      <div className="flex-1 w-full flex items-center justify-center min-h-[105px]">
+                      {/* Product Cutout (Large & Prominent) */}
+                      <div className="flex-1 w-full flex items-center justify-center min-h-[105px] py-0.5">
                         <img
                           src={item.image}
                           alt={item.title}
-                          className="h-[96px] sm:h-[105px] md:h-[114px] w-auto max-w-[96%] object-contain group-hover/item:scale-105 transition-transform duration-300 drop-shadow-sm"
-                          style={{ maxHeight: '114px', width: 'auto', objectFit: 'contain' }}
+                          className="h-[100px] sm:h-[110px] md:h-[118px] w-auto max-w-[95%] object-contain group-hover/item:scale-105 transition-transform duration-300 drop-shadow-sm"
+                          style={{ maxHeight: '118px', width: 'auto', objectFit: 'contain' }}
                         />
                       </div>
 
-                      {/* Product Title (Text Name) */}
-                      <div className="w-full text-center px-0.5 mt-1">
-                        <span className="block text-[11px] sm:text-[12px] text-slate-800 font-bold truncate leading-tight">
+                      {/* Product Title */}
+                      <div className="w-full text-center px-1 mt-1">
+                        <span className="block text-[11.5px] sm:text-[12.5px] text-slate-800 font-bold truncate leading-tight">
                           {language === 'ne' ? (item.nepaliTitle || item.title) : item.title}
                         </span>
                       </div>
@@ -317,8 +324,74 @@ export const VoucherSubsidiesCards = ({ onSelectCategory, onSelectProduct, produ
                       {/* Price Tag Pill */}
                       <div className="w-full text-center mt-1 pb-0">
                         <span 
-                          className="inline-block bg-[#FF5000] text-white text-[10.5px] sm:text-[11.5px] md:text-xs font-black px-2 sm:px-2.5 py-0.5 sm:py-0.8 rounded-md shadow-xs tracking-tight whitespace-nowrap"
-                          style={{ backgroundColor: '#FF5000', color: '#FFFFFF' }}
+                          className="inline-block bg-[#E11D48] text-white text-[10.5px] sm:text-[11.5px] md:text-xs font-black px-2.5 sm:px-3 py-0.5 sm:py-0.8 rounded-md shadow-xs tracking-tight whitespace-nowrap"
+                        >
+                          {formatNPR ? formatNPR(item.priceUSD) : formatPrice(item.priceUSD)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          }
+
+          // RENDER DUAL ITEM CARD (Voucher Collection with Phone + Shoes side-by-side)
+          if (card.type === 'dual') {
+            return (
+              <div
+                key={card.id}
+                className="w-[320px] sm:w-[420px] xl:w-[495px] flex-shrink-0 snap-start bg-white rounded-2xl border border-slate-200 p-2.5 sm:p-3 flex flex-col justify-between shadow-2xs hover:shadow-md transition-shadow"
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-1.5 font-black text-sm sm:text-[15px] text-slate-900 truncate">
+                    <span>{language === 'ne' ? card.nepaliTitle : card.title}</span>
+                  </div>
+                  {(card.subtitle || card.nepaliSubtitle) && (
+                    <span className="text-[10.5px] sm:text-[11.5px] font-black text-[#E11D48] bg-[#FFE7EC] border border-[#FECDD3] px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
+                      <span>🎟️</span>
+                      <span>{language === 'ne' ? (card.nepaliSubtitle || card.subtitle) : card.subtitle}</span>
+                    </span>
+                  )}
+                </div>
+
+                {/* 2 Items Side-by-Side (Phone + Shoes) */}
+                <div className="grid grid-cols-2 gap-3 flex-1 items-stretch py-0.5">
+                  {card.items.map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => {
+                        if (onSelectProduct && products.length > 0) {
+                          const match = products.find(p => p.category === item.categoryId) || products[0];
+                          if (match) onSelectProduct(match);
+                        } else if (onSelectCategory) {
+                          onSelectCategory(item.categoryId);
+                        }
+                      }}
+                      className="group/item flex flex-col justify-between items-center bg-slate-50/70 hover:bg-rose-50/50 rounded-xl p-2 border border-slate-100 hover:border-rose-200/80 transition-all cursor-pointer"
+                    >
+                      {/* Product Cutout */}
+                      <div className="flex-1 w-full flex items-center justify-center min-h-[105px] py-0.5">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="h-[100px] sm:h-[110px] md:h-[118px] w-auto max-w-[95%] object-contain group-hover/item:scale-105 transition-transform duration-300 drop-shadow-sm"
+                          style={{ maxHeight: '118px', width: 'auto', objectFit: 'contain' }}
+                        />
+                      </div>
+
+                      {/* Product Title */}
+                      <div className="w-full text-center px-1 mt-1">
+                        <span className="block text-[11.5px] sm:text-[12.5px] text-slate-800 font-bold truncate leading-tight">
+                          {language === 'ne' ? (item.nepaliTitle || item.title) : item.title}
+                        </span>
+                      </div>
+
+                      {/* Price Tag Pill */}
+                      <div className="w-full text-center mt-1 pb-0">
+                        <span 
+                          className="inline-block bg-[#E11D48] text-white text-[10.5px] sm:text-[11.5px] md:text-xs font-black px-2.5 sm:px-3 py-0.5 sm:py-0.8 rounded-md shadow-xs tracking-tight whitespace-nowrap"
                         >
                           {formatNPR ? formatNPR(item.priceUSD) : formatPrice(item.priceUSD)}
                         </span>

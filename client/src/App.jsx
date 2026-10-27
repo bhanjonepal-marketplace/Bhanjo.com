@@ -34,7 +34,7 @@ import { CATEGORIES } from './data/categories';
 import { PRODUCTS } from './data/products';
 import { SUPPLIERS } from './data/suppliers';
 
-import { Search, Filter, ShieldCheck, X, Camera, Sparkles, ChevronDown, ArrowLeft, ChevronRight, Home } from 'lucide-react';
+import { Search, Filter, ShieldCheck, X, Camera, Sparkles, ChevronDown, ArrowLeft, ChevronRight, Home, Globe } from 'lucide-react';
 import { useCurrency } from './context/CurrencyContext';
 import { useAuth } from './context/AuthContext';
 import { matchesProductSearch } from './utils/searchMatcher';
@@ -77,6 +77,48 @@ export function App() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCatalogCount, setTotalCatalogCount] = useState(PRODUCTS.length);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
+  const [isLoading1688Live, setIsLoading1688Live] = useState(false);
+  const [current1688Page, setCurrent1688Page] = useState(1);
+
+  const handleSearch1688Live = async (term, page = 1) => {
+    const q = (term || searchQuery || '').trim();
+    if (!q) return;
+    setIsLoading1688Live(true);
+    try {
+      const res = await fetch(`/api/1688/live-search?q=${encodeURIComponent(q)}&page=${page}&pageSize=100`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.products) && data.products.length > 0) {
+        if (page === 1) {
+          // Clear older live-searched items and put the new 100 live products right up front
+          setAllProducts(prev => {
+            const existing = prev.filter(p => !p.is1688Live);
+            return [...data.products, ...existing];
+          });
+          setCurrent1688Page(1);
+          setForYouVisibleCount(100);
+          showToast(`Found ${data.products.length} live products directly from 1688!`);
+        } else {
+          // Append the next 30 live products
+          setAllProducts(prev => {
+            const existingIds = new Set(prev.map(p => p.id));
+            const newItems = data.products.filter(p => !existingIds.has(p.id));
+            return [...prev, ...newItems];
+          });
+          setCurrent1688Page(page);
+          setForYouVisibleCount(prev => prev + data.products.length);
+          showToast(`Loaded ${data.products.length} more products from 1688!`);
+        }
+      } else {
+        if (page > 1) {
+          showToast('All available products loaded for this search.');
+        }
+      }
+    } catch (err) {
+      console.warn('1688 search note:', err);
+    } finally {
+      setIsLoading1688Live(false);
+    }
+  };
 
   useEffect(() => {
     setIsLoadingProducts(true);
@@ -296,11 +338,17 @@ export function App() {
     setForYouVisibleCount(18);
     setCurrentPage(1);
     setSelectedProductId(null);
+    setIsCartOpen(false);
+    setIsMegaMenuOpen(false);
     setActiveView('marketplace');
     if (typeof window !== 'undefined' && window.history?.pushState) {
-      window.history.pushState({ catId: 'all', subCategoryKeyword: '', view: 'marketplace' }, '');
+      try {
+        window.history.pushState({ catId: 'all', subCategoryKeyword: '', view: 'marketplace' }, '', window.location.pathname);
+      } catch (e) {}
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   };
 
   useEffect(() => {
@@ -454,7 +502,7 @@ export function App() {
         (selectedCategoryId === 'phone-laptop-cases' && (prod.categoryId === 'consumer-electronics' || prod.categoryId === 'phone-laptop-cases')) ||
         (selectedCategoryId === 'luggage-bags-cases' && (prod.categoryId === 'luggage-bags' || prod.categoryId === 'luggage-bags-cases')) ||
         (selectedCategoryId === 'vehicle-parts-accessories' && (prod.categoryId === 'vehicles-accessories' || prod.categoryId === 'vehicle-parts-accessories' || prod.categoryId === 'vehicles-transportation'));
-      const matchesSearch = matchesProductSearch(prod, searchQuery);
+      const matchesSearch = (searchQuery && prod.is1688Live) ? true : matchesProductSearch(prod, searchQuery);
       const matchesNepal = !filterOnlyNepal || prod.isHimalayanExport;
       const matchesAlibaba = !filterAlibabaOnly || prod.isAlibabaImport || prod.id?.startsWith('ali-') || prod.is1688Import;
       const matchesMall = !filterMallOnly || prod.isMall || !prod.isAlibabaImport;
@@ -630,6 +678,7 @@ export function App() {
           setCurrentPage(1);
           setActiveView('marketplace');
           if (query && query.trim()) {
+            handleSearch1688Live(query, 1);
             setTimeout(() => {
               const catalogElem = document.getElementById('catalog-section');
               if (catalogElem) {
@@ -975,14 +1024,25 @@ export function App() {
                         : (language === 'ne' ? (activeCategoryObj?.nepaliName || activeCategoryObj?.name) : activeCategoryObj?.name)}
                     </h2>
                     {searchQuery && (
-                      <button
-                        onClick={() => setSearchQuery('')}
-                        className="inline-flex items-center gap-1 bg-orange-100 text-[#F85606] hover:bg-[#F85606] hover:text-white px-2 py-0.5 rounded-full text-xs font-semibold transition"
-                        title="Clear search query"
-                      >
-                        <span>"{searchQuery}"</span>
-                        <span>✕</span>
-                      </button>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <button
+                          onClick={() => setSearchQuery('')}
+                          className="inline-flex items-center gap-1 bg-orange-100 text-[#F85606] hover:bg-[#F85606] hover:text-white px-2 py-0.5 rounded-full text-xs font-semibold transition"
+                          title="Clear search query"
+                        >
+                          <span>"{searchQuery}"</span>
+                          <span>✕</span>
+                        </button>
+                        <button
+                          onClick={() => handleSearch1688Live(searchQuery)}
+                          disabled={isLoading1688Live}
+                          className="inline-flex items-center gap-1.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-3 py-0.5 rounded-full text-xs font-bold shadow-xs hover:shadow-md transition cursor-pointer active:scale-95"
+                          title="Search live on 1688 China Factory Direct"
+                        >
+                          <Globe className="w-3.5 h-3.5" />
+                          <span>{isLoading1688Live ? 'Searching 1688...' : '✈️ Search 1688 Factory Direct'}</span>
+                        </button>
+                      </div>
                     )}
                     {filterAlibabaOnly && (
                       <button
@@ -1071,7 +1131,19 @@ export function App() {
 
               {/* Full-Width Product Grid (Spanning from Left to Right) */}
               <div className="w-full">
-                {filteredProducts.length === 0 ? (
+                {isLoading1688Live && filteredProducts.length === 0 ? (
+                  <div className="bg-white rounded-2xl p-12 text-center border-2 border-orange-200/80 shadow-sm space-y-3">
+                    <div className="w-14 h-14 mx-auto rounded-full bg-orange-100 flex items-center justify-center">
+                      <Globe className="w-7 h-7 text-[#F85606] animate-spin" />
+                    </div>
+                    <h3 className="text-base sm:text-lg font-black text-slate-800">
+                      Searching 1688 Factories for "{searchQuery}"...
+                    </h3>
+                    <p className="text-xs text-slate-500 max-w-md mx-auto">
+                      Connecting to live China wholesale suppliers & calculating direct Nepali Rupees (NPR) conversion...
+                    </p>
+                  </div>
+                ) : filteredProducts.length === 0 ? (
                   <div className="bg-white rounded-2xl p-12 text-center border border-slate-200 shadow-xs">
                     <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-orange-50 border border-orange-200 flex items-center justify-center text-2xl">
                       📦
@@ -1084,13 +1156,33 @@ export function App() {
                         ? t('catalogClearedDesc')
                         : t('noMatchDesc')}
                     </p>
-                    {allProducts.length > 0 && (
-                      <button
-                        onClick={handleResetFilters}
-                        className="mt-4 bg-[#F85606] hover:bg-[#E04E05] text-white font-bold text-xs px-4 py-2 rounded-lg transition cursor-pointer"
-                      >
-                        {t('resetFilters')}
-                      </button>
+                    {searchQuery ? (
+                      <div className="mt-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 border-2 border-orange-200/80 max-w-md mx-auto shadow-sm">
+                        <div className="flex items-center justify-center gap-2 text-sm font-black text-orange-950 mb-1">
+                          <Globe className="w-4 h-4 text-[#F85606]" />
+                          <span>Search 500M+ Factory Direct Items on 1688</span>
+                        </div>
+                        <p className="text-xs text-slate-600 mb-3.5">
+                          Couldn't find "{searchQuery}" in local stock? Tap below to search China factories in real-time with direct NPR conversion!
+                        </p>
+                        <button
+                          onClick={() => handleSearch1688Live(searchQuery, 1)}
+                          disabled={isLoading1688Live}
+                          className="w-full bg-gradient-to-r from-[#FF6A00] to-[#F85606] hover:from-[#EE5007] hover:to-[#e04e05] text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                        >
+                          <Globe className="w-4 h-4" />
+                          <span>{isLoading1688Live ? 'Searching 1688 API...' : `Find "${searchQuery}" on 1688 Factory Direct`}</span>
+                        </button>
+                      </div>
+                    ) : (
+                      allProducts.length > 0 && (
+                        <button
+                          onClick={handleResetFilters}
+                          className="mt-4 bg-[#F85606] hover:bg-[#E04E05] text-white font-bold text-xs px-4 py-2 rounded-lg transition cursor-pointer"
+                        >
+                          {t('resetFilters')}
+                        </button>
+                      )
                     )}
                   </div>
                 ) : (
@@ -1110,8 +1202,35 @@ export function App() {
                       ))}
                     </div>
 
-                    {/* Centered Show More Option in the Down Middle (Progressively loads 3 lines / 18 products) */}
-                    {forYouVisibleCount < filteredProducts.length && (
+                    {/* Show More 1688 Products Button */}
+                    {searchQuery && (
+                      <div className="mt-8 flex flex-col items-center justify-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => handleSearch1688Live(searchQuery, current1688Page + 1)}
+                          disabled={isLoading1688Live}
+                          className="bg-gradient-to-r from-[#FF6A00] to-[#F85606] hover:from-[#EE5007] hover:to-[#e04e05] active:scale-95 text-white font-extrabold text-xs sm:text-sm px-10 sm:px-14 py-3 rounded-full shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                        >
+                          {isLoading1688Live ? (
+                            <>
+                              <Globe className="w-4 h-4 animate-spin" />
+                              <span>Loading 30 More Products from 1688...</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>Load More Products (+30 More from 1688)</span>
+                              <ChevronDown className="w-4 h-4 stroke-[2.5]" />
+                            </>
+                          )}
+                        </button>
+                        <span className="text-[11px] text-slate-400">
+                          Showing {filteredProducts.length} factory direct items from 1688
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Standard catalog Show More if not search */}
+                    {!searchQuery && forYouVisibleCount < filteredProducts.length && (
                       <div className="mt-8 flex justify-center items-center">
                         <button
                           type="button"
@@ -1120,26 +1239,6 @@ export function App() {
                         >
                           <span>{language === 'ne' ? 'थप देखाउनुहोस्' : 'Show More'}</span>
                           <ChevronDown className="w-4 h-4 stroke-[2.5] group-hover:translate-y-0.5 transition-transform" />
-                        </button>
-                      </div>
-                    )}
-
-                    {/* All Products Reached Indicator */}
-                    {filteredProducts.length > 18 && forYouVisibleCount >= filteredProducts.length && (
-                      <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 py-4 text-xs text-slate-500">
-                        <span className="flex items-center gap-1.5 font-medium">
-                          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                          Showing all {filteredProducts.length} products
-                        </span>
-                        <button
-                          onClick={() => {
-                            setForYouVisibleCount(18);
-                            const elem = document.getElementById('catalog-section');
-                            if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-                          }}
-                          className="px-3.5 py-1.5 rounded-full border border-slate-300 font-bold bg-white text-slate-700 hover:border-orange-400 hover:text-[#F85606] transition cursor-pointer"
-                        >
-                          ↑ Show Less (3 Lines)
                         </button>
                       </div>
                     )}

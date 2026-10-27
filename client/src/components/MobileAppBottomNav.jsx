@@ -15,12 +15,18 @@ export const MobileAppBottomNav = ({
   const { user } = useAuth();
 
   const handleHomeClick = () => {
+    setActiveView('marketplace');
     if (onResetToHome) {
       onResetToHome();
-    } else {
-      setActiveView('marketplace');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    try {
+      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      const root = document.getElementById('root');
+      if (root) root.scrollTop = 0;
+    } catch (e) {}
   };
 
   const handleCategoriesClick = () => {
@@ -61,7 +67,7 @@ export const MobileAppBottomNav = ({
         <button
           type="button"
           onClick={handleHomeClick}
-          className={`flex flex-col items-center justify-center flex-1 py-1 transition-all active:scale-90 cursor-pointer ${activeView === 'marketplace' ? 'text-[#F85606]' : 'text-slate-500 hover:text-slate-700'
+          className={`flex flex-col items-center justify-center flex-1 py-1 transition-all active:scale-90 cursor-pointer ${activeView === 'marketplace' ? 'text-[#E11D48]' : 'text-[#5B6070] hover:text-[#1B1F3B]'
             }`}
         >
           <Home className={`w-5 h-5 ${activeView === 'marketplace' ? 'stroke-[2.5]' : 'stroke-2'}`} />
@@ -69,7 +75,7 @@ export const MobileAppBottomNav = ({
             Home
           </span>
           {activeView === 'marketplace' && (
-            <span className="w-1.5 h-1.5 bg-[#F85606] rounded-full mt-0.5 animate-in zoom-in" />
+            <span className="w-1.5 h-1.5 bg-[#E11D48] rounded-full mt-0.5 animate-in zoom-in" />
           )}
         </button>
 
@@ -77,7 +83,7 @@ export const MobileAppBottomNav = ({
         <button
           type="button"
           onClick={handleCategoriesClick}
-          className="flex flex-col items-center justify-center flex-1 py-1 text-slate-500 hover:text-slate-700 transition-all active:scale-90 cursor-pointer"
+          className="flex flex-col items-center justify-center flex-1 py-1 text-[#5B6070] hover:text-[#1B1F3B] transition-all active:scale-90 cursor-pointer"
         >
           <LayoutGrid className="w-5 h-5 stroke-2" />
           <span className="text-[10px] font-semibold mt-0.5 tracking-tight">
@@ -89,21 +95,21 @@ export const MobileAppBottomNav = ({
         <button
           type="button"
           onClick={handleFlashSaleClick}
-          className={`flex flex-col items-center justify-center flex-1 py-1 transition-all active:scale-90 cursor-pointer relative ${activeView === 'flash-sale' ? 'text-[#E00028]' : 'text-slate-500 hover:text-slate-700'
+          className={`flex flex-col items-center justify-center flex-1 py-1 transition-all active:scale-90 cursor-pointer relative ${activeView === 'flash-sale' ? 'text-[#E11D48]' : 'text-[#5B6070] hover:text-[#1B1F3B]'
             }`}
         >
           <div className="relative">
-            <Zap className={`w-5 h-5 ${activeView === 'flash-sale' ? 'fill-current text-[#E00028]' : 'text-amber-500 fill-current'}`} />
+            <Zap className={`w-5 h-5 ${activeView === 'flash-sale' ? 'fill-current text-[#E11D48]' : 'text-[#FFC83D] fill-current'}`} />
             <span className="absolute -top-1 -right-1 flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E11D48]"></span>
             </span>
           </div>
-          <span className={`text-[10px] mt-0.5 tracking-tight ${activeView === 'flash-sale' ? 'font-black text-[#E00028]' : 'font-semibold'}`}>
+          <span className={`text-[10px] mt-0.5 tracking-tight ${activeView === 'flash-sale' ? 'font-black text-[#E11D48]' : 'font-semibold'}`}>
             Flash Sale
           </span>
           {activeView === 'flash-sale' && (
-            <span className="w-1.5 h-1.5 bg-[#E00028] rounded-full mt-0.5 animate-in zoom-in" />
+            <span className="w-1.5 h-1.5 bg-[#E11D48] rounded-full mt-0.5 animate-in zoom-in" />
           )}
         </button>
 
@@ -111,12 +117,12 @@ export const MobileAppBottomNav = ({
         <button
           type="button"
           onClick={onOpenCart}
-          className="flex flex-col items-center justify-center flex-1 py-1 text-slate-500 hover:text-slate-700 transition-all active:scale-90 cursor-pointer relative"
+          className="flex flex-col items-center justify-center flex-1 py-1 text-[#5B6070] hover:text-[#1B1F3B] transition-all active:scale-90 cursor-pointer relative"
         >
           <div className="relative">
             <ShoppingCart className="w-5 h-5 stroke-2" />
             {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-2 bg-[#F85606] text-white text-[9px] font-black min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center shadow-xs">
+              <span className="absolute -top-1.5 -right-2 bg-[#E11D48] text-white text-[9px] font-black min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center shadow-xs">
                 {cartCount > 99 ? '99+' : cartCount}
               </span>
             )}
@@ -130,7 +136,7 @@ export const MobileAppBottomNav = ({
         <button
           type="button"
           onClick={handleAccountClick}
-          className={`flex flex-col items-center justify-center flex-1 py-1 transition-all active:scale-90 cursor-pointer ${activeView === 'my-orders' ? 'text-[#F85606]' : 'text-slate-500 hover:text-slate-700'
+          className={`flex flex-col items-center justify-center flex-1 py-1 transition-all active:scale-90 cursor-pointer ${activeView === 'my-orders' ? 'text-[#E11D48]' : 'text-[#5B6070] hover:text-[#1B1F3B]'
             }`}
         >
           <User className={`w-5 h-5 ${activeView === 'my-orders' ? 'stroke-[2.5]' : 'stroke-2'}`} />
@@ -138,7 +144,7 @@ export const MobileAppBottomNav = ({
             {user ? 'Account' : 'Login'}
           </span>
           {activeView === 'my-orders' && (
-            <span className="w-1.5 h-1.5 bg-[#F85606] rounded-full mt-0.5 animate-in zoom-in" />
+            <span className="w-1.5 h-1.5 bg-[#E11D48] rounded-full mt-0.5 animate-in zoom-in" />
           )}
         </button>
 

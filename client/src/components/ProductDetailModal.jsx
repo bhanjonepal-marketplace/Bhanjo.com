@@ -141,25 +141,65 @@ export const ProductDetailModal = ({
     }
   };
 
-  const [activeImage, setActiveImage] = useState(product?.images[0]);
+  const [activeProduct, setActiveProduct] = useState(product);
+  const [activeImage, setActiveImage] = useState(product?.images?.[0] || product?.image);
   const [orderQuantity, setOrderQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState('Standard');
   const [addedSuccess, setAddedSuccess] = useState(false);
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
 
   // Live Price Editing State
   const [currentPriceUSD, setCurrentPriceUSD] = useState(product?.samplePrice || 20);
   const [isEditingInlinePrice, setIsEditingInlinePrice] = useState(false);
   const [inlinePriceUSD, setInlinePriceUSD] = useState((product?.samplePrice || 20).toString());
-  const [inlinePriceNPR, setInlinePriceNPR] = useState(Math.round((product?.samplePrice || 20) * 133.5).toString());
+  const [inlinePriceNPR, setInlinePriceNPR] = useState(Math.round((product?.samplePrice || 20)).toString());
   const [isSavingInlinePrice, setIsSavingInlinePrice] = useState(false);
 
   useEffect(() => {
-    if (product) {
-      const p = product.samplePrice || 20;
-      setCurrentPriceUSD(p);
-      setInlinePriceUSD(p.toString());
-      setInlinePriceNPR(Math.round(p * 133.5).toString());
-      setIsEditingInlinePrice(false);
+    if (!product) return;
+    setActiveProduct(product);
+    const p = product.samplePrice || product.price || 20;
+    setCurrentPriceUSD(p);
+    setInlinePriceUSD(p.toString());
+    setInlinePriceNPR(Math.round(p).toString());
+    setIsEditingInlinePrice(false);
+
+    const initialImg = product.images?.[0] || product.image;
+    if (initialImg) setActiveImage(initialImg);
+
+    // If 1688 product, fetch all high-res photos, specifications, and variants
+    const rawId = String(product.id || product.itemId || '');
+    const cleanId = rawId.replace(/^1688-/, '');
+    if (product.is1688Live || rawId.startsWith('1688-') || /^\d{8,18}$/.test(cleanId)) {
+      setIsLoadingDetails(true);
+      fetch(`/api/1688/live-detail/${cleanId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.product) {
+            setActiveProduct(prev => {
+              const fullImgs = (data.product.images && data.product.images.length > 0)
+                ? data.product.images
+                : (prev?.images || [prev?.image]);
+              return {
+                ...prev,
+                ...data.product,
+                images: fullImgs,
+                specifications: data.product.specifications || prev?.specifications || {},
+                description: data.product.description || prev?.description || '',
+                videoUrl: data.product.videoUrl || data.product.video || prev?.videoUrl || prev?.video || null,
+                video: data.product.videoUrl || data.product.video || prev?.videoUrl || prev?.video || null,
+                detailImages: (data.product.detailImages && data.product.detailImages.length > 0)
+                  ? data.product.detailImages
+                  : (prev?.detailImages || [])
+              };
+            });
+            if (data.product.images?.[0]) {
+              setActiveImage(data.product.images[0]);
+            }
+          }
+        })
+        .catch(err => console.warn('Could not load full 1688 details:', err))
+        .finally(() => setIsLoadingDetails(false));
     }
   }, [product]);
 
@@ -170,16 +210,17 @@ export const ProductDetailModal = ({
     }
   };
 
-  const retailPrice = currentPriceUSD;
-  const originalPrice = currentPriceUSD * 1.4;
+  const retailPrice = activeProduct?.samplePrice || activeProduct?.price || currentPriceUSD;
+  const originalPrice = activeProduct?.originalPrice || (retailPrice * 1.35);
 
   const sanitizedDescription = useMemo(() => {
-    return cleanProductDescription(product?.description, product?.title);
-  }, [product?.description, product?.title]);
+    return cleanProductDescription(activeProduct?.description, activeProduct?.title);
+  }, [activeProduct?.description, activeProduct?.title]);
 
   const sanitizedSpecs = useMemo(() => {
-    return cleanProductSpecs(product?.specs);
-  }, [product?.specs]);
+    const raw = activeProduct?.specifications || activeProduct?.specs;
+    return cleanProductSpecs(raw);
+  }, [activeProduct?.specifications, activeProduct?.specs]);
 
   const handleSaveInlinePrice = async () => {
     const finalUSD = parseFloat(inlinePriceUSD);
@@ -521,7 +562,7 @@ export const ProductDetailModal = ({
               
               {/* Vertical Thumbnails Column on the Left (matching 2nd photo) */}
               <div className="flex flex-col gap-2 max-h-[380px] overflow-y-auto no-scrollbar py-0.5 flex-shrink-0 w-12 sm:w-14">
-                {product.videoUrl && (
+                {(activeProduct?.videoUrl || activeProduct?.video) && (
                   <button
                     type="button"
                     onClick={() => setShowVideo(true)}
@@ -537,7 +578,7 @@ export const ProductDetailModal = ({
                   </button>
                 )}
 
-                {product.images.map((img, idx) => (
+                {(activeProduct?.images && activeProduct.images.length > 0 ? activeProduct.images : [activeProduct?.image || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400']).map((img, idx) => (
                   <button
                     key={idx}
                     onMouseEnter={() => {
@@ -560,7 +601,7 @@ export const ProductDetailModal = ({
                       alt={`Thumbnail ${idx + 1}`} 
                       className="w-full h-full object-cover" 
                       onError={(e) => {
-                        e.target.src = product.images[0];
+                        e.target.src = activeProduct?.images?.[0] || activeProduct?.image;
                       }}
                     />
                   </button>
@@ -580,10 +621,10 @@ export const ProductDetailModal = ({
 
               {/* Main Product Preview Photo (Centered next to vertical thumbnails) */}
               <div className="flex-1 min-w-0">
-                {showVideo && product.videoUrl ? (
+                {showVideo && (activeProduct?.videoUrl || activeProduct?.video) ? (
                   <div className="relative aspect-square rounded-2xl overflow-hidden bg-black flex items-center justify-center border border-slate-200 shadow-xs">
                     <video
-                      src={product.videoUrl}
+                      src={activeProduct.videoUrl || activeProduct.video}
                       controls
                       autoPlay
                       muted
@@ -602,8 +643,8 @@ export const ProductDetailModal = ({
                     className="relative aspect-square rounded-2xl overflow-hidden bg-slate-50 border border-slate-200 cursor-crosshair group select-none shadow-2xs"
                   >
                     <img 
-                      src={activeImage} 
-                      alt={product.title} 
+                      src={activeImage || activeProduct?.images?.[0] || activeProduct?.image} 
+                      alt={activeProduct?.title} 
                       className={`w-full h-full object-cover transition-transform duration-100 ${
                         isZoomed ? 'scale-150 origin-top-left' : 'scale-100'
                       }`}
@@ -718,10 +759,10 @@ export const ProductDetailModal = ({
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl sm:text-3xl font-black tracking-tight drop-shadow-2xs">
-                      {formatPrice(retailPrice)}
+                      {formatPrice(retailPrice, activeProduct || product)}
                     </span>
                     <span className="text-xs text-white/70 line-through">
-                      {formatPrice(originalPrice)}
+                      {formatPrice(originalPrice, activeProduct || product)}
                     </span>
                     <span className="bg-white/20 backdrop-blur-xs text-white text-[10px] font-black px-1.5 py-0.5 rounded">
                       -30% Off
@@ -886,19 +927,19 @@ export const ProductDetailModal = ({
               )}
 
               <div className="flex items-center gap-2.5">
-                <div className="flex-1 flex rounded-xl overflow-hidden shadow-sm">
+                <div className="flex-1 flex gap-2">
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    className="flex-1 py-2.5 px-4 bg-gradient-to-r from-[#FF9500] to-[#FF7A00] hover:opacity-95 text-white font-extrabold text-xs sm:text-sm transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
+                    className="flex-1 py-2.5 px-4 bg-white border-2 border-[#1B1F3B] hover:bg-[#FFE7EC]/50 text-[#1B1F3B] rounded-xl font-extrabold text-xs sm:text-sm transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 shadow-2xs"
                   >
-                    <ShoppingCart className="w-4 h-4" />
+                    <ShoppingCart className="w-4 h-4 text-[#1B1F3B]" />
                     <span>Add to cart</span>
                   </button>
                   <button
                     type="button"
                     onClick={handleBuyNow}
-                    className="flex-1 py-2.5 px-4 bg-gradient-to-r from-[#FF5000] to-[#E52B20] hover:opacity-95 text-white font-extrabold text-xs sm:text-sm transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
+                    className="flex-1 py-2.5 px-4 bg-[#E11D48] hover:bg-[#BE123C] text-white rounded-xl font-extrabold text-xs sm:text-sm transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 shadow-sm shadow-rose-900/10"
                   >
                     <Zap className="w-4 h-4 fill-white" />
                     <span>Buy now</span>
@@ -967,6 +1008,28 @@ export const ProductDetailModal = ({
                   <span className="text-slate-800 font-semibold">{v}</span>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* 1688 Factory Presentation & Graphical Detail Photos */}
+          {activeProduct?.detailImages && activeProduct.detailImages.length > 0 && (
+            <div className="mt-5 pt-4 border-t border-slate-200">
+              <h4 className="font-bold text-xs text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <span>📸 Factory Presentation & Detailed Photos ({activeProduct.detailImages.length})</span>
+              </h4>
+              <div className="space-y-3">
+                {activeProduct.detailImages.map((imgUrl, imgIdx) => (
+                  <div key={imgIdx} className="rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+                    <img 
+                      src={imgUrl} 
+                      alt={`Product Feature Detail ${imgIdx + 1}`} 
+                      className="w-full h-auto object-contain"
+                      loading="lazy" 
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -1270,15 +1333,15 @@ export const ProductDetailModal = ({
           <button
             type="button"
             onClick={handleAddToCart}
-            className="flex-1 bg-[#FFB703] hover:bg-[#FFA200] active:scale-95 text-slate-900 font-extrabold text-xs py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1 shadow-xs cursor-pointer"
+            className="flex-1 bg-white border border-[#1B1F3B] hover:bg-slate-50 active:scale-95 text-[#1B1F3B] font-extrabold text-xs py-2 px-2 rounded-xl transition flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
           >
-            <ShoppingCart className="w-3.5 h-3.5" />
+            <ShoppingCart className="w-3.5 h-3.5 text-[#1B1F3B]" />
             <span>Add to Cart</span>
           </button>
           <button
             type="button"
             onClick={handleBuyNow}
-            className="flex-1 bg-[#F85606] hover:bg-[#E04E05] active:scale-95 text-white font-extrabold text-xs py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1 shadow-sm cursor-pointer"
+            className="flex-1 bg-[#E11D48] hover:bg-[#BE123C] active:scale-95 text-white font-extrabold text-xs py-2 px-2 rounded-xl transition flex items-center justify-center gap-1 shadow-sm cursor-pointer"
           >
             <Zap className="w-3.5 h-3.5 fill-white" />
             <span>Buy Now</span>

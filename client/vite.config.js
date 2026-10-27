@@ -12,9 +12,10 @@ export default defineConfig({
         target: 'http://localhost:5000',
         changeOrigin: true,
       },
-      // /admin is intentionally NOT proxied here.
-      // The admin panel is only accessible directly on localhost:5000/admin
-      // and is hidden from any shared tunnel or external link.
+      '/admin': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
     },
   },
 });
