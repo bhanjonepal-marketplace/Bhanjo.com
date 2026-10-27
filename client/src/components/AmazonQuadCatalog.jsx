@@ -6,7 +6,7 @@ import { useCurrency } from '../context/CurrencyContext';
 const FEATURED_QUAD_CARDS = [
 {
     id: 'luggage-travel',
-    title: 'Bag, luggage and other essential',
+    title: 'Bag, luggage and other essentials',
     nepaliTitle: 'झोला, लगेज तथा अन्य सामग्री',
     categoryId: 'luggage-bags-cases',
     searchKeyword: 'Bag',
@@ -517,167 +517,119 @@ export const AmazonQuadCatalog = ({
   };
 
   return (
-    <section 
-      className="my-3.5 sm:my-5 rounded-2xl border border-[#E5E7EB] shadow-xs overflow-hidden bg-gradient-to-b from-[#FFE7EC]/20 via-white to-white transition-all duration-200" 
-      id="amazon-quad-catalog"
-    >
-      {/* BALANCED & CUTE HEADER BANNER */}
-      <div className="bg-[#FAFAFB] border-b border-[#E5E7EB] px-4 sm:px-6 py-2.5 sm:py-3.5 text-[#1B1F3B] flex items-center justify-between gap-3 shadow-2xs relative overflow-hidden">
-        {/* Subtle decorative soft glow */}
-        <div className="absolute -right-8 -top-8 w-40 h-40 bg-emerald-100/40 rounded-full blur-2xl pointer-events-none" />
-
-        {/* Left Side: Icon + Titles & Badges */}
-        <div className="flex items-center gap-2.5 sm:gap-3.5 relative z-10 min-w-0">
-          <div className="w-8.5 h-8.5 sm:w-10 sm:h-10 rounded-xl bg-emerald-600 text-white shadow-xs flex items-center justify-center flex-shrink-0">
-            <LayoutGrid className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.4]" />
-          </div>
-
-          <div className="min-w-0">
-            {/* Top Row: Badges & Announcement */}
-            <div className="flex items-center gap-2 flex-wrap mb-0.5">
-              <span className="bg-emerald-600 text-white text-[8.5px] sm:text-[9.5px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider leading-none shadow-2xs">
-                FEATURED HUBS
-              </span>
-              <span className="text-[10px] sm:text-[11px] font-black text-emerald-800 tracking-wide uppercase truncate hidden sm:inline">
-                🌱 {language === 'ne' ? 'प्रमुख क्याटागोरी विभागहरू' : 'CURATED LIFESTYLE DEPARTMENTS'}
-              </span>
-            </div>
-
-            {/* Bottom Row: Main Heading + Count */}
-            <div className="flex items-baseline gap-2">
-              <h2 className="text-[14px] sm:text-[17px] font-black text-[#1B1F3B] tracking-tight leading-tight">
-                {language === 'ne' ? 'प्रमुख विभागहरू' : 'Popular Departments'}
-              </h2>
-              <span className="text-[11px] sm:text-[11.5px] font-bold text-[#5B6070] hidden sm:inline">
-                • 🌿 {language === 'ne' ? '१० क्युरेटेड सेट' : '10 Curated Sets'}
-              </span>
-            </div>
-          </div>
+    <section className="my-3 sm:my-4" id="amazon-quad-catalog">
+      {/* Clean Minimal Header matching Image 2 */}
+      <div className="flex items-center justify-between gap-3 mb-2 px-0.5">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span className="bg-[#1B1F3B] text-white text-[9.5px] sm:text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-2xs">
+            FEATURED HUBS
+          </span>
+          <h2 className="text-base sm:text-lg font-black text-[#1B1F3B] tracking-tight">
+            Popular Departments
+          </h2>
+          <span className="text-[11px] sm:text-xs font-semibold text-[#5B6070]">
+            10 Curated Sets
+          </span>
         </div>
 
-        {/* Right Side: Chevrons */}
-        <div className="flex items-center gap-1.5 relative z-10 flex-shrink-0">
+        {/* Subtle Horizontal Navigation Chevrons */}
+        <div className="flex items-center gap-1 flex-shrink-0">
           <button
+            type="button"
             onClick={() => handleSideScroll('left')}
             disabled={!canScrollLeft}
             aria-label="Scroll left"
-            className={`w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-lg sm:rounded-xl border flex items-center justify-center transition-all shadow-2xs ${
+            className={`w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-full border border-[#E5E7EB] flex items-center justify-center transition-all ${
               canScrollLeft
-                ? 'bg-white text-[#1B1F3B] border-[#E5E7EB] hover:bg-[#FFE7EC] hover:text-[#E11D48] hover:border-[#E11D48] cursor-pointer active:scale-95'
-                : 'bg-white/60 text-slate-300 border-slate-200 cursor-not-allowed opacity-40'
+                ? 'bg-white text-[#1B1F3B] hover:bg-slate-100 cursor-pointer shadow-2xs active:scale-95'
+                : 'bg-transparent text-slate-300 border-slate-200 cursor-not-allowed opacity-30'
             }`}
           >
-            <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+            <ChevronLeft className="w-3.5 h-3.5 stroke-[2.5]" />
           </button>
           <button
+            type="button"
             onClick={() => handleSideScroll('right')}
             disabled={!canScrollRight}
             aria-label="Scroll right"
-            className={`w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-lg sm:rounded-xl border flex items-center justify-center transition-all shadow-2xs ${
+            className={`w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-full border border-[#E5E7EB] flex items-center justify-center transition-all ${
               canScrollRight
-                ? 'bg-white text-[#1B1F3B] border-[#E5E7EB] hover:bg-[#FFE7EC] hover:text-[#E11D48] hover:border-[#E11D48] cursor-pointer active:scale-95'
-                : 'bg-white/60 text-slate-300 border-slate-200 cursor-not-allowed opacity-40'
+                ? 'bg-white text-[#1B1F3B] hover:bg-slate-100 cursor-pointer shadow-2xs active:scale-95'
+                : 'bg-transparent text-slate-300 border-slate-200 cursor-not-allowed opacity-30'
             }`}
           >
-            <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+            <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
           </button>
         </div>
       </div>
 
-      {/* Main Carousel Wrapper with Balanced Floating Side Buttons */}
-      <div className="p-3 sm:p-4 relative group/carousel">
-        {/* Left Floating Side Button (desktop only) */}
-        <button
-          onClick={() => handleSideScroll('left')}
-          disabled={!canScrollLeft}
-          aria-label="Previous categories"
-          className={`hidden sm:flex absolute left-2 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-white/95 backdrop-blur-xs text-[#1B1F3B] border border-[#E5E7EB] shadow-md items-center justify-center hover:bg-[#FFE7EC] hover:text-[#E11D48] hover:border-[#E11D48] transition-all hover:scale-105 active:scale-95 cursor-pointer ${
-            canScrollLeft ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-75 pointer-events-none'
-          }`}
-        >
-          <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
-        </button>
+      {/* Horizontally Scrollable 4-Column Quad Department Cards */}
+      <div
+        ref={scrollContainerRef}
+        className="flex gap-2.5 sm:gap-3 overflow-x-auto scroll-smooth no-scrollbar py-1 px-0.5 snap-x snap-mandatory"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {FEATURED_QUAD_CARDS.map((card) => {
+          const cardTitle = language === 'ne' ? card.nepaliTitle : card.title;
 
-        {/* Right Floating Side Button (desktop only) */}
-        <button
-          onClick={() => handleSideScroll('right')}
-          disabled={!canScrollRight}
-          aria-label="Next categories"
-          className={`hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-white/95 backdrop-blur-xs text-[#1B1F3B] border border-[#E5E7EB] shadow-md items-center justify-center hover:bg-[#FFE7EC] hover:text-[#E11D48] hover:border-[#E11D48] transition-all hover:scale-105 active:scale-95 cursor-pointer ${
-            canScrollRight ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-75 pointer-events-none'
-          }`}
-        >
-          <ChevronRight className="w-5 h-5 stroke-[2.5]" />
-        </button>
-
-        {/* Horizontally Scrollable Comfortable Quad Department Cards */}
-        <div
-          ref={scrollContainerRef}
-          className="flex gap-3.5 sm:gap-4 overflow-x-auto scroll-smooth no-scrollbar py-0.5 px-0.5 snap-x snap-mandatory"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          {FEATURED_QUAD_CARDS.map((card) => {
-            const cardTitle = language === 'ne' ? card.nepaliTitle : card.title;
-
-            return (
+          return (
+            <div
+              key={card.id}
+              className="w-[calc(100%-12px)] sm:w-[calc(50%-8px)] lg:w-[calc(25%-9px)] flex-shrink-0 snap-start bg-white rounded-2xl border border-[#E5E7EB] shadow-2xs hover:border-[#1B1F3B]/30 hover:shadow-xs transition-all duration-200 p-3 sm:p-3.5 flex flex-col justify-between"
+            >
+              {/* Card Header (Title with chevron matching Image 2) */}
               <div
-                key={card.id}
-                className="w-[265px] sm:w-[280px] md:w-[290px] lg:w-[300px] flex-shrink-0 snap-start bg-white rounded-2xl border border-[#E5E7EB] shadow-xs hover:border-[#E11D48] hover:shadow-md transition-all duration-200 p-3 sm:p-3.5 flex flex-col"
+                onClick={() => handleCardHeaderClick(card)}
+                className="flex items-center justify-between gap-1 group/header cursor-pointer mb-2.5 select-none"
+                title={`Explore all ${cardTitle}`}
               >
-                {/* Card Header (Clean title with link) */}
-                <div
-                  onClick={() => handleCardHeaderClick(card)}
-                  className="flex items-center justify-between gap-1 group/header cursor-pointer mb-2 select-none"
-                  title={`Explore all ${cardTitle}`}
-                >
-                  <h3 className="text-[13.5px] sm:text-[14.5px] font-black text-[#1B1F3B] tracking-tight leading-tight group-hover/header:text-[#E11D48] transition-colors truncate">
-                    {cardTitle}
-                  </h3>
-                  <ChevronRight className="w-3.5 h-3.5 text-[#5B6070] flex-shrink-0 group-hover/header:translate-x-0.5 group-hover/header:text-[#E11D48] transition-all stroke-[2.5]" />
-                </div>
-
-                {/* 2x2 Quadrant Grid */}
-                <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
-                  {card.quadrants.map((quad) => {
-                    const quadLabel = language === 'ne' ? quad.nepaliLabel : quad.label;
-
-                    return (
-                      <div
-                        key={quad.id}
-                        onClick={(e) => handleQuadrantClick(card, quad, e)}
-                        className="group/item flex flex-col cursor-pointer"
-                        title={`Filter by ${quadLabel}`}
-                      >
-                        {/* Thumbnail Container */}
-                        <div
-                          className="aspect-square w-full rounded-xl overflow-hidden relative bg-[#FAFAFB] border border-[#E5E7EB]/90 shadow-2xs group-hover/item:border-[#E11D48]/40 group-hover/item:shadow-sm transition-all duration-200 flex items-center justify-center p-2"
-                        >
-                          <img
-                            src={quad.image}
-                            alt={quad.alt || quadLabel}
-                            loading="lazy"
-                            className="w-full h-full object-contain scale-98 group-hover/item:scale-105 transition-transform duration-300 ease-out"
-                            onError={(e) => {
-                              e.target.src = 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80';
-                            }}
-                          />
-                        </div>
-
-                        {/* Item Caption Underneath */}
-                        <span
-                          className="mt-1 text-[10.5px] sm:text-[11px] font-semibold text-[#5B6070] text-center leading-tight line-clamp-1 group-hover/item:text-[#E11D48] transition-colors"
-                          title={quadLabel}
-                        >
-                          {quadLabel}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
+                <h3 className="text-[13px] sm:text-[14px] font-black text-[#1B1F3B] tracking-tight leading-tight group-hover/header:text-[#E11D48] transition-colors truncate">
+                  {cardTitle}
+                </h3>
+                <ChevronRight className="w-3.5 h-3.5 text-[#5B6070] flex-shrink-0 group-hover/header:translate-x-0.5 group-hover/header:text-[#E11D48] transition-all stroke-[2.5]" />
               </div>
-            );
-          })}
-        </div>
+
+              {/* 2x2 Quadrant Grid */}
+              <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
+                {card.quadrants.map((quad) => {
+                  const quadLabel = language === 'ne' ? quad.nepaliLabel : quad.label;
+
+                  return (
+                    <div
+                      key={quad.id}
+                      onClick={(e) => handleQuadrantClick(card, quad, e)}
+                      className="group/item flex flex-col cursor-pointer"
+                      title={`Filter by ${quadLabel}`}
+                    >
+                      {/* Neutral Light Gray Rounded Box matching Image 2 */}
+                      <div
+                        className="aspect-[1.15/1] w-full rounded-xl overflow-hidden relative bg-[#F0F2F5] group-hover/item:bg-[#EAECEF] border border-transparent group-hover/item:border-[#E5E7EB] transition-all duration-200 flex items-center justify-center p-2"
+                      >
+                        <img
+                          src={quad.image}
+                          alt={quad.alt || quadLabel}
+                          loading="lazy"
+                          className="w-full h-full object-contain group-hover/item:scale-105 transition-transform duration-200 ease-out"
+                          onError={(e) => {
+                            e.target.src = 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80';
+                          }}
+                        />
+                      </div>
+
+                      {/* Item Caption Underneath */}
+                      <span
+                        className="mt-1 text-[10.5px] sm:text-[11px] font-semibold text-[#1B1F3B] text-center leading-tight line-clamp-1 group-hover/item:text-[#E11D48] transition-colors"
+                        title={quadLabel}
+                      >
+                        {quadLabel}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
