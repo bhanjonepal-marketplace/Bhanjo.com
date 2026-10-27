@@ -517,56 +517,26 @@ export const AmazonQuadCatalog = ({
   };
 
   return (
-    <section className="my-3 sm:my-4" id="amazon-quad-catalog">
-      {/* Clean Minimal Header matching Image 2 */}
-      <div className="flex items-center justify-between gap-3 mb-2 px-0.5">
+    <section className="my-4 sm:my-5" id="amazon-quad-catalog">
+      {/* Clean Minimal Header matching reference image */}
+      <div className="flex items-center justify-between gap-3 mb-3 px-0.5">
         <div className="flex items-center gap-2.5 flex-wrap">
-          <span className="bg-[#1B1F3B] text-white text-[9.5px] sm:text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider shadow-2xs">
+          <span className="bg-[#1B1F3B] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md uppercase tracking-wider shadow-2xs">
             FEATURED HUBS
           </span>
-          <h2 className="text-base sm:text-lg font-black text-[#1B1F3B] tracking-tight">
+          <h2 className="text-lg sm:text-xl font-black text-[#1B1F3B] tracking-tight">
             Popular Departments
           </h2>
-          <span className="text-[11px] sm:text-xs font-semibold text-[#5B6070]">
+          <span className="text-xs font-normal text-[#5B6070] ml-0.5">
             10 Curated Sets
           </span>
-        </div>
-
-        {/* Subtle Horizontal Navigation Chevrons */}
-        <div className="flex items-center gap-1 flex-shrink-0">
-          <button
-            type="button"
-            onClick={() => handleSideScroll('left')}
-            disabled={!canScrollLeft}
-            aria-label="Scroll left"
-            className={`w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-full border border-[#E5E7EB] flex items-center justify-center transition-all ${
-              canScrollLeft
-                ? 'bg-white text-[#1B1F3B] hover:bg-slate-100 cursor-pointer shadow-2xs active:scale-95'
-                : 'bg-transparent text-slate-300 border-slate-200 cursor-not-allowed opacity-30'
-            }`}
-          >
-            <ChevronLeft className="w-3.5 h-3.5 stroke-[2.5]" />
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSideScroll('right')}
-            disabled={!canScrollRight}
-            aria-label="Scroll right"
-            className={`w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-full border border-[#E5E7EB] flex items-center justify-center transition-all ${
-              canScrollRight
-                ? 'bg-white text-[#1B1F3B] hover:bg-slate-100 cursor-pointer shadow-2xs active:scale-95'
-                : 'bg-transparent text-slate-300 border-slate-200 cursor-not-allowed opacity-30'
-            }`}
-          >
-            <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
-          </button>
         </div>
       </div>
 
       {/* Horizontally Scrollable 4-Column Quad Department Cards */}
       <div
         ref={scrollContainerRef}
-        className="flex gap-2.5 sm:gap-3 overflow-x-auto scroll-smooth no-scrollbar py-1 px-0.5 snap-x snap-mandatory"
+        className="flex gap-3 sm:gap-3.5 overflow-x-auto scroll-smooth no-scrollbar py-0.5 px-0.5 snap-x snap-mandatory"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {FEATURED_QUAD_CARDS.map((card) => {
@@ -575,22 +545,22 @@ export const AmazonQuadCatalog = ({
           return (
             <div
               key={card.id}
-              className="w-[calc(100%-12px)] sm:w-[calc(50%-8px)] lg:w-[calc(25%-9px)] flex-shrink-0 snap-start bg-white rounded-2xl border border-[#E5E7EB] shadow-2xs hover:border-[#1B1F3B]/30 hover:shadow-xs transition-all duration-200 p-3 sm:p-3.5 flex flex-col justify-between"
+              className="w-[calc(100%-12px)] sm:w-[calc(50%-8px)] lg:w-[calc(25%-10.5px)] flex-shrink-0 snap-start bg-white rounded-2xl border border-[#E5E7EB] shadow-2xs hover:border-[#1B1F3B]/30 hover:shadow-xs transition-all duration-200 p-3.5 sm:p-4 flex flex-col justify-between"
             >
-              {/* Card Header (Title with chevron matching Image 2) */}
+              {/* Card Header (Title with chevron matching reference) */}
               <div
                 onClick={() => handleCardHeaderClick(card)}
-                className="flex items-center justify-between gap-1 group/header cursor-pointer mb-2.5 select-none"
+                className="flex items-center justify-between gap-1 group/header cursor-pointer mb-3 select-none"
                 title={`Explore all ${cardTitle}`}
               >
-                <h3 className="text-[13px] sm:text-[14px] font-black text-[#1B1F3B] tracking-tight leading-tight group-hover/header:text-[#E11D48] transition-colors truncate">
+                <h3 className="text-[13.5px] sm:text-[14.5px] font-bold text-[#1B1F3B] tracking-tight leading-tight group-hover/header:text-[#E11D48] transition-colors truncate">
                   {cardTitle}
                 </h3>
-                <ChevronRight className="w-3.5 h-3.5 text-[#5B6070] flex-shrink-0 group-hover/header:translate-x-0.5 group-hover/header:text-[#E11D48] transition-all stroke-[2.5]" />
+                <ChevronRight className="w-3.5 h-3.5 text-[#1B1F3B] flex-shrink-0 group-hover/header:translate-x-0.5 group-hover/header:text-[#E11D48] transition-all stroke-[2.5]" />
               </div>
 
               {/* 2x2 Quadrant Grid */}
-              <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                 {card.quadrants.map((quad) => {
                   const quadLabel = language === 'ne' ? quad.nepaliLabel : quad.label;
 
@@ -601,9 +571,9 @@ export const AmazonQuadCatalog = ({
                       className="group/item flex flex-col cursor-pointer"
                       title={`Filter by ${quadLabel}`}
                     >
-                      {/* Neutral Light Gray Rounded Box matching Image 2 */}
+                      {/* Neutral Light Gray Rounded Box matching reference image */}
                       <div
-                        className="aspect-[1.15/1] w-full rounded-xl overflow-hidden relative bg-[#F0F2F5] group-hover/item:bg-[#EAECEF] border border-transparent group-hover/item:border-[#E5E7EB] transition-all duration-200 flex items-center justify-center p-2"
+                        className="aspect-[1.18/1] w-full rounded-xl overflow-hidden relative bg-[#F0F2F5] group-hover/item:bg-[#EAECEF] border border-transparent group-hover/item:border-[#E5E7EB] transition-all duration-200 flex items-center justify-center p-2.5"
                       >
                         <img
                           src={quad.image}
@@ -616,9 +586,9 @@ export const AmazonQuadCatalog = ({
                         />
                       </div>
 
-                      {/* Item Caption Underneath */}
+                      {/* Item Caption Underneath (Left-aligned as in reference image) */}
                       <span
-                        className="mt-1 text-[10.5px] sm:text-[11px] font-semibold text-[#1B1F3B] text-center leading-tight line-clamp-1 group-hover/item:text-[#E11D48] transition-colors"
+                        className="mt-1.5 text-[11px] sm:text-[11.5px] font-medium text-[#1B1F3B] text-left leading-tight line-clamp-1 group-hover/item:text-[#E11D48] transition-colors"
                         title={quadLabel}
                       >
                         {quadLabel}
