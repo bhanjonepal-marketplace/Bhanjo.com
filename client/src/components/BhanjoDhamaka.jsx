@@ -211,7 +211,9 @@ export const BhanjoDhamaka = ({ products = [], onSelectProduct, onSelectCategory
             <div
               key={item.id || product.id}
               onClick={() => onSelectProduct && onSelectProduct(product.id)}
-              className="bg-white rounded-2xl border border-rose-100/90 hover:border-[#E11D48] shadow-2xs hover:shadow-md transition-all duration-200 p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
+              className={`bg-white rounded-2xl border border-rose-100/90 hover:border-[#E11D48] shadow-2xs hover:shadow-md transition-all duration-200 p-2 sm:p-2.5 flex-col justify-between cursor-pointer group relative overflow-hidden ${
+                index >= 2 ? 'hidden sm:flex' : 'flex'
+              }`}
             >
               {/* Product Image Box - Compact height matching Trendy Collection */}
               <div>
