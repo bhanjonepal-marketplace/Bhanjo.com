@@ -102,12 +102,12 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
         )}
         
         {/* Top-Left Pill Badge */}
-        <span className="absolute top-1.5 left-1.5 bg-[#1B1F3B] text-white text-[9.5px] font-bold px-1.5 py-0.5 rounded shadow-2xs z-10 pointer-events-none uppercase">
+        <span className="absolute top-1.5 left-1.5 bg-[#1B1F3B] text-white text-[10px] sm:text-[10.5px] font-bold px-2 py-0.5 rounded shadow-2xs z-10 pointer-events-none">
           {isNepal ? 'Nepal Authentic' : 'Global Direct'}
         </span>
 
         {/* Bottom-Left Pill Badge */}
-        <span className="absolute bottom-1.5 left-1.5 bg-[#1B1F3B] text-white text-[9.5px] font-bold px-1.5 py-0.5 rounded shadow-2xs z-10 pointer-events-none uppercase">
+        <span className="absolute bottom-1.5 left-1.5 bg-[#1B1F3B] text-white text-[10px] sm:text-[10.5px] font-bold px-2 py-0.5 rounded shadow-2xs z-10 pointer-events-none">
           Verified Stock
         </span>
 
@@ -181,13 +181,13 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
       <div className="flex-1 flex flex-col justify-between">
         <div>
           {/* Category Tag */}
-          <span className="text-[10px] text-[#E11D48] font-semibold block mb-1 mt-0.5 leading-none truncate capitalize">
+          <span className="text-[11.5px] sm:text-xs text-[#E11D48] font-bold block mb-1 mt-0.5 leading-none truncate">
             {categoryLabel}
           </span>
 
           {/* Title */}
           <h3 
-            className="text-[12.5px] font-semibold text-[#1B1F3B] line-clamp-2 leading-[1.3] min-h-[32px] group-hover:text-[#E11D48] transition"
+            className="text-[13px] sm:text-[13.5px] md:text-[14px] font-bold text-[#1B1F3B] line-clamp-2 leading-snug min-h-[34px] group-hover:text-[#E11D48] transition"
             title={cleanTitle}
           >
             {cleanTitle}
@@ -196,16 +196,16 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
           {/* Pricing Row */}
           <div className="mt-1.5">
             <div className="flex items-baseline gap-1 flex-wrap">
-              <span className="text-[16px] font-bold text-[#1B1F3B]">
+              <span className="text-[17px] sm:text-[18px] md:text-[19px] font-black text-[#1B1F3B]">
                 {formatPrice(retailPrice)}
               </span>
               {originalPrice > retailPrice && (
-                <span className="text-[8.5px] text-[#94A3B8] font-normal line-through ml-1">
+                <span className="text-[11px] sm:text-xs text-[#94A3B8] font-normal line-through ml-1.5">
                   {formatPrice(originalPrice)}
                 </span>
               )}
             </div>
-            <span className="text-[8.5px] text-[#71717a] font-normal block truncate mt-0.5 mb-2">
+            <span className="text-[10.5px] sm:text-[11px] text-[#64748B] font-medium block truncate mt-0.5 mb-2">
               {isNepal ? 'Nepal Authentic • Fast Delivery' : 'Direct Import • Fast Delivery Nepal'}
             </span>
           </div>
@@ -213,10 +213,10 @@ export const ProductCard = ({ product, onSelectProduct, onQuickAdd, onRequireAut
 
         {/* Footer: Verified Seller & Rating (Matching reference photo) */}
         <div className="flex items-center justify-between text-xs pt-0.5">
-          <span className="text-[#0D9488] font-semibold text-[11px] flex items-center gap-1 truncate">
+          <span className="text-[#0D9488] font-bold text-[11px] sm:text-xs flex items-center gap-1 truncate">
             <span className="truncate">✓ Verified Seller</span>
           </span>
-          <span className="font-semibold text-[#1B1F3B] text-[11px] flex-shrink-0">
+          <span className="font-black text-[#1B1F3B] text-xs sm:text-[12.5px] flex-shrink-0">
             ★ {product.rating || 4.9}
           </span>
         </div>
