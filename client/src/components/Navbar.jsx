@@ -596,7 +596,12 @@ export const Navbar = ({
 
       {/* 2. Main Sticky Header Bar (Sleek Alibaba/Taobao shrink-on-scroll with GPU hardware acceleration) */}
       <header 
-        style={{ position: 'sticky', top: 0, zIndex: 50 }}
+        style={{ 
+          position: 'sticky', 
+          top: 0, 
+          zIndex: 50,
+          paddingTop: 'env(safe-area-inset-top, 0px)'
+        }}
         className={`sticky top-0 z-50 bg-white/95 backdrop-blur-md transition-[padding,box-shadow,border-color] duration-200 ease-out border-b ${
           isScrolled ? 'py-1.5 sm:py-2 shadow-md border-slate-200/90' : 'py-2 sm:py-3.5 shadow-xs border-slate-200'
         }`}
