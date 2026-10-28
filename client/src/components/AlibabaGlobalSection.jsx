@@ -184,10 +184,12 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-full h-full object-contain p-2 mix-blend-multiply opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-contain p-2 mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
                     loading="lazy"
                     onError={(e) => {
-                      e.target.style.display = 'none';
+                      e.target.onerror = null;
+                      e.target.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';
                     }}
                   />
                 )}
