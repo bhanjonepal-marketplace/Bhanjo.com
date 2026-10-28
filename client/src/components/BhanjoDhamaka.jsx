@@ -194,8 +194,8 @@ export const BhanjoDhamaka = ({ products = [], onSelectProduct, onSelectCategory
 
       </div>
 
-      {/* 3. 6 Product Cards Grid */}
-      <div className="px-3 sm:px-4 pb-3.5 sm:pb-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3">
+      {/* 3. 6 Product Cards Grid - Compact and fitly adjusted matching Trendy Collection */}
+      <div className="px-2.5 sm:px-3 pb-3 sm:pb-3.5 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-2.5">
         {allItems.slice(0, 6).map((item, index) => {
           const product = item.product || item;
           const flashPriceUSD = item.flash_price || product.samplePrice || 25;
@@ -211,49 +211,49 @@ export const BhanjoDhamaka = ({ products = [], onSelectProduct, onSelectCategory
             <div
               key={item.id || product.id}
               onClick={() => onSelectProduct && onSelectProduct(product.id)}
-              className="bg-white rounded-2xl border border-rose-100/80 hover:border-[#E11D48] shadow-2xs hover:shadow-md transition-all duration-200 p-2.5 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
+              className="bg-white rounded-2xl border border-rose-100/90 hover:border-[#E11D48] shadow-2xs hover:shadow-md transition-all duration-200 p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
             >
-              {/* Product Image Tile with Top Badges */}
+              {/* Product Image Box - Compact height matching Trendy Collection */}
               <div>
-                <div className="relative aspect-square rounded-xl overflow-hidden bg-slate-50 mb-2">
+                <div className="relative aspect-[1.5/1] rounded-xl overflow-hidden bg-[#EEF1F4] mb-1.5 flex items-center justify-center">
                   <img
                     src={imageSrc}
                     alt={product.title}
-                    className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-200"
+                    className="w-full h-full object-contain p-1.5 group-hover:scale-105 transition-transform duration-200"
                     loading="lazy"
                   />
 
                   {/* Deals & Discount Tag */}
-                  <span className="absolute top-1.5 left-1.5 text-[9.5px] px-2 py-0.5 rounded shadow-2xs z-10 bg-[#1B1F3B] text-white font-bold">
+                  <span className="absolute top-1 left-1 text-[8px] font-black px-1.5 py-0.5 rounded shadow-2xs z-10 bg-[#1B1F3B] text-white leading-none">
                     -{discountPercent}%
                   </span>
 
                   {/* Official Bhanjo Mall Badge */}
-                  <span className="absolute top-1.5 right-1.5 text-[8.5px] font-bold px-1.5 py-0.5 rounded shadow-2xs z-10 bg-white/95 text-[#1B1F3B] border border-slate-100">
+                  <span className="absolute top-1 right-1 text-[7.5px] font-black px-1.5 py-0.5 rounded shadow-2xs z-10 bg-white/95 text-[#1B1F3B] border border-slate-100 leading-none">
                     BHANJO MALL
                   </span>
                 </div>
 
                 {/* Crimson DHAMAKA strip */}
-                <div className="bg-[#E11D48] text-white px-2 py-1 text-[9.5px] font-bold flex justify-between items-center rounded-sm mb-2">
-                  <span className="uppercase tracking-tight">DHAMAKA</span>
-                  <span className="font-mono text-[9px]">{pad(itemMins)}:{pad(itemSecs)}.{itemMillis} Left</span>
+                <div className="bg-[#E11D48] text-white px-1.5 py-0.5 text-[8.5px] font-bold flex justify-between items-center rounded-sm mb-1 leading-tight">
+                  <span className="uppercase tracking-tight font-black">DHAMAKA</span>
+                  <span className="font-mono text-[8.5px]">{pad(itemMins)}:{pad(itemSecs)}.{itemMillis} Left</span>
                 </div>
 
                 {/* Title */}
                 <h3 
-                  className="text-xs font-semibold text-[#1B1F3B] line-clamp-2 leading-tight group-hover:text-[#E11D48] transition min-h-[30px]"
+                  className="text-[11px] sm:text-[11.5px] font-bold text-[#1B1F3B] line-clamp-2 leading-[1.25] group-hover:text-[#E11D48] transition min-h-[29px]"
                   title={product.title}
                 >
                   {product.title}
                 </h3>
 
                 {/* Price Row */}
-                <div className="mt-2 flex items-baseline gap-1.5">
-                  <span className="text-sm sm:text-base font-black text-[#1B1F3B]">
+                <div className="mt-1 flex items-baseline gap-1 flex-wrap">
+                  <span className="text-[14px] sm:text-[15px] font-black text-[#1B1F3B]">
                     {formatNPR(flashPriceUSD)}
                   </span>
-                  <span className="text-[10.5px] text-slate-400 line-through">
+                  <span className="text-[9.5px] text-[#94A3B8] line-through">
                     {formatNPR(originalPriceUSD)}
                   </span>
                 </div>
@@ -266,7 +266,7 @@ export const BhanjoDhamaka = ({ products = [], onSelectProduct, onSelectCategory
                   e.stopPropagation();
                   if (onSelectProduct) onSelectProduct(product.id);
                 }}
-                className="mt-3 w-full bg-[#E11D48] hover:bg-[#BE123C] text-white font-black text-xs py-2 rounded-xl text-center transition-all cursor-pointer active:scale-95 shadow-xs"
+                className="mt-2 w-full bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold text-[11px] py-1.5 rounded-lg text-center transition-all cursor-pointer active:scale-95 shadow-xs"
               >
                 Loot Deal
               </button>
