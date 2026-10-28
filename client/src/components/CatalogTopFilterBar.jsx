@@ -136,17 +136,17 @@ export const CatalogTopFilterBar = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/90 p-2 sm:p-2.5 mb-3 shadow-xs transition-all">
+    <div className="bg-white rounded-2xl border border-[#E5E7EB] p-2 sm:p-2.5 mb-3.5 shadow-2xs transition-all">
       <div className="flex flex-wrap items-center justify-between gap-2.5">
         
         {/* Left Side: Filter Chips & Quick Selectors */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar sm:flex-wrap flex-1 min-w-0 py-0.5">
           
-          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 pr-2 border-r border-slate-200 flex-shrink-0">
-            <Filter className="w-3.5 h-3.5 text-[#F85606]" />
-            <span className="hidden sm:inline">{t('filters')}</span>
+          <div className="flex items-center gap-1.5 text-xs font-bold text-[#E11D48] pr-2.5 flex-shrink-0">
+            <Filter className="w-3.5 h-3.5 text-[#E11D48]" />
+            <span>{t('filters')}</span>
             {activeFilterCount > 0 && (
-              <span className="bg-[#F85606] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+              <span className="bg-[#E11D48] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
                 {activeFilterCount}
               </span>
             )}
@@ -156,14 +156,13 @@ export const CatalogTopFilterBar = ({
           <button
             type="button"
             onClick={() => setFilterOnlyNepal(!filterOnlyNepal)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer border flex-shrink-0 ${
+            className={`px-3.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer border flex-shrink-0 shadow-2xs ${
               filterOnlyNepal
-                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-transparent shadow-xs'
-                : 'bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border-slate-200'
+                ? 'bg-[#1B1F3B] text-white border-transparent'
+                : 'bg-white hover:bg-slate-50 text-slate-700 border-[#E5E7EB]'
             }`}
           >
-            <span>🇳🇵</span>
-            <span>{t('nepalAuthenticGI')}</span>
+            <span>Nepal Authentic</span>
           </button>
 
           {/* Price Range Dropdown Pill */}
@@ -171,14 +170,14 @@ export const CatalogTopFilterBar = ({
             <button
               type="button"
               onClick={() => setIsPriceDropdownOpen(!isPriceDropdownOpen)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer border ${
+              className={`px-3.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer border shadow-2xs ${
                 hasPriceActive
-                  ? 'bg-orange-50 border-[#F85606] text-[#F85606] font-bold shadow-xs'
-                  : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                  ? 'bg-orange-50 border-[#E11D48] text-[#E11D48] font-bold'
+                  : 'bg-white hover:bg-slate-50 text-slate-700 border-[#E5E7EB]'
               }`}
             >
               <span>{getPriceLabel()}</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isPriceDropdownOpen ? 'rotate-180 text-[#F85606]' : 'text-slate-400'}`} />
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isPriceDropdownOpen ? 'rotate-180 text-[#E11D48]' : 'text-slate-400'}`} />
             </button>
 
             {/* Price Popover Panel */}
@@ -281,13 +280,13 @@ export const CatalogTopFilterBar = ({
             <button
               type="button"
               onClick={() => setIsRatingDropdownOpen(!isRatingDropdownOpen)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer border ${
+              className={`px-3.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer border shadow-2xs ${
                 minRating > 0
-                  ? 'bg-amber-50 border-amber-400 text-amber-700 font-bold shadow-xs'
-                  : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                  ? 'bg-amber-50 border-amber-400 text-amber-700 font-bold'
+                  : 'bg-white hover:bg-slate-50 text-slate-700 border-[#E5E7EB]'
               }`}
             >
-              <Star className={`w-3.5 h-3.5 ${minRating > 0 ? 'fill-amber-400 text-amber-400' : 'text-slate-400'}`} />
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
               <span>{minRating > 0 ? `★ ${minRating}.0+` : t('rating')}</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isRatingDropdownOpen ? 'rotate-180 text-amber-600' : 'text-slate-400'}`} />
             </button>

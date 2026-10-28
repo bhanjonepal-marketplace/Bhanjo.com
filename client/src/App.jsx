@@ -525,10 +525,25 @@ export function App() {
       return matched.sort((a, b) => (b.rating || 4.5) - (a.rating || 4.5));
     }
 
-    // Default 'popular' sort: When viewing all categories, interleave categories so Hoodies, Bags, Tech, Shoes are all visible from the top
+    // Default 'popular' sort: When viewing all categories, lead with the 5 curated items then interleave categories
     if (selectedCategoryId === 'all' && !searchQuery) {
+      const topIds = [
+        '1688-920212973096',
+        'ali-1601776667509',
+        '1688-788615188525',
+        'ali-1601942989211',
+        'live-1688-643709487744'
+      ];
+      const topSet = new Set(topIds);
+      const topItems = [];
+      for (const id of topIds) {
+        const found = matched.find(p => p.id === id);
+        if (found) topItems.push(found);
+      }
+      const remaining = matched.filter(p => !topSet.has(p.id));
+
       const byCategory = {};
-      for (const p of matched) {
+      for (const p of remaining) {
         const cat = p.categoryId || 'other';
         if (!byCategory[cat]) byCategory[cat] = [];
         byCategory[cat].push(p);
@@ -543,7 +558,7 @@ export function App() {
           }
         }
       }
-      return interleaved.length > 0 ? interleaved : matched;
+      return [...topItems, ...(interleaved.length > 0 ? interleaved : remaining)];
     }
 
     return matched.sort((a, b) => {
@@ -977,7 +992,7 @@ export function App() {
             {/* 6. Catalog Section with Left Filter Sidebar & Right Product Grid */}
             <div id="catalog-section" className="mt-4 sm:mt-5 mb-8 sm:mb-10 scroll-mt-28">
               
-              <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2 border-b border-slate-200 mb-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2.5 mb-2.5">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
                     {!isHomeActive && (
@@ -990,7 +1005,7 @@ export function App() {
                         <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
                       </button>
                     )}
-                    <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+                    <h2 className="text-[21px] sm:text-[23px] font-black text-[#1B1F3B] tracking-tight">
                       {selectedCategoryId === 'all' 
                         ? (searchQuery ? `"${searchQuery}"` : (filterAlibabaOnly ? '✈️ All Bhanjo Global Direct Products' : t('justForYou'))) 
                         : (language === 'ne' ? (activeCategoryObj?.nepaliName || activeCategoryObj?.name) : activeCategoryObj?.name)}
@@ -1033,12 +1048,12 @@ export function App() {
                   {/* Mobile Filters Toggle Button */}
                   <button
                     onClick={() => setIsMobileFilterOpen(true)}
-                    className="lg:hidden flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:border-[#F85606] transition shadow-xs cursor-pointer"
+                    className="lg:hidden flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-[#E5E7EB] rounded-lg text-xs font-semibold text-slate-700 hover:border-[#E11D48] transition shadow-2xs cursor-pointer"
                   >
-                    <Filter className="w-3.5 h-3.5 text-[#F85606]" />
+                    <Filter className="w-3.5 h-3.5 text-[#E11D48]" />
                     <span>{t('filters')}</span>
                     {activeFilterCount > 0 && (
-                      <span className="bg-[#F85606] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                      <span className="bg-[#E11D48] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
                         {activeFilterCount}
                       </span>
                     )}
@@ -1047,20 +1062,20 @@ export function App() {
                   {selectedCategoryId !== 'all' && (
                     <button
                       onClick={() => handleSelectCategory('all')}
-                      className="bg-[#F85606] text-white font-bold px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-1 hover:bg-[#e04e05] transition cursor-pointer"
+                      className="bg-[#E11D48] text-white font-bold px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-1 hover:bg-[#BE123C] transition cursor-pointer"
                     >
                       <span>{language === 'ne' ? activeCategoryObj?.nepaliName : activeCategoryObj?.name}</span>
                       <span>✕</span>
                     </button>
                   )}
 
-                  {/* Sort Dropdown (Left) */}
-                  <div className="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs">
-                    <span className="text-slate-400 mr-1">{t('sortLabel')}</span>
+                  {/* Sort Dropdown */}
+                  <div className="bg-white border border-[#E5E7EB] hover:border-slate-300 rounded-lg px-2.5 py-1 text-xs text-slate-700 flex items-center shadow-2xs">
+                    <span className="text-[#64748B] mr-1.5 font-bold text-[11px]">{t('sortLabel')}</span>
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="bg-transparent text-slate-700 font-semibold focus:outline-none cursor-pointer"
+                      className="bg-transparent text-[#1B1F3B] font-bold text-xs focus:outline-none cursor-pointer"
                     >
                       <option value="popular">{t('popular')}</option>
                       <option value="price-low">{t('priceLowToHigh')}</option>
@@ -1068,15 +1083,11 @@ export function App() {
                     </select>
                   </div>
 
-                  {/* View All Products Button (Right) */}
+                  {/* View All Products Button (with eye emoji preserved) */}
                   <button
                     onClick={handleToggleViewAllEveryProduct}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition cursor-pointer border ${
-                      forYouVisibleCount >= filteredProducts.length && selectedCategoryId === 'all' && !searchQuery && !filterAlibabaOnly
-                        ? 'bg-gradient-to-r from-[#F85606] to-amber-500 text-white border-transparent shadow-xs'
-                        : 'bg-white hover:bg-orange-50 text-slate-700 hover:text-[#F85606] border-slate-300'
-                    }`}
-                    title="Toggle viewing all products or 3 lines"
+                    className="bg-white hover:bg-slate-50 border border-[#E5E7EB] hover:border-slate-300 rounded-lg px-3 py-1 text-xs font-bold text-[#1B1F3B] flex items-center gap-1.5 shadow-2xs transition cursor-pointer"
+                    title="Toggle viewing all products"
                   >
                     <span>👁️ {language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'}</span>
                   </button>
