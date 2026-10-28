@@ -17,7 +17,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'टोट तथा पर्स',
         keyword: 'Tote Bag',
         bg: 'bg-white',
-        image: '/categories/tote_crossbody_slouchy.jpg?v=ai_gen',
+        image: '/categories/tote_crossbody_slouchy.png?v=ai_gen',
         alt: 'Designer Slouchy Tote Bag'
       },
       {
@@ -26,7 +26,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'डफल ब्याग',
         keyword: 'Duffle Bag',
         bg: 'bg-white',
-        image: '/categories/gym_bag.jpg?v=ai_gen',
+        image: '/categories/gym_bag.png?v=ai_gen',
         alt: 'Athletic Duffle Bag'
       },
       {
@@ -35,7 +35,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'लगेज सुटकेस',
         keyword: 'Luggage',
         bg: 'bg-white',
-        image: '/categories/suitcase_blue.jpg?v=ai_gen',
+        image: '/categories/suitcase_blue.png?v=ai_gen',
         alt: 'Hardshell Spinner Suitcase'
       },
       {
@@ -44,7 +44,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'ब्याकप्याक',
         keyword: 'Backpack',
         bg: 'bg-white',
-        image: '/categories/hemp_backpacks.jpg?v=ai_gen',
+        image: '/categories/hemp_backpacks.png?v=ai_gen',
         alt: 'Vintage Canvas Leather Backpack'
       }
     ]
@@ -62,7 +62,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'पश्मिना तथा शल',
         keyword: 'Pashmina',
         bg: 'bg-white',
-        image: '/categories/pashmina_shawls_white.jpg',
+        image: '/categories/pashmina_shawls_white.png',
         alt: 'Himalayan Cashmere Shawl'
       },
       {
@@ -71,7 +71,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'हुडिज तथा स्वेटर',
         keyword: 'Hoodie',
         bg: 'bg-white',
-        image: '/categories/hoodies_sweats_white.jpg',
+        image: '/categories/hoodies_sweats_white.png',
         alt: 'Warm Heavyweight Hoodie'
       },
       {
@@ -80,7 +80,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'ज्याकेट तथा भेस्ट',
         keyword: 'Jacket',
         bg: 'bg-white',
-        image: '/categories/winter_jackets_white.jpg',
+        image: '/categories/winter_jackets_white.png',
         alt: 'Puffer Winter Jacket'
       },
       {
@@ -89,7 +89,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'स्ट्रिटवेयर फेसन',
         keyword: 'Clothing',
         bg: 'bg-white',
-        image: '/categories/streetwear_fashion_white.jpg',
+        image: '/categories/streetwear_fashion_white.png',
         alt: 'Casual Modern Apparel'
       }
     ]
@@ -107,7 +107,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'स्यान्डल',
         keyword: 'Sandals',
         bg: 'bg-white',
-        image: '/categories/women_shoes.jpg',
+        image: '/categories/women_shoes.png',
         alt: "Women's Sandals & Heels"
       },
       {
@@ -116,7 +116,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'पुरुष स्निकर्स',
         keyword: 'Sneakers',
         bg: 'bg-white',
-        image: '/categories/men_shoes.jpg',
+        image: '/categories/men_shoes.png',
         alt: "Men's Shoes & Sneakers"
       },
       {
@@ -125,7 +125,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'बालबालिका स्यान्डल',
         keyword: 'Kids Sandals',
         bg: 'bg-white',
-        image: '/categories/kids_shoes.jpg',
+        image: '/categories/kids_shoes.png',
         alt: "Kids' Sandals"
       },
       {
@@ -134,7 +134,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'महिला जुत्ता',
         keyword: 'Women Shoes',
         bg: 'bg-white',
-        image: '/categories/all_shoes.jpg',
+        image: '/categories/all_shoes.png',
         alt: "Women's Shoes & Sneakers"
       }
     ]
@@ -152,7 +152,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'हेल्मेट तथा भाइजर',
         keyword: 'Helmet',
         bg: 'bg-white',
-        image: '/categories/helmet_gear_white.jpg',
+        image: '/categories/helmet_gear_white.png',
         alt: 'Riding Helmet Protection'
       },
       {
@@ -161,7 +161,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'मोबाइल होल्डर',
         keyword: 'Car Mount',
         bg: 'bg-white',
-        image: '/categories/phone_mount_white.jpg',
+        image: '/categories/phone_mount_white.png',
         alt: 'Universal Vehicle Phone Mount'
       },
       {
@@ -170,7 +170,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'सफाइ तथा पोलिस',
         keyword: 'Car Care',
         bg: 'bg-white',
-        image: '/categories/car_care_kit.jpg',
+        image: '/categories/car_care_kit.png',
         alt: 'Vehicle Cleaning Detail Kit'
       },
       {
@@ -179,7 +179,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'राइडिङ पञ्जा',
         keyword: 'Gloves',
         bg: 'bg-white',
-        image: '/categories/motorcycle_gloves.jpg',
+        image: '/categories/motorcycle_gloves.png',
         alt: 'Motorcycle Protective Riding Gloves'
       }
     ]
@@ -197,7 +197,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'ब्लक्स तथा खेलौना',
         keyword: 'Building Blocks',
         bg: 'bg-white',
-        image: '/categories/stem_blocks.jpg',
+        image: '/categories/stem_blocks.png',
         alt: 'Colorful Building Blocks'
       },
       {
@@ -206,7 +206,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'सफ्ट खेलौनाहरू',
         keyword: 'Plush Toy',
         bg: 'bg-white',
-        image: '/categories/soft_plushies.jpg',
+        image: '/categories/soft_plushies.png',
         alt: 'Soft Stuffed Teddy Bear'
       },
       {
@@ -215,7 +215,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'चित्रकला सामग्री',
         keyword: 'Art Set',
         bg: 'bg-white',
-        image: '/categories/drawing_crafts.jpg',
+        image: '/categories/drawing_crafts.png',
         alt: 'Kids Drawing Art Supplies'
       },
       {
@@ -224,7 +224,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'दिमागी पजल खेल',
         keyword: 'Puzzle',
         bg: 'bg-white',
-        image: '/categories/board_puzzles.jpg',
+        image: '/categories/board_puzzles.png',
         alt: 'Brain Strategy Puzzle Games'
       }
     ]
@@ -242,7 +242,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'मोबाइल कभर',
         keyword: 'Phone Case',
         bg: 'bg-white',
-        image: '/categories/phone_cases.jpg',
+        image: '/categories/phone_cases.png',
         alt: 'Slim Protective Phone Case'
       },
       {
@@ -251,7 +251,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'ल्यापटप स्लिभ',
         keyword: 'Laptop Sleeve',
         bg: 'bg-white',
-        image: '/categories/laptop_sleeves.jpg',
+        image: '/categories/laptop_sleeves.png',
         alt: 'Padded Laptop Sleeve'
       },
       {
@@ -260,7 +260,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'इयरबड्स तथा अडियो',
         keyword: 'Earbuds',
         bg: 'bg-white',
-        image: '/categories/wireless_audio.jpg',
+        image: '/categories/wireless_audio.png',
         alt: 'True Wireless Earbuds'
       },
       {
@@ -269,7 +269,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'फास्ट चार्जर',
         keyword: 'Charger',
         bg: 'bg-white',
-        image: '/categories/chargers_power.jpg',
+        image: '/categories/chargers_power.png',
         alt: 'Fast Charger Adapter'
       }
     ]
@@ -287,7 +287,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'आईवेयर चस्मा',
         keyword: 'Eyewear',
         bg: 'bg-white',
-        image: '/categories/eyewear_sunglasses.jpg',
+        image: '/categories/eyewear_sunglasses.png',
         alt: 'Designer Eyewear Sunglasses'
       },
       {
@@ -296,7 +296,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'रिस्टवेयर घडी',
         keyword: 'Wristwear',
         bg: 'bg-white',
-        image: '/categories/classic_watches.jpg',
+        image: '/categories/classic_watches.png',
         alt: 'Luxury Wristwear Watch'
       },
       {
@@ -305,7 +305,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'गहना तथा एक्सेसरिज',
         keyword: 'Jewelry',
         bg: 'bg-white',
-        image: '/categories/rings_jewelry.jpg',
+        image: '/categories/rings_jewelry.png',
         alt: 'Fine Jewelry & Accessories'
       },
       {
@@ -314,7 +314,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'स्मार्ट ब्यान्ड',
         keyword: 'Smart Watch',
         bg: 'bg-white',
-        image: '/categories/smart_bands.jpg',
+        image: '/categories/smart_bands.png',
         alt: 'Fitness Smart Fitness Band'
       }
     ]
@@ -332,7 +332,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'भान्छा सामग्री',
         keyword: 'Kitchen',
         bg: 'bg-white',
-        image: '/categories/kitchen_essentials.jpg',
+        image: '/categories/kitchen_essentials.png',
         alt: 'Kitchen essentials power blender'
       },
       {
@@ -341,7 +341,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'बैठक कोठा सजावट',
         keyword: 'Living Room',
         bg: 'bg-white',
-        image: '/categories/home_comfort.jpg',
+        image: '/categories/home_comfort.png',
         alt: 'Home comfort living room'
       },
       {
@@ -350,7 +350,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'कलात्मक सजावट',
         keyword: 'Decor',
         bg: 'bg-white',
-        image: '/categories/decorate_elegance.jpg',
+        image: '/categories/decorate_elegance.png',
         alt: 'Decorate with elegance vases and flowers'
       },
       {
@@ -359,7 +359,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'आधुनिक बत्तीहरू',
         keyword: 'Lamp',
         bg: 'bg-white',
-        image: '/categories/light_it_right.jpg',
+        image: '/categories/light_it_right.png',
         alt: 'Table night lamp'
       }
     ]
@@ -377,7 +377,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'महिला पम्प्स',
         keyword: 'Heels',
         bg: 'bg-white',
-        image: '/categories/budget_womens.jpg',
+        image: '/categories/budget_womens.png',
         alt: "Women's Nude High Heels"
       },
       {
@@ -386,7 +386,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'पुरुष छालाको जुत्ता',
         keyword: 'Formal Shoes',
         bg: 'bg-white',
-        image: '/categories/budget_mens.jpg',
+        image: '/categories/budget_mens.png',
         alt: "Men's Leather Dress Shoes"
       },
       {
@@ -395,7 +395,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'बालिका जुत्ता',
         keyword: 'School Shoes',
         bg: 'bg-white',
-        image: '/categories/budget_girls.jpg',
+        image: '/categories/budget_girls.png',
         alt: "Girl's School Shoes"
       },
       {
@@ -404,7 +404,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'बालक स्निकर',
         keyword: 'Kids Sneakers',
         bg: 'bg-white',
-        image: '/categories/budget_boys.jpg',
+        image: '/categories/budget_boys.png',
         alt: "Boy's Toddler Blue Sneakers"
       }
     ]
@@ -422,7 +422,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'कुकुरका सामग्री',
         keyword: 'Dog',
         bg: 'bg-white',
-        image: '/categories/dogs.jpg',
+        image: '/categories/dogs.png',
         alt: 'Happy Fluffy Dog'
       },
       {
@@ -431,7 +431,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'बिरालोका सामग्री',
         keyword: 'Cat',
         bg: 'bg-white',
-        image: '/categories/cats.jpg',
+        image: '/categories/cats.png',
         alt: 'Adorable Ginger Cat'
       },
       {
@@ -440,7 +440,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'साना घरपालुवा जनावर',
         keyword: 'Pet',
         bg: 'bg-white',
-        image: '/categories/small_pets.jpg',
+        image: '/categories/small_pets.png',
         alt: 'Cute Hamster Small Pet'
       },
       {
@@ -449,7 +449,7 @@ const FEATURED_QUAD_CARDS = [
         nepaliLabel: 'विशेष छुट अफरहरू',
         keyword: 'Pet Toy',
         bg: 'bg-white',
-        image: '/categories/pet_deals.jpg',
+        image: '/categories/pet_deals.png',
         alt: 'Pet toys and accessories deals'
       }
     ]
@@ -579,7 +579,7 @@ export const AmazonQuadCatalog = ({
                           src={quad.image}
                           alt={quad.alt || quadLabel}
                           loading="lazy"
-                          className="w-full h-full object-contain group-hover/item:scale-105 transition-transform duration-200 ease-out"
+                          className="w-full h-full object-contain mix-blend-multiply group-hover/item:scale-105 transition-transform duration-200 ease-out"
                           onError={(e) => {
                             e.target.src = 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80';
                           }}
