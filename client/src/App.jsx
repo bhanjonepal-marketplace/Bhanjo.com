@@ -1005,7 +1005,7 @@ export function App() {
                         <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
                       </button>
                     )}
-                    <h2 className="text-2xl sm:text-3xl md:text-[32px] font-black text-[#1B1F3B] tracking-tight">
+                    <h2 className="text-[21px] sm:text-[24px] md:text-[26px] font-black text-[#1B1F3B] tracking-tight">
                       {selectedCategoryId === 'all' 
                         ? (searchQuery ? `"${searchQuery}"` : (filterAlibabaOnly ? '✈️ All Bhanjo Global Direct Products' : t('justForYou'))) 
                         : (language === 'ne' ? (activeCategoryObj?.nepaliName || activeCategoryObj?.name) : activeCategoryObj?.name)}
