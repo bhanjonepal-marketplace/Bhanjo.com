@@ -71,7 +71,7 @@ export function App() {
 
   // Catalog Products (Dynamic from SQLite backend)
   const [allProducts, setAllProducts] = useState(PRODUCTS);
-  const [forYouVisibleCount, setForYouVisibleCount] = useState(18); // 3 lines initially (6 items/row on desktop)
+  const [forYouVisibleCount, setForYouVisibleCount] = useState(20); // 4 full lines (5 items/row on desktop)
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState('all');
   const [totalPages, setTotalPages] = useState(1);
@@ -268,7 +268,7 @@ export function App() {
 
   const handleToggleViewAllEveryProduct = () => {
     if (forYouVisibleCount >= filteredProducts.length && selectedCategoryId === 'all' && !searchQuery) {
-      setForYouVisibleCount(18);
+      setForYouVisibleCount(20);
       const catalogElem = document.getElementById('catalog-section');
       if (catalogElem) {
         catalogElem.scrollIntoView({ behavior: 'smooth' });
@@ -307,7 +307,7 @@ export function App() {
       setFilterMallOnly(false);
       setFilterFreeDelivery(false);
     }
-    setForYouVisibleCount(18);
+    setForYouVisibleCount(20);
     setCurrentPage(1);
     setActiveView('marketplace');
     if (typeof window !== 'undefined' && window.history?.pushState) {
@@ -335,7 +335,7 @@ export function App() {
     setMinRating(0);
     setPriceRange({ min: 0, max: Infinity });
     setVisualSearch(null);
-    setForYouVisibleCount(18);
+    setForYouVisibleCount(20);
     setCurrentPage(1);
     setSelectedProductId(null);
     setIsCartOpen(false);
@@ -600,7 +600,7 @@ export function App() {
     setMinRating(0);
     setPriceRange({ min: 0, max: Infinity });
     setVisualSearch(null);
-    setForYouVisibleCount(18);
+    setForYouVisibleCount(20);
   };
 
   const handleVisualSearch = (searchResult) => {
@@ -1192,7 +1192,7 @@ export function App() {
                           type="button"
                           onClick={() => handleSearch1688Live(searchQuery, current1688Page + 1)}
                           disabled={isLoading1688Live}
-                          className="bg-gradient-to-r from-[#FF6A00] to-[#F85606] hover:from-[#EE5007] hover:to-[#e04e05] active:scale-95 text-white font-extrabold text-xs sm:text-sm px-10 sm:px-14 py-3 rounded-full shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                          className="bg-[#E11D48] hover:bg-[#BE123C] active:scale-95 text-white font-extrabold text-xs sm:text-sm px-10 sm:px-14 py-3 rounded-full shadow-md shadow-rose-500/20 hover:shadow-lg hover:shadow-rose-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
                         >
                           {isLoading1688Live ? (
                             <>
@@ -1217,8 +1217,8 @@ export function App() {
                       <div className="mt-8 flex justify-center items-center">
                         <button
                           type="button"
-                          onClick={() => setForYouVisibleCount(prev => Math.min(prev + 18, filteredProducts.length))}
-                          className="bg-gradient-to-r from-[#FF6A00] to-[#F85606] hover:from-[#EE5007] hover:to-[#e04e05] active:scale-95 text-white font-extrabold text-xs sm:text-sm px-10 sm:px-14 py-3 rounded-full shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer group"
+                          onClick={() => setForYouVisibleCount(prev => Math.min(prev + 20, filteredProducts.length))}
+                          className="bg-[#E11D48] hover:bg-[#BE123C] active:scale-95 text-white font-extrabold text-xs sm:text-sm px-10 sm:px-14 py-3 rounded-full shadow-md shadow-rose-500/20 hover:shadow-lg hover:shadow-rose-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer group"
                         >
                           <span>{language === 'ne' ? 'थप देखाउनुहोस्' : 'Show More'}</span>
                           <ChevronDown className="w-4 h-4 stroke-[2.5] group-hover:translate-y-0.5 transition-transform" />
