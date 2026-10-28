@@ -92,7 +92,7 @@ export const BhanjoPillars = ({
   ];
 
   return (
-    <div className="my-3 sm:my-3.5 bg-white rounded-2xl border border-[#E5E7EB] p-2 sm:p-2.5 shadow-2xs">
+    <div className="hidden sm:block my-3 sm:my-3.5 bg-white rounded-2xl border border-[#E5E7EB] p-2 sm:p-2.5 shadow-2xs">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-2.5">
         {channels.map((ch) => (
           <button

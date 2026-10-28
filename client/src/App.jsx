@@ -779,7 +779,7 @@ export function App() {
 
             {/* 1b. The 5 Shortcut Pillars (Dedicated Standalone Box) */}
             {selectedCategoryId === 'all' && !searchQuery && (
-              <div className="block">
+              <div className="hidden sm:block">
                 <BhanjoPillars
                   onSelectCategory={handleSelectCategory}
                   onOpenVouchers={() => {
@@ -1242,17 +1242,19 @@ export function App() {
                 />
 
                 {/* 2. The 5 Shortcut Channels (Flash Sale, Free Delivery, Daily Vouchers, Low Price, Best Sellers) */}
-                <BhanjoPillars
-                  onSelectCategory={handleSelectCategory}
-                  onOpenVouchers={() => {
-                    showToast("Use voucher code BHANJO10 for 10% off at checkout!");
-                    setIsCartOpen(true);
-                  }}
-                  onScrollToFlashSale={() => setActiveView('flash-sale')}
-                  onFilterFreeDelivery={handleFilterFreeDeliveryChannel}
-                  onFilterBudget={handleFilterBudgetChannel}
-                  onFilterBestSellers={handleFilterBestSellersChannel}
-                />
+                <div className="hidden sm:block">
+                  <BhanjoPillars
+                    onSelectCategory={handleSelectCategory}
+                    onOpenVouchers={() => {
+                      showToast("Use voucher code BHANJO10 for 10% off at checkout!");
+                      setIsCartOpen(true);
+                    }}
+                    onScrollToFlashSale={() => setActiveView('flash-sale')}
+                    onFilterFreeDelivery={handleFilterFreeDeliveryChannel}
+                    onFilterBudget={handleFilterBudgetChannel}
+                    onFilterBestSellers={handleFilterBestSellersChannel}
+                  />
+                </div>
               </div>
             )}
 
