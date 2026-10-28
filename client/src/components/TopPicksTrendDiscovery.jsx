@@ -334,97 +334,80 @@ export const TopPicksTrendDiscovery = ({
         {/* ========================================================= */}
         <div 
           onClick={() => onOpenTopPicksShowcase && onOpenTopPicksShowcase()}
-          className="lg:col-span-5 bg-gradient-to-br from-[#FFF5F7] via-[#FAFAFB] to-[#FFFFFF] border border-[#E5E7EB] ring-1 ring-rose-100/60 rounded-2xl p-2.5 sm:p-3 shadow-xs hover:shadow-md transition-all flex flex-col justify-between cursor-pointer group/box relative overflow-hidden"
+          className="lg:col-span-5 bg-white border border-[#E5E7EB] hover:border-slate-300 rounded-2xl p-2.5 sm:p-3 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between cursor-pointer group/box relative overflow-hidden"
           title="Click to open Bhanjo Prime Showcase"
         >
-          {/* Subtle Ambient Glow */}
-          <div className="absolute -right-8 -top-8 w-40 h-40 bg-rose-200/25 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -left-6 bottom-0 w-32 h-32 bg-amber-100/20 rounded-full blur-2xl pointer-events-none" />
-
           {/* Header Row & Products */}
           <div className="relative z-10">
-            <div className="flex items-center justify-between gap-1 pb-1.5 border-b border-[#E5E7EB]">
+            <div className="flex items-center justify-between gap-2 pb-2 border-b border-[#E5E7EB]">
               
-              {/* Left Column: Title (Row 1) + Countdown & Controls (Row 2 on mobile, flex on laptop) */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 min-w-0 flex-1">
-                {/* Title & Badge */}
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="bg-[#1B1F3B] text-[#FFC83D] text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tight shadow-xs flex-shrink-0 flex items-center gap-1">
-                    <span>👑</span>
-                    <span>BHANJO PRIME</span>
+              {/* Left Column: Title + Curated Link */}
+              <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                <span className="bg-[#1B1F3B] text-[#FFC83D] text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tight shadow-xs flex-shrink-0 flex items-center gap-1">
+                  <span>👑</span>
+                  <span>BHANJO PRIME</span>
+                </span>
+                <h3 className="text-[15px] sm:text-[16px] font-black text-[#1B1F3B] tracking-tight transition-colors">
+                  Top Radar
+                </h3>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onOpenTopPicksShowcase) onOpenTopPicksShowcase();
+                  }}
+                  className="text-[11px] text-[#E11D48] hover:text-[#BE123C] font-bold flex items-center transition cursor-pointer"
+                  title="Explore Bhanjo Prime Showcase"
+                >
+                  <span>Curated</span>
+                  <ChevronRight className="w-3 h-3 stroke-[2.5]" />
+                </button>
+              </div>
+
+              {/* Right Column: Prime Deals Countdown & Scroll Controls */}
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onOpenTopPicksShowcase) onOpenTopPicksShowcase();
+                  }}
+                  className="flex items-center gap-1 bg-[#FFC83D] hover:bg-[#F6BE2F] border border-[#F0B820] text-[#1B1F3B] px-2.5 py-0.5 rounded-full transition cursor-pointer shadow-xs"
+                  title="Open Prime Deals"
+                >
+                  <span className="text-[11px] sm:text-xs font-black text-[#1B1F3B]">
+                    Prime Deals
                   </span>
-                  <h3 className="text-[15px] sm:text-[16px] font-black text-[#1B1F3B] tracking-tight transition-colors">
-                    Top Radar
-                  </h3>
+                  <span className="text-[11px] sm:text-xs font-black text-[#1B1F3B] font-mono flex items-center">
+                    <span>{pad(timeLeft.hours)}:{pad(timeLeft.minutes)}:{pad(timeLeft.seconds)}</span>
+                  </span>
+                </button>
+
+                {/* Side-Scroll Left/Right Controls */}
+                <div className="flex items-center gap-0.5 ml-0.5">
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (onOpenTopPicksShowcase) onOpenTopPicksShowcase();
+                      scrollLeft();
                     }}
-                    className="text-[11px] text-[#E11D48] hover:text-[#BE123C] font-bold flex items-center transition cursor-pointer"
-                    title="Explore Bhanjo Prime Showcase"
+                    className="w-5 h-5 rounded-md bg-white border border-[#E5E7EB] text-slate-700 hover:text-[#E11D48] hover:bg-rose-50/60 shadow-2xs flex items-center justify-center transition cursor-pointer active:scale-95"
+                    title="Scroll left"
                   >
-                    <span>Curated</span>
+                    <ChevronLeft className="w-3 h-3 stroke-[2.5]" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      scrollRight();
+                    }}
+                    className="w-5 h-5 rounded-md bg-white border border-[#E5E7EB] text-slate-700 hover:text-[#E11D48] hover:bg-rose-50/60 shadow-2xs flex items-center justify-center transition cursor-pointer active:scale-95"
+                    title="Scroll right"
+                  >
                     <ChevronRight className="w-3 h-3 stroke-[2.5]" />
                   </button>
                 </div>
-
-                {/* Prime Deals & Live Countdown (Gold badge with Midnight Navy text as per theme chart) */}
-                <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (onOpenTopPicksShowcase) onOpenTopPicksShowcase();
-                    }}
-                    className="flex items-center gap-1 bg-[#FFC83D] hover:bg-[#F6BE2F] border border-[#F0B820] text-[#1B1F3B] px-2.5 py-0.5 rounded-full transition cursor-pointer shadow-xs"
-                    title="Open Prime Deals"
-                  >
-                    <span className="text-[11px] sm:text-xs font-black text-[#1B1F3B]">
-                      Prime Deals
-                    </span>
-                    <span className="text-[11px] sm:text-xs font-black text-[#1B1F3B] font-mono flex items-center">
-                      <span>{pad(timeLeft.hours)}:{pad(timeLeft.minutes)}:{pad(timeLeft.seconds)}</span>
-                    </span>
-                  </button>
-
-                  {/* Side-Scroll Left/Right Controls */}
-                  <div className="flex items-center gap-0.5 ml-0.5">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        scrollLeft();
-                      }}
-                      className="w-4.5 h-4.5 rounded bg-white border border-[#E5E7EB] text-slate-700 hover:text-[#E11D48] hover:bg-rose-50/60 shadow-2xs flex items-center justify-center transition cursor-pointer active:scale-95"
-                      title="Scroll left"
-                    >
-                      <ChevronLeft className="w-2.5 h-2.5 stroke-[2.5]" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        scrollRight();
-                      }}
-                      className="w-4.5 h-4.5 rounded bg-white border border-[#E5E7EB] text-slate-700 hover:text-[#E11D48] hover:bg-rose-50/60 shadow-2xs flex items-center justify-center transition cursor-pointer active:scale-95"
-                      title="Scroll right"
-                    >
-                      <ChevronRight className="w-2.5 h-2.5 stroke-[2.5]" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: 3D Mascot Header Icon */}
-              <div className="flex-shrink-0 self-center lg:self-end flex items-center justify-end pl-1 sm:pl-2 lg:-mb-2.5">
-                <img
-                  src="/mascot/bhanjo_mascot_3d_clean.png?v=3"
-                  alt="Bhanjo Prime Mascot"
-                  className="w-[46px] h-[52px] sm:w-[50px] sm:h-[56px] lg:w-[72px] lg:h-[80px] max-w-[46px] sm:max-w-[50px] lg:max-w-[72px] max-h-[52px] sm:max-h-[56px] lg:max-h-[80px] object-contain drop-shadow-[0_8px_16px_rgba(27,31,59,0.14)] -my-2 lg:-my-1 flex-shrink-0 hover:scale-105 active:rotate-3 transition-transform cursor-pointer"
-                  title="Bhanjo Prime Mascot"
-                />
               </div>
 
             </div>
