@@ -1005,7 +1005,7 @@ export function App() {
                         <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
                       </button>
                     )}
-                    <h2 className="text-[21px] sm:text-[23px] font-black text-[#1B1F3B] tracking-tight">
+                    <h2 className="text-2xl sm:text-3xl md:text-[32px] font-black text-[#1B1F3B] tracking-tight">
                       {selectedCategoryId === 'all' 
                         ? (searchQuery ? `"${searchQuery}"` : (filterAlibabaOnly ? '✈️ All Bhanjo Global Direct Products' : t('justForYou'))) 
                         : (language === 'ne' ? (activeCategoryObj?.nepaliName || activeCategoryObj?.name) : activeCategoryObj?.name)}
@@ -1014,7 +1014,7 @@ export function App() {
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <button
                           onClick={() => setSearchQuery('')}
-                          className="inline-flex items-center gap-1 bg-orange-100 text-[#F85606] hover:bg-[#F85606] hover:text-white px-2 py-0.5 rounded-full text-xs font-semibold transition"
+                          className="inline-flex items-center gap-1 bg-orange-100 text-[#F85606] hover:bg-[#F85606] hover:text-white px-2.5 py-0.5 rounded-full text-xs font-semibold transition"
                           title="Clear search query"
                         >
                           <span>"{searchQuery}"</span>
@@ -1044,11 +1044,11 @@ export function App() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs flex-wrap">
+                <div className="flex items-center gap-2 text-xs sm:text-[13px] flex-wrap">
                   {/* Mobile Filters Toggle Button */}
                   <button
                     onClick={() => setIsMobileFilterOpen(true)}
-                    className="lg:hidden flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-[#E5E7EB] rounded-lg text-xs font-semibold text-slate-700 hover:border-[#E11D48] transition shadow-2xs cursor-pointer"
+                    className="lg:hidden flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#E5E7EB] rounded-lg text-xs sm:text-[13px] font-semibold text-slate-700 hover:border-[#E11D48] transition shadow-2xs cursor-pointer"
                   >
                     <Filter className="w-3.5 h-3.5 text-[#E11D48]" />
                     <span>{t('filters')}</span>
@@ -1062,7 +1062,7 @@ export function App() {
                   {selectedCategoryId !== 'all' && (
                     <button
                       onClick={() => handleSelectCategory('all')}
-                      className="bg-[#E11D48] text-white font-bold px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-1 hover:bg-[#BE123C] transition cursor-pointer"
+                      className="bg-[#E11D48] text-white font-bold px-3 py-1.5 rounded-lg text-xs sm:text-[13px] flex items-center gap-1 hover:bg-[#BE123C] transition cursor-pointer"
                     >
                       <span>{language === 'ne' ? activeCategoryObj?.nepaliName : activeCategoryObj?.name}</span>
                       <span>✕</span>
@@ -1070,12 +1070,12 @@ export function App() {
                   )}
 
                   {/* Sort Dropdown */}
-                  <div className="bg-white border border-[#E5E7EB] hover:border-slate-300 rounded-lg px-2.5 py-1 text-xs text-slate-700 flex items-center shadow-2xs">
-                    <span className="text-[#64748B] mr-1.5 font-bold text-[11px]">{t('sortLabel')}</span>
+                  <div className="bg-white border border-[#E5E7EB] hover:border-slate-300 rounded-lg px-3 py-1.5 text-xs sm:text-[13px] text-slate-700 flex items-center shadow-2xs">
+                    <span className="text-[#64748B] mr-1.5 font-bold text-[11.5px] sm:text-xs">{t('sortLabel')}</span>
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="bg-transparent text-[#1B1F3B] font-bold text-xs focus:outline-none cursor-pointer"
+                      className="bg-transparent text-[#1B1F3B] font-bold text-xs sm:text-[13px] focus:outline-none cursor-pointer"
                     >
                       <option value="popular">{t('popular')}</option>
                       <option value="price-low">{t('priceLowToHigh')}</option>
@@ -1083,13 +1083,13 @@ export function App() {
                     </select>
                   </div>
 
-                  {/* View All Products Button (with eye emoji preserved) */}
+                  {/* View All Products Button */}
                   <button
                     onClick={handleToggleViewAllEveryProduct}
-                    className="bg-white hover:bg-slate-50 border border-[#E5E7EB] hover:border-slate-300 rounded-lg px-3 py-1 text-xs font-bold text-[#1B1F3B] flex items-center gap-1.5 shadow-2xs transition cursor-pointer"
+                    className="bg-white hover:bg-slate-50 border border-[#E5E7EB] hover:border-slate-300 rounded-lg px-3.5 py-1.5 text-xs sm:text-[13px] font-bold text-[#1B1F3B] flex items-center gap-1.5 shadow-2xs transition cursor-pointer"
                     title="Toggle viewing all products"
                   >
-                    <span>👁️ {language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'}</span>
+                    <span>{language === 'ne' ? 'सबै हेर्नुहोस्' : 'View All'}</span>
                   </button>
                 </div>
               </div>

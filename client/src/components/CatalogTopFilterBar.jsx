@@ -140,13 +140,13 @@ export const CatalogTopFilterBar = ({
       <div className="flex flex-wrap items-center justify-between gap-2.5">
         
         {/* Left Side: Filter Chips & Quick Selectors */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar sm:flex-wrap flex-1 min-w-0 py-0.5">
+        <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar sm:flex-wrap flex-1 min-w-0 py-0.5">
           
-          <div className="flex items-center gap-1.5 text-xs font-bold text-[#E11D48] pr-2.5 flex-shrink-0">
+          <div className="flex items-center gap-1.5 text-xs sm:text-[13.5px] font-bold text-[#E11D48] pr-2 flex-shrink-0">
             <Filter className="w-3.5 h-3.5 text-[#E11D48]" />
             <span>{t('filters')}</span>
             {activeFilterCount > 0 && (
-              <span className="bg-[#E11D48] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+              <span className="bg-[#E11D48] text-white text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center">
                 {activeFilterCount}
               </span>
             )}
@@ -156,7 +156,7 @@ export const CatalogTopFilterBar = ({
           <button
             type="button"
             onClick={() => setFilterOnlyNepal(!filterOnlyNepal)}
-            className={`px-3.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer border flex-shrink-0 shadow-2xs ${
+            className={`px-4 py-1.5 rounded-full text-xs sm:text-[13px] font-bold flex items-center gap-1.5 transition cursor-pointer border flex-shrink-0 shadow-2xs ${
               filterOnlyNepal
                 ? 'bg-[#1B1F3B] text-white border-transparent'
                 : 'bg-white hover:bg-slate-50 text-slate-700 border-[#E5E7EB]'
@@ -170,9 +170,9 @@ export const CatalogTopFilterBar = ({
             <button
               type="button"
               onClick={() => setIsPriceDropdownOpen(!isPriceDropdownOpen)}
-              className={`px-3.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer border shadow-2xs ${
+              className={`px-4 py-1.5 rounded-full text-xs sm:text-[13px] font-bold flex items-center gap-1.5 transition cursor-pointer border shadow-2xs ${
                 hasPriceActive
-                  ? 'bg-orange-50 border-[#E11D48] text-[#E11D48] font-bold'
+                  ? 'bg-orange-50 border-[#E11D48] text-[#E11D48]'
                   : 'bg-white hover:bg-slate-50 text-slate-700 border-[#E5E7EB]'
               }`}
             >
@@ -280,9 +280,9 @@ export const CatalogTopFilterBar = ({
             <button
               type="button"
               onClick={() => setIsRatingDropdownOpen(!isRatingDropdownOpen)}
-              className={`px-3.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer border shadow-2xs ${
+              className={`px-4 py-1.5 rounded-full text-xs sm:text-[13px] font-bold flex items-center gap-1.5 transition cursor-pointer border shadow-2xs ${
                 minRating > 0
-                  ? 'bg-amber-50 border-amber-400 text-amber-700 font-bold'
+                  ? 'bg-amber-50 border-amber-400 text-amber-700'
                   : 'bg-white hover:bg-slate-50 text-slate-700 border-[#E5E7EB]'
               }`}
             >
@@ -303,13 +303,13 @@ export const CatalogTopFilterBar = ({
                         setMinRating(minRating === stars ? 0 : stars);
                         setIsRatingDropdownOpen(false);
                       }}
-                      className={`w-full flex items-center justify-between p-2 rounded-xl text-xs transition cursor-pointer ${
+                      className={`w-full flex items-center justify-between p-2 rounded-xl text-xs sm:text-[13px] transition cursor-pointer ${
                         minRating === stars ? 'bg-amber-50 text-amber-800 font-bold' : 'hover:bg-slate-50 text-slate-700'
                       }`}
                     >
                       <div className="flex items-center gap-1">
                         <span className="text-amber-500 font-bold">★ {stars}.0</span>
-                        <span className="text-slate-500 text-[11px]">& up</span>
+                        <span className="text-slate-500 text-[11px] sm:text-xs">& up</span>
                       </div>
                       {minRating === stars && <Check className="w-3.5 h-3.5 text-amber-600" />}
                     </button>
@@ -321,7 +321,7 @@ export const CatalogTopFilterBar = ({
                         setMinRating(0);
                         setIsRatingDropdownOpen(false);
                       }}
-                      className="w-full text-center py-1.5 text-[11px] text-slate-500 hover:text-red-600 font-semibold border-t border-slate-100 mt-1 cursor-pointer"
+                      className="w-full text-center py-1.5 text-xs text-slate-500 hover:text-red-600 font-semibold border-t border-slate-100 mt-1 cursor-pointer"
                     >
                       Clear Rating Filter
                     </button>
@@ -338,7 +338,7 @@ export const CatalogTopFilterBar = ({
           <button
             type="button"
             onClick={onResetFilters}
-            className="flex items-center gap-1.5 text-xs text-red-600 hover:text-red-700 font-bold bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-xl transition cursor-pointer flex-shrink-0"
+            className="flex items-center gap-1.5 text-xs sm:text-[13px] text-red-600 hover:text-red-700 font-bold bg-red-50 hover:bg-red-100 px-3.5 py-1.5 rounded-xl transition cursor-pointer flex-shrink-0"
             title="Reset all active filters"
           >
             <RotateCcw className="w-3.5 h-3.5" />
