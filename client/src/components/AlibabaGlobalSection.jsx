@@ -125,7 +125,7 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
 
         {/* Second Row: Main Title on Left, Sort & View All on Right */}
         <div className="flex flex-wrap items-center justify-between gap-3 mt-1.5">
-          <h2 className="text-2xl sm:text-3xl md:text-[32px] font-black text-[#1B1F3B] tracking-tight leading-tight">
+          <h2 className="text-[21px] sm:text-[24px] md:text-[26px] font-black text-[#1B1F3B] tracking-tight leading-tight">
             International Trending Collection
           </h2>
 
