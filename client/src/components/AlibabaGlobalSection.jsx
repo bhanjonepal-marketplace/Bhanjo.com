@@ -248,11 +248,10 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
           <button
             type="button"
             onClick={() => setVisibleCount(prev => Math.min(prev + 5, sortedAlibabaProducts.length))}
-            className="bg-white hover:bg-slate-50 text-[#1B1F3B] border-2 border-[#1B1F3B] font-black text-[13.5px] sm:text-[14px] px-6 sm:px-7 py-2 rounded-xl shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
-            style={{ fontWeight: 900 }}
+            className="bg-white hover:bg-slate-50 text-black border-[1.8px] border-black font-black text-[13px] sm:text-[13.5px] px-6 sm:px-7 py-2 rounded-xl shadow-2xs transition-all flex items-center justify-center gap-1 cursor-pointer active:scale-95 [text-shadow:_0_0_0.35px_currentColor]"
           >
-            <span style={{ fontWeight: 900 }}>Load More</span>
-            <span className="text-[11px] leading-none" style={{ fontWeight: 900 }}>v</span>
+            <span className="font-black">Load More</span>
+            <span className="text-[10px] font-black leading-none ml-0.5">v</span>
           </button>
         </div>
       )}
