@@ -519,15 +519,15 @@ export const AmazonQuadCatalog = ({
   return (
     <section className="my-4 sm:my-5" id="amazon-quad-catalog">
       {/* Clean Minimal Header matching reference image */}
-      <div className="flex items-center justify-between gap-3 mb-3 px-0.5">
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <span className="bg-[#1B1F3B] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md uppercase tracking-wider shadow-2xs">
+      <div className="flex items-center justify-between gap-3 mb-3.5 sm:mb-4 px-0.5">
+        <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+          <span className="bg-[#1B1F3B] text-white text-[11px] sm:text-xs font-black px-3 py-1 sm:py-1.5 rounded-lg uppercase tracking-wider shadow-2xs">
             FEATURED HUBS
           </span>
-          <h2 className="text-lg sm:text-xl font-black text-[#1B1F3B] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#1B1F3B] tracking-tight leading-none">
             Popular Departments
           </h2>
-          <span className="text-xs font-normal text-[#5B6070] ml-0.5">
+          <span className="text-sm sm:text-base font-normal text-[#5B6070] ml-1 sm:ml-1.5">
             10 Curated Sets
           </span>
         </div>
