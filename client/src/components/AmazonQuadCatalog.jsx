@@ -545,7 +545,7 @@ export const AmazonQuadCatalog = ({
           return (
             <div
               key={card.id}
-              className="w-[calc(100%-12px)] sm:w-[calc(50%-8px)] lg:w-[calc(25%-10.5px)] flex-shrink-0 snap-start bg-white rounded-2xl border border-[#E5E7EB] shadow-2xs hover:border-[#1B1F3B]/30 hover:shadow-xs transition-all duration-200 p-3.5 sm:p-4 flex flex-col justify-between"
+              className="w-[calc(100%-12px)] sm:w-[calc(50%-8px)] lg:w-[calc(25%-10.5px)] min-w-[390px] sm:min-w-[406px] flex-shrink-0 snap-start bg-white rounded-2xl border border-[#E5E7EB] shadow-2xs hover:border-[#1B1F3B]/30 hover:shadow-xs transition-all duration-200 p-3 sm:p-3.5 flex flex-col justify-between"
             >
               {/* Card Header (Title with chevron matching reference) */}
               <div
@@ -560,7 +560,7 @@ export const AmazonQuadCatalog = ({
               </div>
 
               {/* 2x2 Quadrant Grid */}
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
                 {card.quadrants.map((quad) => {
                   const quadLabel = language === 'ne' ? quad.nepaliLabel : quad.label;
 
@@ -568,12 +568,12 @@ export const AmazonQuadCatalog = ({
                     <div
                       key={quad.id}
                       onClick={(e) => handleQuadrantClick(card, quad, e)}
-                      className="group/item flex flex-col cursor-pointer"
+                      className="group/item flex flex-col items-center sm:items-start cursor-pointer"
                       title={`Filter by ${quadLabel}`}
                     >
-                      {/* Neutral Light Gray Rounded Box matching reference image */}
+                      {/* Neutral Light Gray Rounded Box: 184 x 105 px */}
                       <div
-                        className="aspect-[1.38/1] w-full rounded-xl overflow-hidden relative bg-[#F1F3F6] group-hover/item:bg-[#EAECEF] border border-transparent group-hover/item:border-[#E5E7EB] transition-all duration-200 flex items-center justify-center p-2 sm:p-2.5"
+                        className="w-[184px] max-w-full h-[105px] rounded-xl overflow-hidden relative bg-[#F1F3F6] group-hover/item:bg-[#EAECEF] border border-transparent group-hover/item:border-[#E5E7EB] transition-all duration-200 flex items-center justify-center p-2 mx-auto"
                       >
                         <img
                           src={quad.image}
@@ -588,7 +588,7 @@ export const AmazonQuadCatalog = ({
 
                       {/* Item Caption Underneath (Left-aligned as in reference image) */}
                       <span
-                        className="mt-1.5 text-[11px] sm:text-[11.5px] font-medium text-[#1B1F3B] text-left leading-tight line-clamp-1 group-hover/item:text-[#E11D48] transition-colors"
+                        className="mt-1.5 text-[11px] sm:text-[11.5px] font-medium text-[#1B1F3B] text-left leading-tight line-clamp-1 group-hover/item:text-[#E11D48] transition-colors w-full"
                         title={quadLabel}
                       >
                         {quadLabel}
