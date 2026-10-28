@@ -521,13 +521,13 @@ export const AmazonQuadCatalog = ({
       {/* Clean Minimal Header matching reference image */}
       <div className="flex items-center justify-between gap-3 mb-3.5 sm:mb-4 px-0.5">
         <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-          <span className="bg-[#1B1F3B] text-white text-[11px] sm:text-xs font-black px-3 py-1 sm:py-1.5 rounded-lg uppercase tracking-wider shadow-2xs">
+          <span className="bg-[#1B1F3B] text-white text-[9.5px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider shadow-2xs">
             FEATURED HUBS
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-[#1B1F3B] tracking-tight leading-none">
+          <h2 className="text-[24px] font-bold text-[#1B1F3B] tracking-tight leading-[1.25]">
             Popular Departments
           </h2>
-          <span className="text-sm sm:text-base font-normal text-[#5B6070] ml-1 sm:ml-1.5">
+          <span className="text-[11px] font-normal text-[#5B6070] ml-1 sm:ml-1.5">
             10 Curated Sets
           </span>
         </div>
@@ -553,7 +553,7 @@ export const AmazonQuadCatalog = ({
                 className="flex items-center justify-between gap-1 group/header cursor-pointer mb-3 select-none"
                 title={`Explore all ${cardTitle}`}
               >
-                <h3 className="text-[15.5px] sm:text-[16.5px] md:text-[17px] font-extrabold text-[#1B1F3B] tracking-tight leading-tight group-hover/header:text-[#E11D48] transition-colors truncate">
+                <h3 className="text-[14px] font-semibold text-[#1B1F3B] tracking-tight leading-[1.35] group-hover/header:text-[#E11D48] transition-colors truncate">
                   {cardTitle}
                 </h3>
                 <ChevronRight className="w-4 h-4 text-[#1B1F3B] flex-shrink-0 group-hover/header:translate-x-0.5 group-hover/header:text-[#E11D48] transition-all stroke-[3]" />
@@ -588,7 +588,7 @@ export const AmazonQuadCatalog = ({
 
                       {/* Item Caption Underneath (Left-aligned as in reference image) */}
                       <span
-                        className="mt-1.5 text-[11px] sm:text-[11.5px] font-medium text-[#1B1F3B] text-left leading-tight line-clamp-1 group-hover/item:text-[#E11D48] transition-colors w-full"
+                        className="mt-1.5 text-[11px] font-normal text-[#1B1F3B] text-left leading-tight line-clamp-1 group-hover/item:text-[#E11D48] transition-colors w-full"
                         title={quadLabel}
                       >
                         {quadLabel}
