@@ -553,10 +553,10 @@ export const AmazonQuadCatalog = ({
                 className="flex items-center justify-between gap-1 group/header cursor-pointer mb-3 select-none"
                 title={`Explore all ${cardTitle}`}
               >
-                <h3 className="text-[13.5px] sm:text-[14.5px] font-bold text-[#1B1F3B] tracking-tight leading-tight group-hover/header:text-[#E11D48] transition-colors truncate">
+                <h3 className="text-[15.5px] sm:text-[16.5px] md:text-[17px] font-extrabold text-[#1B1F3B] tracking-tight leading-tight group-hover/header:text-[#E11D48] transition-colors truncate">
                   {cardTitle}
                 </h3>
-                <ChevronRight className="w-3.5 h-3.5 text-[#1B1F3B] flex-shrink-0 group-hover/header:translate-x-0.5 group-hover/header:text-[#E11D48] transition-all stroke-[2.5]" />
+                <ChevronRight className="w-4 h-4 text-[#1B1F3B] flex-shrink-0 group-hover/header:translate-x-0.5 group-hover/header:text-[#E11D48] transition-all stroke-[3]" />
               </div>
 
               {/* 2x2 Quadrant Grid */}
