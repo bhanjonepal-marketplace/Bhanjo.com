@@ -573,7 +573,7 @@ export const AmazonQuadCatalog = ({
                     >
                       {/* Neutral Light Gray Rounded Box matching reference image */}
                       <div
-                        className="aspect-[1.18/1] w-full rounded-xl overflow-hidden relative bg-[#F0F2F5] group-hover/item:bg-[#EAECEF] border border-transparent group-hover/item:border-[#E5E7EB] transition-all duration-200 flex items-center justify-center p-2.5"
+                        className="aspect-[1.38/1] w-full rounded-xl overflow-hidden relative bg-[#F1F3F6] group-hover/item:bg-[#EAECEF] border border-transparent group-hover/item:border-[#E5E7EB] transition-all duration-200 flex items-center justify-center p-2 sm:p-2.5"
                       >
                         <img
                           src={quad.image}
