@@ -334,57 +334,31 @@ export const TopPicksTrendDiscovery = ({
         {/* ========================================================= */}
         <div 
           onClick={() => onOpenTopPicksShowcase && onOpenTopPicksShowcase()}
-          className="lg:col-span-5 bg-white border border-[#E5E7EB] hover:border-slate-300 rounded-2xl p-2.5 sm:p-3 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between cursor-pointer group/box relative overflow-hidden"
+          className="lg:col-span-5 bg-white border border-[#E5E7EB] hover:border-slate-300 rounded-2xl p-3 sm:p-3.5 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between cursor-pointer group/box relative overflow-hidden"
           title="Click to open Bhanjo Prime Showcase"
         >
           {/* Header Row & Products */}
           <div className="relative z-10">
-            <div className="flex items-center justify-between gap-2 pb-2 border-b border-[#E5E7EB]">
+            {/* Header matching Image 1: Left has BHANJO PRIME badge + Top Radar + Prime Deals Countdown; Right has Open Deals */}
+            <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[#E5E7EB]">
               
-              {/* Left Column: Title + Curated Link */}
-              <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-                <span className="bg-[#1B1F3B] text-[#FFC83D] text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tight shadow-xs flex-shrink-0 flex items-center gap-1">
-                  <span>👑</span>
-                  <span>BHANJO PRIME</span>
+              {/* Left Column: BHANJO PRIME + Top Radar + Prime Deals Countdown Pill */}
+              <div className="flex items-center gap-2 flex-wrap min-w-0">
+                <span className="bg-[#1B1F3B] text-white text-[9.5px] sm:text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider shadow-2xs leading-none">
+                  BHANJO PRIME
                 </span>
-                <h3 className="text-[15px] sm:text-[16px] font-black text-[#1B1F3B] tracking-tight transition-colors">
+                <h3 className="text-[15px] sm:text-[16px] font-black text-[#1B1F3B] tracking-tight">
                   Top Radar
                 </h3>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (onOpenTopPicksShowcase) onOpenTopPicksShowcase();
-                  }}
-                  className="text-[11px] text-[#E11D48] hover:text-[#BE123C] font-bold flex items-center transition cursor-pointer"
-                  title="Explore Bhanjo Prime Showcase"
-                >
-                  <span>Curated</span>
-                  <ChevronRight className="w-3 h-3 stroke-[2.5]" />
-                </button>
+                <div className="flex items-center gap-1 border border-rose-200 bg-rose-50/70 text-[#E11D48] text-[10.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full shadow-2xs">
+                  <span>Prime Deals</span>
+                  <span className="font-mono font-black">{pad(timeLeft.hours)}:{pad(timeLeft.minutes)}:{pad(timeLeft.seconds)}</span>
+                </div>
               </div>
 
-              {/* Right Column: Prime Deals Countdown & Scroll Controls */}
+              {/* Right Column: Scroll Controls & Open Deals Button matching Image 1 */}
               <div className="flex items-center gap-1.5 flex-shrink-0">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (onOpenTopPicksShowcase) onOpenTopPicksShowcase();
-                  }}
-                  className="flex items-center gap-1 bg-[#FFC83D] hover:bg-[#F6BE2F] border border-[#F0B820] text-[#1B1F3B] px-2.5 py-0.5 rounded-full transition cursor-pointer shadow-xs"
-                  title="Open Prime Deals"
-                >
-                  <span className="text-[11px] sm:text-xs font-black text-[#1B1F3B]">
-                    Prime Deals
-                  </span>
-                  <span className="text-[11px] sm:text-xs font-black text-[#1B1F3B] font-mono flex items-center">
-                    <span>{pad(timeLeft.hours)}:{pad(timeLeft.minutes)}:{pad(timeLeft.seconds)}</span>
-                  </span>
-                </button>
-
-                {/* Side-Scroll Left/Right Controls */}
-                <div className="flex items-center gap-0.5 ml-0.5">
+                <div className="flex items-center gap-0.5">
                   <button
                     type="button"
                     onClick={(e) => {
@@ -408,14 +382,27 @@ export const TopPicksTrendDiscovery = ({
                     <ChevronRight className="w-3 h-3 stroke-[2.5]" />
                   </button>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onOpenTopPicksShowcase) onOpenTopPicksShowcase();
+                  }}
+                  className="bg-[#E11D48] hover:bg-[#BE123C] text-white text-[10.5px] sm:text-[11.5px] font-bold px-3 py-1 rounded-xl shadow-xs transition cursor-pointer flex items-center gap-0.5 active:scale-95"
+                  title="Open Deals"
+                >
+                  <span>Open Deals</span>
+                  <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                </button>
               </div>
 
             </div>
 
-            {/* Side-Scrollable Products Row */}
+            {/* Side-Scrollable Products Row matching Image 1 */}
             <div 
               ref={scrollRef}
-              className="flex items-start gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth snap-x snap-mandatory py-2 px-0.5 lg:mt-3.5 lg:pt-1"
+              className="flex items-start gap-2 sm:gap-2.5 overflow-x-auto no-scrollbar [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth snap-x snap-mandatory pt-3 pb-1 px-0.5"
             >
               {topPicks.map((item) => (
                 <div
@@ -424,53 +411,42 @@ export const TopPicksTrendDiscovery = ({
                     e.stopPropagation();
                     handleItemClick(item);
                   }}
-                  className="w-[108px] sm:w-[116px] md:w-[124px] flex-shrink-0 snap-start group flex flex-col cursor-pointer select-none"
+                  className="w-[calc(25%-6px)] min-w-[95px] sm:min-w-[105px] flex-shrink-0 snap-start group flex flex-col cursor-pointer select-none"
                   title={item.title}
                 >
-                  {/* Square Image Box */}
-                  <div className="aspect-square w-full rounded-xl overflow-hidden bg-white border border-[#E5E7EB] group-hover:border-[#E11D48] shadow-2xs relative flex items-center justify-center p-2 transition-all">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      loading="lazy"
-                      className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-300 bg-white"
-                    />
+                  {/* Container: Light Neutral Grey Box + Attached Black Strip matching Image 1 */}
+                  <div className="w-full rounded-xl overflow-hidden bg-[#F1F3F6] border border-transparent group-hover:border-[#E11D48] shadow-2xs transition-all flex flex-col">
+                    <div className="aspect-[1.28/1] w-full flex items-center justify-center p-2 relative">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        loading="lazy"
+                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
 
-                    {/* Tag Badge on Bottom of Image (Midnight Navy with clean white text) */}
-                    <div className="absolute bottom-1 left-1 right-1">
-                      <div className="bg-[#1B1F3B] text-white text-[8.5px] sm:text-[9px] font-black py-0.5 px-1 rounded-xs text-center shadow-xs leading-none truncate">
-                        <span>{item.badge}</span>
-                      </div>
+                    {/* Dark Tag Badge Strip attached at the bottom of the grey box */}
+                    <div className="bg-[#1B1F3B] text-white text-[8.5px] sm:text-[9px] font-bold py-1 px-1 text-center leading-none uppercase tracking-wide truncate">
+                      <span>{item.badge || 'Limited Stock'}</span>
                     </div>
                   </div>
 
-                  {/* Price Tag underneath (Crimson) */}
-                  <div className="mt-1.5 text-center">
-                    <span className="text-[12.5px] sm:text-[13px] font-black text-[#E11D48] tracking-tight">
+                  {/* Title underneath (centered, bold black) */}
+                  <div className="mt-1.5 text-center px-0.5">
+                    <h4 className="text-[11px] sm:text-[11.5px] font-bold text-[#1B1F3B] truncate group-hover:text-[#E11D48] transition-colors leading-tight">
+                      {item.title}
+                    </h4>
+                  </div>
+
+                  {/* Price underneath (centered, bold black matching Image 1) */}
+                  <div className="mt-0.5 text-center">
+                    <span className="text-[12.5px] sm:text-[13.5px] font-black text-[#1B1F3B] tracking-tight">
                       {formatPrice(item.price)}
                     </span>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Bottom Bar: Interactive Link */}
-          <div 
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onOpenTopPicksShowcase) onOpenTopPicksShowcase();
-            }}
-            className="mt-1.5 pt-1.5 border-t border-[#E5E7EB] flex items-center justify-between text-[10.5px] font-bold text-slate-700 transition-colors relative z-10"
-          >
-            <span className="flex items-center gap-1 font-black text-[#1B1F3B]">
-              <Sparkles className="w-3 h-3 text-[#E11D48]" />
-              <span>Bhanjo Prime Showcase</span>
-            </span>
-            <span className="flex items-center gap-0.5 bg-[#E11D48] hover:bg-[#BE123C] text-white px-2.5 py-0.5 rounded-full text-[9.5px] font-black shadow-xs transition-colors">
-              <span>Open Deals</span>
-              <ChevronRight className="w-2.5 h-2.5 stroke-[2.5]" />
-            </span>
           </div>
         </div>
 
