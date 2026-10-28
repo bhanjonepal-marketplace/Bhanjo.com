@@ -54,7 +54,13 @@ const CURATED_FEATURED = [
 export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll }) => {
   const { formatPrice, t, language } = useCurrency();
   const [globalSortBy, setGlobalSortBy] = useState('popular');
-  const [visibleCount, setVisibleCount] = useState(5);
+  const [mobileVisibleCount, setMobileVisibleCount] = useState(2);
+  const [desktopVisibleCount, setDesktopVisibleCount] = useState(5);
+
+  const handleLoadMore = () => {
+    setMobileVisibleCount(prev => Math.min(prev + 2, sortedAlibabaProducts.length));
+    setDesktopVisibleCount(prev => Math.min(prev + 5, sortedAlibabaProducts.length));
+  };
 
   // Filter imported global products
   const alibabaProducts = useMemo(() => {
@@ -168,7 +174,18 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
 
       {/* 5-Column Products Grid - Compact and fitly adjusted matching Image 2 */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 mt-3.5">
-        {sortedAlibabaProducts.slice(0, visibleCount).map((item) => {
+        {sortedAlibabaProducts.slice(0, Math.max(mobileVisibleCount, desktopVisibleCount)).map((item, index) => {
+          const isVisibleOnMobile = index < mobileVisibleCount;
+          const isVisibleOnDesktop = index < desktopVisibleCount;
+
+          if (!isVisibleOnMobile && !isVisibleOnDesktop) return null;
+
+          const visibilityClass = isVisibleOnMobile && isVisibleOnDesktop
+            ? 'flex'
+            : isVisibleOnMobile
+            ? 'flex sm:hidden'
+            : 'hidden sm:flex';
+
           const displayPrice = item.displayPrice ?? (item.priceTiers?.[item.priceTiers.length - 1]?.price || item.samplePrice || 25);
           const originalPrice = item.originalPrice ?? Math.round(displayPrice * 1.35);
 
@@ -176,7 +193,7 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
             <div
               key={item.id}
               onClick={() => onSelectProduct(item.id)}
-              className="bg-white rounded-2xl border border-[#E5E7EB] hover:border-slate-300 hover:shadow-xs transition-all duration-200 p-3 sm:p-3.5 flex flex-col justify-between cursor-pointer group relative overflow-hidden"
+              className={`bg-white rounded-2xl border border-[#E5E7EB] hover:border-slate-300 hover:shadow-xs transition-all duration-200 p-3 sm:p-3.5 flex-col justify-between cursor-pointer group relative overflow-hidden ${visibilityClass}`}
             >
               {/* Image Box - Compact height matching Image 2 */}
               <div className="aspect-[1.5/1] rounded-xl overflow-hidden bg-[#EEF1F4] relative mb-2 flex items-center justify-center">
@@ -245,11 +262,11 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
       </div>
 
       {/* Centered Minimal Load More Button (Matching Image 2) */}
-      {visibleCount < sortedAlibabaProducts.length && (
+      {(mobileVisibleCount < sortedAlibabaProducts.length || desktopVisibleCount < sortedAlibabaProducts.length) && (
         <div className="mt-5 mb-1 flex justify-center items-center">
           <button
             type="button"
-            onClick={() => setVisibleCount(prev => Math.min(prev + 5, sortedAlibabaProducts.length))}
+            onClick={handleLoadMore}
             className="bg-white hover:bg-slate-50 text-black border-[1.8px] border-black font-black text-[14.5px] sm:text-[15px] px-6 py-1.5 sm:py-[7px] rounded-xl shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 [text-shadow:_0_0_0.35px_currentColor]"
           >
             <span className="font-black">Load More</span>
