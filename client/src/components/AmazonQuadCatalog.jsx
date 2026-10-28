@@ -524,10 +524,10 @@ export const AmazonQuadCatalog = ({
           <span className="bg-[#1B1F3B] text-white text-[9.5px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider shadow-2xs">
             FEATURED HUBS
           </span>
-          <h2 className="text-[24px] font-bold text-[#1B1F3B] tracking-tight leading-[1.25]">
+          <h2 className="text-[19px] font-bold text-[#1B1F3B] tracking-tight leading-[1.25]">
             Popular Departments
           </h2>
-          <span className="text-[11px] font-normal text-[#5B6070] ml-1 sm:ml-1.5">
+          <span className="text-[9px] font-normal text-[#5B6070] ml-1 sm:ml-1.5">
             10 Curated Sets
           </span>
         </div>

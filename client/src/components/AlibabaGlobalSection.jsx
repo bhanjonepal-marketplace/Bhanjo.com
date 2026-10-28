@@ -118,7 +118,7 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
           <span className="bg-[#1B1F3B] text-white text-[9.5px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider shadow-2xs">
             OVERSEAS PAVILION
           </span>
-          <span className="text-[11px] font-normal text-[#475569] tracking-wider uppercase truncate">
+          <span className="text-[9px] font-normal text-[#475569] tracking-wider uppercase truncate">
             GLOBAL DIRECT SOURCING • VERIFIED FACTORY PRICING
           </span>
         </div>
@@ -203,7 +203,7 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
 
               {/* Title & Info */}
               <div className="flex-1 flex flex-col">
-                <span className="text-[10px] font-semibold text-[#E11D48] capitalize block mb-1 mt-0.5 leading-none truncate">
+                <span className="text-[10.5px] font-bold text-[#E11D48] capitalize block mb-1 mt-0.5 leading-none truncate">
                   {item.categoryName || 'Global Collection'}
                 </span>
 
@@ -222,7 +222,7 @@ export const AlibabaGlobalSection = ({ products = [], onSelectProduct, onViewAll
                       </span>
                     )}
                   </div>
-                  <span className="text-[8.5px] text-[#64748B] font-normal block truncate mt-0.5 mb-2">
+                  <span className="text-[8px] text-[#64748B] font-normal block truncate mt-0.5 mb-2">
                     Direct Import • Fast Delivery Nepal
                   </span>
                 </div>
