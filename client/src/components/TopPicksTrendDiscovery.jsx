@@ -135,10 +135,11 @@ export const TopPicksTrendDiscovery = ({
     {
       id: 'set-retro-denim',
       title: '# Retro modern street',
+      badge: 'TRENDING SET',
       socialProof: 'Trendy Picks',
       tag: '# Summer sport series',
-      bgCard: 'bg-[#FFFDF2] border-[#FCEECB]',
-      tagColor: 'text-amber-800 hover:text-amber-900',
+      bgCard: 'bg-white border-[#E5E7EB] hover:border-slate-300',
+      tagColor: 'text-[#E11D48] hover:text-[#BE123C]',
       categoryId: 'apparel-accessories',
       keyword: 'Retro Streetwear',
       items: [
@@ -146,23 +147,24 @@ export const TopPicksTrendDiscovery = ({
           id: 'ts-5',
           title: 'Waffle Knit Sweater & Corduroy Trousers Set',
           price: 9.5,
-          image: '/categories/retro_modern_fit_1.jpg?v=pure_original_ai'
+          image: '/categories/retro_modern_fit_1.png'
         },
         {
           id: 'ts-6',
           title: 'Beige Knit Cardigan, Pleated Wool Trousers & Silk Scarf Set',
           price: 10.5,
-          image: '/categories/cardigan_wool_trousers_fit.jpg?v=women_chic_v1'
+          image: '/categories/cardigan_wool_trousers_fit.png'
         }
       ]
     },
     {
       id: 'set-loungewear',
       title: '# Mandarin collar cozy wear',
+      badge: 'HOT SELLER',
       socialProof: 'Hot Sellers',
       tag: '# Everyday comfort collection',
-      bgCard: 'bg-[#FFFDF4] border-[#FDEBCB]',
-      tagColor: 'text-amber-800 hover:text-amber-900',
+      bgCard: 'bg-white border-[#E5E7EB] hover:border-slate-300',
+      tagColor: 'text-[#E11D48] hover:text-[#BE123C]',
       categoryId: 'apparel-accessories',
       keyword: 'Mandarin Collar',
       items: [
@@ -170,23 +172,24 @@ export const TopPicksTrendDiscovery = ({
           id: 'ts-7',
           title: 'Premium Sky Blue Linen Mandarin Collar Shirt',
           price: 8.5,
-          image: '/categories/mandarin_collar_shirt.jpg?v=ai_gen'
+          image: '/categories/mandarin_collar_shirt.png'
         },
         {
           id: 'ts-8',
           title: 'Tropical Botanical Casual Resort Collar Shirt',
           price: 6.2,
-          image: '/categories/tropical_casual_shirt.jpg?v=ai_gen'
+          image: '/categories/tropical_casual_shirt.png'
         }
       ]
     },
     {
       id: 'set-shoes',
       title: '# Shoes Worth the Hype',
+      badge: 'TOP RATED',
       socialProof: '10K+ positive reviews',
       tag: '# Healing low saturation series',
-      bgCard: 'bg-[#F0FAF5] border-[#D5EFE3]',
-      tagColor: 'text-emerald-700 hover:text-emerald-800',
+      bgCard: 'bg-white border-[#E5E7EB] hover:border-slate-300',
+      tagColor: 'text-[#E11D48] hover:text-[#BE123C]',
       categoryId: 'shoes-accessories',
       keyword: 'Boots & Sneakers',
       items: [
@@ -194,23 +197,24 @@ export const TopPicksTrendDiscovery = ({
           id: 'ts-1',
           title: 'TOMS Brown Oiled Leather Chukka Sneaker Boots',
           price: 12.5,
-          image: '/categories/brown_leather_chukka_boots.jpg?v=restored_original'
+          image: '/categories/brown_leather_chukka_boots.png'
         },
         {
           id: 'ts-2',
           title: 'Olive Canvas Cutout Tie-Accent Ankle Boots',
           price: 9.8,
-          image: '/categories/olive_canvas_ankle_boots.jpg?v=ai_gen'
+          image: '/categories/olive_canvas_ankle_boots.png'
         }
       ]
     },
     {
       id: 'set-summer-outfits',
       title: '# Summer Fits & Finds',
+      badge: 'POPULAR',
       socialProof: 'Popular Essentials',
       tag: '# Slippers refresh guide',
-      bgCard: 'bg-[#F2FAF6] border-[#D7EFE4]',
-      tagColor: 'text-emerald-700 hover:text-emerald-800',
+      bgCard: 'bg-white border-[#E5E7EB] hover:border-slate-300',
+      tagColor: 'text-[#E11D48] hover:text-[#BE123C]',
       categoryId: 'apparel-accessories',
       keyword: 'Summer Outfits',
       items: [
@@ -218,13 +222,13 @@ export const TopPicksTrendDiscovery = ({
           id: 'ts-3',
           title: 'Retro Washed Tee & Cargo Shorts with Leather Slippers Set',
           price: 4.5,
-          image: '/categories/summer_shorts_slippers_fit.jpg?v=ai_gen'
+          image: '/categories/summer_shorts_slippers_fit.png'
         },
         {
           id: 'ts-4',
           title: 'Pink Zip Overshirt, Ribbed Tank & Pleated Shorts Set',
           price: 6.8,
-          image: '/categories/pink_resort_shorts_fit.jpg?v=ai_gen'
+          image: '/categories/pink_resort_shorts_fit.png'
         }
       ]
     }
@@ -452,9 +456,9 @@ export const TopPicksTrendDiscovery = ({
 
         {/* ========================================================= */}
         {/* RIGHT COLUMN: CURATED TREND SETS (lg:col-span-7)          */}
-        {/* Standalone White Box (Independent from Top Picks pink box)*/}
+        {/* Unified with Top Radar Theme: Clean White, Navy & Crimson */}
         {/* ========================================================= */}
-        <div className="lg:col-span-7 bg-white border border-slate-200/90 hover:border-slate-300 rounded-2xl p-2.5 sm:p-3 shadow-xs hover:shadow-md transition-all flex flex-col justify-between relative">
+        <div className="lg:col-span-7 bg-white border border-[#E5E7EB] hover:border-slate-300 rounded-2xl p-3 sm:p-3.5 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between relative">
           <div className="relative group/trend-carousel">
             {/* Left Floating Side Button (mobile) */}
             <button
@@ -462,7 +466,7 @@ export const TopPicksTrendDiscovery = ({
               onClick={() => scrollTrend('prev')}
               disabled={!canScrollTrendLeft}
               aria-label="Previous trend set"
-              className={`absolute left-1.5 top-1/2 -translate-y-1/2 z-30 w-7.5 h-7.5 rounded-full bg-white/95 backdrop-blur-xs text-slate-800 border border-slate-200/90 shadow-[0_3px_12px_rgba(0,0,0,0.18)] flex items-center justify-center hover:bg-orange-50 hover:text-[#F85606] transition-all duration-200 active:scale-90 cursor-pointer sm:hidden ${
+              className={`absolute left-1.5 top-1/2 -translate-y-1/2 z-30 w-7.5 h-7.5 rounded-full bg-white/95 backdrop-blur-xs text-slate-800 border border-[#E5E7EB] shadow-xs flex items-center justify-center hover:bg-rose-50 hover:text-[#E11D48] transition-all duration-200 active:scale-90 cursor-pointer sm:hidden ${
                 canScrollTrendLeft ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-75 pointer-events-none'
               }`}
             >
@@ -475,7 +479,7 @@ export const TopPicksTrendDiscovery = ({
               onClick={() => scrollTrend('next')}
               disabled={!canScrollTrendRight}
               aria-label="Next trend set"
-              className={`absolute right-1.5 top-1/2 -translate-y-1/2 z-30 w-7.5 h-7.5 rounded-full bg-white/95 backdrop-blur-xs text-slate-800 border border-slate-200/90 shadow-[0_3px_12px_rgba(0,0,0,0.18)] flex items-center justify-center hover:bg-orange-50 hover:text-[#F85606] transition-all duration-200 active:scale-90 cursor-pointer sm:hidden ${
+              className={`absolute right-1.5 top-1/2 -translate-y-1/2 z-30 w-7.5 h-7.5 rounded-full bg-white/95 backdrop-blur-xs text-slate-800 border border-[#E5E7EB] shadow-xs flex items-center justify-center hover:bg-rose-50 hover:text-[#E11D48] transition-all duration-200 active:scale-90 cursor-pointer sm:hidden ${
                 canScrollTrendRight ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-75 pointer-events-none'
               }`}
             >
@@ -494,36 +498,37 @@ export const TopPicksTrendDiscovery = ({
                 return (
                   <div
                     key={set.id}
-                    className={`${set.bgCard} border rounded-xl p-2.5 sm:p-2.5 pb-2.5 sm:pb-2 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between w-full min-w-full sm:min-w-0 sm:w-auto flex-shrink-0 snap-start ${
+                    className={`bg-white border border-[#E5E7EB] hover:border-slate-300 rounded-xl p-2.5 sm:p-3 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between w-full min-w-full sm:min-w-0 sm:w-auto flex-shrink-0 snap-start ${
                       isDesktopVisible ? 'sm:flex' : 'sm:hidden'
                     }`}
                   >
                     <div>
-                      {/* Trend Set Header with Hashtag and Controls */}
+                      {/* Trend Set Header with Hashtag and Top Radar Badge */}
                       <div className="flex items-center justify-between gap-1 select-none">
                         <div
                           onClick={() => onSelectCategory && onSelectCategory(set.categoryId, set.keyword)}
-                          className="flex items-center gap-1 group/title cursor-pointer min-w-0"
+                          className="flex items-center gap-1.5 group/title cursor-pointer min-w-0"
                           title={`Explore ${set.title}`}
                         >
-                          <h4 className="text-[15px] sm:text-[13.5px] font-black text-slate-900 tracking-tight leading-tight group-hover/title:text-[#F85606] transition-colors truncate">
+                          <h4 className="text-[14px] sm:text-[14px] font-black text-[#1B1F3B] tracking-tight leading-tight group-hover/title:text-[#E11D48] transition-colors truncate">
                             {set.title}
                           </h4>
+                          <ChevronRight className="w-3.5 h-3.5 text-[#1B1F3B] stroke-[2.5] flex-shrink-0 group-hover/title:translate-x-0.5 group-hover/title:text-[#E11D48] transition-all hidden sm:inline-block" />
                         </div>
 
-                        {/* Mobile Header Pagination Controls (Moved from bottom per user request) */}
+                        {/* Mobile Header Pagination Controls */}
                         <div
                           className="flex sm:hidden items-center gap-2 flex-shrink-0"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <span className="text-[13px] font-extrabold text-slate-600 font-mono select-none tracking-tight">
+                          <span className="text-[13px] font-extrabold text-[#1B1F3B] font-mono select-none tracking-tight">
                             {activeMobileTrend + 1}/{trendSets.length}
                           </span>
                           <div className="flex items-center gap-1.5">
                             <button
                               type="button"
                               onClick={handlePrevTrend}
-                              className="w-7 h-7 rounded-lg bg-white border border-slate-200 shadow-2xs flex items-center justify-center text-slate-700 hover:text-[#F85606] hover:bg-orange-50 active:scale-90 transition cursor-pointer"
+                              className="w-7 h-7 rounded-lg bg-white border border-[#E5E7EB] shadow-2xs flex items-center justify-center text-slate-700 hover:text-[#E11D48] hover:bg-rose-50 active:scale-90 transition cursor-pointer"
                               title="Previous trend set"
                             >
                               <ChevronLeft className="w-4.5 h-4.5 stroke-[2.5]" />
@@ -531,7 +536,7 @@ export const TopPicksTrendDiscovery = ({
                             <button
                               type="button"
                               onClick={handleNextTrend}
-                              className="w-7 h-7 rounded-lg bg-white border border-slate-200 shadow-2xs flex items-center justify-center text-slate-700 hover:text-[#F85606] hover:bg-orange-50 active:scale-90 transition cursor-pointer"
+                              className="w-7 h-7 rounded-lg bg-white border border-[#E5E7EB] shadow-2xs flex items-center justify-center text-slate-700 hover:text-[#E11D48] hover:bg-rose-50 active:scale-90 transition cursor-pointer"
                               title="Next trend set"
                             >
                               <ChevronRight className="w-4.5 h-4.5 stroke-[2.5]" />
@@ -539,42 +544,37 @@ export const TopPicksTrendDiscovery = ({
                           </div>
                         </div>
 
-                        {/* Desktop Right Chevron */}
-                        <button
-                          type="button"
-                          onClick={() => onSelectCategory && onSelectCategory(set.categoryId, set.keyword)}
-                          className="hidden sm:inline-flex p-0.5 text-slate-800 hover:text-[#F85606] transition"
-                          title={`Explore ${set.title}`}
-                        >
-                          <ChevronRight className="w-4 h-4 stroke-[2.5]" />
-                        </button>
+                        {/* Top Radar Style Pill Badge (Extra Touch) */}
+                        <span className="hidden sm:inline-flex bg-[#1B1F3B] text-white text-[8.5px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider shadow-2xs leading-none">
+                          {set.badge || 'CURATED'}
+                        </span>
                       </div>
 
                       {/* Social Proof Row: 3 Avatars + Review / Popularity Count */}
-                      <div className="flex items-center gap-1.5 mt-0.5 mb-2 sm:mb-1.5">
+                      <div className="flex items-center gap-1.5 mt-1 mb-2.5 sm:mb-2">
                         <div className="flex items-center">
                           <img
                             src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
                             alt="Buyer"
-                            className="w-4 h-4 sm:w-4 sm:h-4 rounded-full object-cover border border-white shadow-2xs z-30"
+                            className="w-4 h-4 rounded-full object-cover border border-white shadow-2xs z-30"
                           />
                           <img
                             src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
                             alt="Buyer"
-                            className="-ml-1 w-4 h-4 sm:w-4 sm:h-4 rounded-full object-cover border border-white shadow-2xs z-20"
+                            className="-ml-1 w-4 h-4 rounded-full object-cover border border-white shadow-2xs z-20"
                           />
                           <img
                             src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80"
                             alt="Buyer"
-                            className="-ml-1 w-4 h-4 sm:w-4 sm:h-4 rounded-full object-cover border border-white shadow-2xs z-10"
+                            className="-ml-1 w-4 h-4 rounded-full object-cover border border-white shadow-2xs z-10"
                           />
                         </div>
-                        <span className="text-[11px] sm:text-[10px] font-bold text-slate-700 truncate">
+                        <span className="text-[10.5px] sm:text-[10px] font-bold text-[#5B6070] truncate">
                           {set.socialProof}
                         </span>
                       </div>
 
-                      {/* 2 Photos Side-by-Side with Bold Price tags below */}
+                      {/* 2 Photos Side-by-Side: matching Top Radar neutral grey box */}
                       <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
                         {set.items.map((it) => (
                           <div
@@ -583,19 +583,19 @@ export const TopPicksTrendDiscovery = ({
                             className="group flex flex-col cursor-pointer select-none"
                             title={it.title}
                           >
-                            {/* Larger, prominent photo container */}
-                            <div className="aspect-square sm:aspect-auto sm:h-28 md:h-32 w-full rounded-xl overflow-hidden bg-white border border-slate-200/80 shadow-2xs p-1.5 group-hover:border-[#F85606] transition-all flex items-center justify-center">
+                            {/* Neutral Grey Rounded Box with mix-blend-multiply matching Top Radar */}
+                            <div className="aspect-[1.28/1] sm:aspect-auto sm:h-28 md:h-32 w-full rounded-xl overflow-hidden bg-[#F1F3F6] border border-transparent group-hover:border-[#E11D48] shadow-2xs p-2 transition-all flex items-center justify-center">
                               <img
                                 src={it.image}
                                 alt={it.title}
                                 loading="lazy"
-                                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                                className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
                               />
                             </div>
 
-                            {/* Bold Price underneath */}
+                            {/* Bold Price underneath matching Top Radar (Deep Navy #1B1F3B) */}
                             <div className="mt-1.5 pb-0.5 sm:pb-0">
-                              <span className="text-[13.5px] sm:text-xs font-black text-[#F85606] tracking-tight group-hover:underline">
+                              <span className="text-[13px] sm:text-[13.5px] font-black text-[#1B1F3B] tracking-tight group-hover:text-[#E11D48] transition-colors">
                                 {formatPrice(it.price)}
                               </span>
                             </div>
@@ -604,24 +604,25 @@ export const TopPicksTrendDiscovery = ({
                       </div>
                     </div>
 
-                    {/* Bottom Hashtag Tag directly below prices (Hidden on mobile per user request, visible on laptop) */}
-                    <div className="hidden sm:flex mt-1.5 pt-1 border-t border-slate-200/50 items-center justify-between">
+                    {/* Bottom Hashtag Tag directly below prices */}
+                    <div className="hidden sm:flex mt-2 pt-1.5 border-t border-[#E5E7EB] items-center justify-between">
                       <button
                         type="button"
                         onClick={() => onSelectCategory && onSelectCategory(set.categoryId, set.keyword)}
-                        className={`text-[10px] sm:text-[10.5px] font-extrabold ${set.tagColor} transition cursor-pointer truncate hover:underline`}
+                        className="text-[10.5px] font-bold text-[#E11D48] hover:text-[#BE123C] transition cursor-pointer truncate hover:underline flex items-center gap-0.5"
                       >
-                        {set.tag}
+                        <span>{set.tag}</span>
+                        <ChevronRight className="w-3 h-3 stroke-[2.5]" />
                       </button>
 
                       {/* Quick cycle arrow button */}
                       <button
                         type="button"
                         onClick={handleNextTrend}
-                        className="p-0.5 rounded text-slate-400 hover:text-slate-700 hover:bg-black/5 transition cursor-pointer"
+                        className="p-1 rounded-md text-slate-400 hover:text-[#E11D48] hover:bg-rose-50 transition cursor-pointer"
                         title="See more trend sets"
                       >
-                        <ChevronRight className="w-3 h-3 stroke-[2.5]" />
+                        <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
                       </button>
                     </div>
 
@@ -631,30 +632,31 @@ export const TopPicksTrendDiscovery = ({
             </div>
           </div>
 
-          {/* Side Indicator / Carousel Chevrons for the sets (Laptop only, moved to header on mobile) */}
-          <div className="hidden sm:flex items-center justify-between mt-1.5 px-0.5 text-[10px] text-slate-500 font-medium">
-            <span>
-              ✨ {language === 'ne' ? 'फेसन तथा ट्रेन्डिङ स्टाइल सेटहरू' : 'Curated Streetwear & Lifestyle Sets'}
+          {/* Side Indicator / Carousel Chevrons for the sets */}
+          <div className="hidden sm:flex items-center justify-between mt-2 pt-1.5 border-t border-[#E5E7EB] px-0.5 text-[11px] text-[#5B6070] font-bold">
+            <span className="flex items-center gap-1.5 text-[#1B1F3B]">
+              <Sparkles className="w-3.5 h-3.5 text-[#E11D48] fill-current" />
+              <span>{language === 'ne' ? 'फेसन तथा ट्रेन्डिङ स्टाइल सेटहरू' : 'Curated Streetwear & Lifestyle Sets'}</span>
             </span>
             <div className="flex items-center gap-1.5 ml-auto">
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 font-mono select-none mr-0.5">
+              <span className="text-[11px] font-bold text-[#5B6070] font-mono select-none mr-0.5">
                 {trendSetPage + 1}/{totalTrendPages}
               </span>
               <button
                 type="button"
                 onClick={handlePrevTrend}
-                className="w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-md bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-slate-700 hover:bg-orange-50 hover:text-[#F85606] hover:border-orange-200 transition cursor-pointer active:scale-95"
+                className="w-6 h-6 rounded-md bg-white border border-[#E5E7EB] shadow-2xs flex items-center justify-center text-slate-700 hover:bg-rose-50 hover:text-[#E11D48] hover:border-rose-200 transition cursor-pointer active:scale-95"
                 title="Previous trend sets"
               >
-                <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+                <ChevronLeft className="w-3.5 h-3.5 stroke-[2.5]" />
               </button>
               <button
                 type="button"
                 onClick={handleNextTrend}
-                className="w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-md bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-slate-700 hover:bg-orange-50 hover:text-[#F85606] hover:border-orange-200 transition cursor-pointer active:scale-95"
+                className="w-6 h-6 rounded-md bg-white border border-[#E5E7EB] shadow-2xs flex items-center justify-center text-slate-700 hover:bg-rose-50 hover:text-[#E11D48] hover:border-rose-200 transition cursor-pointer active:scale-95"
                 title="Next trend sets"
               >
-                <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+                <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
               </button>
             </div>
           </div>
