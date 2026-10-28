@@ -545,7 +545,7 @@ export const AmazonQuadCatalog = ({
           return (
             <div
               key={card.id}
-              className="w-[calc(100%-12px)] sm:w-[calc(50%-8px)] lg:w-[calc(25%-10.5px)] min-w-[390px] sm:min-w-[406px] flex-shrink-0 snap-start bg-white rounded-2xl border border-[#E5E7EB] shadow-2xs hover:border-[#1B1F3B]/30 hover:shadow-xs transition-all duration-200 p-3 sm:p-3.5 flex flex-col justify-between"
+              className="w-[85vw] max-w-[360px] min-w-[280px] sm:max-w-none sm:w-[calc(50%-8px)] sm:min-w-[406px] lg:w-[calc(25%-10.5px)] flex-shrink-0 snap-start bg-white rounded-2xl border border-[#E5E7EB] shadow-2xs hover:border-[#1B1F3B]/30 hover:shadow-xs transition-all duration-200 p-3 sm:p-3.5 flex flex-col justify-between"
             >
               {/* Card Header (Title with chevron matching reference) */}
               <div
@@ -573,7 +573,7 @@ export const AmazonQuadCatalog = ({
                     >
                       {/* Neutral Light Gray Rounded Box: 184 x 105 px */}
                       <div
-                        className="w-[184px] max-w-full h-[105px] rounded-xl overflow-hidden relative bg-[#F1F3F6] group-hover/item:bg-[#EAECEF] border border-transparent group-hover/item:border-[#E5E7EB] transition-all duration-200 flex items-center justify-center p-2 mx-auto"
+                        className="w-full sm:w-[184px] max-w-full h-[95px] sm:h-[105px] rounded-xl overflow-hidden relative bg-[#F1F3F6] group-hover/item:bg-[#EAECEF] border border-transparent group-hover/item:border-[#E5E7EB] transition-all duration-200 flex items-center justify-center p-2 mx-auto"
                       >
                         <img
                           src={quad.image}
